@@ -1,12 +1,12 @@
-const StatBox = ({ label, value }) => (
-  <div className="bg-white border border-zinc-100 p-4 rounded-xl flex flex-col justify-center shadow-sm">
-    <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-1">{label}</span>
-    <span className="text-lg font-bold text-zinc-900 truncate">{value}</span>
+﻿const StatRow = ({ label, value, isLast }) => (
+  <div className={lex justify-between items-center py-2.5 }>
+    <span className="text-xs font-medium text-zinc-500 uppercase tracking-wide">{label}</span>
+    <span className="text-sm font-bold text-zinc-900">{value}</span>
   </div>
 );
 
-const StatsView = () => {
-  const { books, folders, showToast } = useArchive();
+const StatsView = ({ onOpenProfile }) => {
+  const { books, folders } = useArchive();
 
   const stats = useMemo(() => {
     const libBooks = books.filter(b => b.inLibrary);
@@ -40,8 +40,8 @@ const StatsView = () => {
     
     const listS = calc(books) || { total: 0, pages: 0, avg: 0, long: '-', short: '-', fav: '-', price: 0 };
     const libS = calc(libBooks) || { total: 0, pages: 0, avg: 0, long: '-', short: '-', fav: '-', price: 0 };
-    const read = libBooks.filter(b => b.isRead);
-    const unread = libBooks.filter(b => !b.isRead);
+    const read = books.filter(b => b.isRead);
+    const unread = books.filter(b => !b.isRead);
     const rPages = read.reduce((s, b) => s + (parseInt(b.pageCount)||0), 0);
     const uPages = unread.reduce((s, b) => s + (parseInt(b.pageCount)||0), 0);
     return { list: listS, lib: libS, read: { rCount: read.length, rPages, uCount: unread.length, uPages } };
@@ -49,47 +49,78 @@ const StatsView = () => {
 
   return (
     <div className="h-full flex flex-col bg-zinc-50 relative">
-      <div className="p-4 pt-6 pb-3 sticky top-0 bg-zinc-50/90 backdrop-blur-md z-10 border-b border-zinc-200 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-zinc-900 tracking-tight">Verilerim</h1>
+      <div className="sticky top-0 bg-[#3d3430] backdrop-blur-md z-20 shadow-sm flex flex-col">
+        <div className="h-14 px-4 flex items-center justify-between border-b border-[#2a2421]">
+          <button onClick={onOpenProfile} className="p-2 -ml-2 text-stone-300 hover:bg-stone-800 rounded-full transition-colors">
+            <User size={22} />
+          </button>
+          <div className="flex items-center justify-center text-stone-50">
+            <Library size={24} strokeWidth={2.5} />
+            <span className="font-mono text-xl font-bold tracking-[0.25em] ml-2 mt-0.5">ARCHIVE</span>
+          </div>
+          <div className="w-[38px]"></div>
+        </div>
       </div>
-      <div className="flex-1 overflow-y-auto p-4 pb-24 space-y-6">
-        <section>
-          <h2 className="text-sm font-bold text-zinc-700 mb-3 flex items-center gap-1.5"><List size={16} className="text-zinc-400"/> Listelerim</h2>
-          <div className="grid grid-cols-2 gap-2">
-            <StatBox label="Toplam Kitap" value={stats.list.total} />
-            <StatBox label="Toplam Sayfa" value={stats.list.pages.toLocaleString()} />
-            <StatBox label="Ort. Sayfa" value={stats.list.avg} />
-            <StatBox label="Favori Yazar" value={stats.list.fav} />
-            <div className="col-span-2 bg-white border border-zinc-100 p-3 rounded-xl shadow-sm">
-                <span className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider block mb-1">En Uzun Kitap</span>
-                <span className="text-sm font-semibold text-zinc-800 truncate block">{stats.list.long}</span>
-            </div>
+      
+      <div className="sticky top-14 bg-white/95 backdrop-blur-sm z-10 border-b border-zinc-100 shadow-sm transition-all">
+        <div className="px-5 py-1 min-h-[25px] flex flex-col justify-center">
+          <div className="flex items-center justify-between w-full animate-in fade-in slide-in-from-left-4 duration-300">
+             <h1 className="text-xl font-extrabold text-zinc-900 tracking-tight">Verilerim</h1>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto pt-[12.8px] pr-4 pb-24 pl-[10px] space-y-4">
+        
+        <section className="bg-white border border-zinc-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="bg-zinc-50 border-b border-zinc-200 px-4 py-2.5 flex items-center gap-2">
+            <List size={16} className="text-orange-600" />
+            <h2 className="text-sm font-bold text-zinc-800">Tüm Listelerim</h2>
+          </div>
+          <div className="px-4 py-1">
+            <StatRow label="Toplam Kitap" value={stats.list.total} />
+            <StatRow label="Toplam Sayfa" value={stats.list.pages.toLocaleString()} />
+            <StatRow label="Ort. Sayfa" value={stats.list.avg} />
+            <StatRow label="Favori Yazar" value={stats.list.fav} />
+            <StatRow label="En Uzun Kitap" value={stats.list.long} isLast={true} />
           </div>
         </section>
-        <section>
-          <h2 className="text-sm font-bold text-zinc-700 mb-3 flex items-center gap-1.5"><Library size={16} className="text-zinc-400"/> Kütüphanem</h2>
-          <div className="grid grid-cols-2 gap-2">
-            <StatBox label="Toplam Kitap" value={stats.lib.total} />
-            <StatBox label="Toplam Değer" value={`₺${stats.lib.price.toLocaleString()}`} />
-            <StatBox label="Toplam Sayfa" value={stats.lib.pages.toLocaleString()} />
-            <StatBox label="Favori Yazar" value={stats.lib.fav} />
+
+        <section className="bg-white border border-zinc-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="bg-zinc-50 border-b border-zinc-200 px-4 py-2.5 flex items-center gap-2">
+            <Library size={16} className="text-orange-600" />
+            <h2 className="text-sm font-bold text-zinc-800">Kütüphanem</h2>
+          </div>
+          <div className="px-4 py-1">
+            <StatRow label="Toplam Kitap" value={stats.lib.total} />
+            <StatRow label="Toplam Sayfa" value={stats.lib.pages.toLocaleString()} />
+            <StatRow label="Toplam Değer" value={'₺' + stats.lib.price.toLocaleString()} />
+            <StatRow label="Favori Yazar" value={stats.lib.fav} isLast={true} />
           </div>
         </section>
-        <section>
-          <h2 className="text-sm font-bold text-zinc-700 mb-3 flex items-center gap-1.5"><BookOpen size={16} className="text-zinc-400"/> Okuma (Kütüphane)</h2>
-          <div className="grid grid-cols-2 gap-2">
-            <div className="col-span-2 bg-zinc-900 p-4 rounded-xl flex items-center justify-between shadow-md">
-              <div>
-                <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">Okunan Kitap</p>
-                <p className="text-xl font-bold text-white">{stats.read.rCount}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider mb-0.5">Okunan Sayfa</p>
-                <p className="text-xl font-bold text-white">{stats.read.rPages.toLocaleString()}</p>
-              </div>
+
+        <section className="bg-[#2a2421] border border-[#3d3430] rounded-2xl shadow-md overflow-hidden">
+          <div className="bg-[#3d3430] border-b border-[#2a2421] px-4 py-2.5 flex items-center gap-2">
+            <BookOpen size={16} className="text-orange-500" />
+            <h2 className="text-sm font-bold text-stone-100">Okuma Durumu</h2>
+          </div>
+          <div className="px-4 py-1">
+            <div className={lex justify-between items-center py-2.5 border-b border-[#3d3430]}>
+              <span className="text-xs font-medium text-stone-400 uppercase tracking-wide">Okunan Kitap</span>
+              <span className="text-sm font-bold text-orange-500">{stats.read.rCount}</span>
             </div>
-            <StatBox label="Okunmayan Kitap" value={stats.read.uCount} />
-            <StatBox label="Okunmayan Sayfa" value={stats.read.uPages.toLocaleString()} />
+            <div className={lex justify-between items-center py-2.5 border-b border-[#3d3430]}>
+              <span className="text-xs font-medium text-stone-400 uppercase tracking-wide">Okunan Sayfa</span>
+              <span className="text-sm font-bold text-orange-500">{stats.read.rPages.toLocaleString()}</span>
+            </div>
+            <div className={lex justify-between items-center py-2.5 border-b border-[#3d3430]}>
+              <span className="text-xs font-medium text-stone-400 uppercase tracking-wide">Okunmayan Kitap</span>
+              <span className="text-sm font-bold text-stone-100">{stats.read.uCount}</span>
+            </div>
+            <div className={lex justify-between items-center py-2.5}>
+              <span className="text-xs font-medium text-stone-400 uppercase tracking-wide">Okunmayan Sayfa</span>
+              <span className="text-sm font-bold text-stone-100">{stats.read.uPages.toLocaleString()}</span>
+            </div>
           </div>
         </section>
 
