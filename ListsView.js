@@ -82,51 +82,65 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
 
   return (
     <div className="h-full flex flex-col bg-white relative">
-      <div className="sticky top-0 bg-[#3d3430] backdrop-blur-md z-10 shadow-md flex flex-col">
+      <div className="sticky top-0 bg-[#3d3430] backdrop-blur-md z-20 shadow-sm flex flex-col">
         <div className="h-14 px-4 flex items-center justify-between border-b border-[#2a2421]">
           <button onClick={onOpenProfile} className="p-2 -ml-2 text-stone-300 hover:bg-stone-800 rounded-full transition-colors">
             <User size={22} />
           </button>
-            <div className="flex items-center justify-center text-stone-50">
-              <Library size={24} strokeWidth={2.5} />
-              <span className="font-mono text-xl font-bold tracking-[0.25em] ml-2 mt-0.5">ARCHIVE</span>
-            </div>
-          <button onClick={() => { setIsSearching(!isSearching); if(isSearching) setSearchTerm(''); }} className="p-2 -mr-2 text-stone-300 hover:bg-stone-800 rounded-full transition-colors">
-            {isSearching ? <X size={22} /> : <Search size={22} />}
-          </button>
+          <div className="flex items-center justify-center text-stone-50">
+            <Library size={24} strokeWidth={2.5} />
+            <span className="font-mono text-xl font-bold tracking-[0.25em] ml-2 mt-0.5">ARCHIVE</span>
+          </div>
+          <div className="w-[38px]"></div>
         </div>
-        
-          {isSearching && (
-            <div className="px-4 py-3 bg-[#3d3430] border-b border-[#2a2421]">
-              <div className="relative">
-                <Search className="absolute left-3 top-2.5 text-stone-500" size={18} />
-                <input autoFocus type="text" placeholder="Kitap veya yazar ara..." className="w-full pl-9 pr-3 py-2 bg-stone-800 text-stone-100 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 placeholder-stone-500" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+      </div>
+      
+      <div className="sticky top-14 bg-white/95 backdrop-blur-sm z-10 border-b border-zinc-100 shadow-sm transition-all">
+        <div className="px-5 py-3 min-h-[60px] flex flex-col justify-center">
+          {isSearching ? (
+            <div className="flex items-center w-full gap-3 animate-in fade-in slide-in-from-right-4 duration-300">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-2.5 text-zinc-400" size={18} />
+                <input autoFocus type="text" placeholder="Kitap veya yazar ara..." className="w-full pl-9 pr-3 py-2 bg-zinc-100 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-zinc-900" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
               </div>
+              <button onClick={() => { setIsSearching(false); setSearchTerm(''); }} className="text-zinc-500 hover:text-zinc-900 font-medium text-sm transition-colors shrink-0">
+                İptal
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between w-full animate-in fade-in slide-in-from-left-4 duration-300">
+              <div className="flex flex-col flex-1 overflow-hidden">
+                {!activeFolderId ? (
+                   <h1 className="text-2xl font-extrabold text-zinc-900 tracking-tight">Listelerim</h1>
+                ) : (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => setActiveFolderId(null)} className="flex items-center gap-1 text-zinc-500 hover:text-zinc-900 transition-colors" data-breadcrumb-target="root">
+                         <ArrowLeft size={18} />
+                         <span className="font-medium text-sm">Geri</span>
+                      </button>
+                    </div>
+                    <div className="flex flex-col mt-1">
+                      {breadcrumbs.map((bc, idx) => (
+                        <div key={bc.id} className="flex items-center mt-1 w-full" style={{ paddingLeft: `${(idx) * 16}px` }}>
+                          <CornerDownRight size={14} className="text-zinc-400 shrink-0 mr-1.5" />
+                          <button onClick={() => setActiveFolderId(bc.id)} className={`text-left transition-all px-2 py-0.5 rounded-lg border ${(activeFolderId === bc.id) ? 'text-zinc-900 font-bold bg-zinc-50 border-transparent' : 'text-zinc-600 font-medium hover:bg-zinc-50 hover:text-zinc-900 border-transparent'} ${(draggedId && overTarget && overTarget.type === 'folder' && overTarget.id === bc.id && overTarget.source === 'breadcrumb') ? 'ring-2 ring-zinc-900 border-dashed bg-zinc-100' : ''}`} data-breadcrumb-target={bc.id}>
+                            <span className="truncate max-w-[200px] inline-block">{bc.name}</span>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+              
+              <button onClick={() => setIsSearching(true)} className="p-2 -mr-2 ml-4 text-zinc-600 hover:bg-zinc-100 hover:text-orange-600 rounded-full transition-colors shrink-0">
+                <Search size={22} />
+              </button>
             </div>
           )}
         </div>
-
-        {!isSearching && (
-          <div className="p-4 py-3 min-h-[60px] flex items-center bg-white border-b border-zinc-100">
-            <div className="flex flex-col w-full">
-              <div className="flex w-full justify-between items-start">
-                <button onClick={() => setActiveFolderId(null)} className={`text-left flex items-center gap-1.5 transition-all w-full px-2 py-1 rounded-lg border ${(!activeFolderId) ? 'text-zinc-900 font-bold bg-zinc-50 border-transparent cursor-default' : 'text-zinc-600 font-medium hover:bg-zinc-50 hover:text-zinc-900 border-transparent'} ${(draggedId && overTarget && overTarget.type === 'folder' && overTarget.id === 'root' && overTarget.source === 'breadcrumb') ? 'ring-2 ring-zinc-900 border-dashed bg-zinc-100' : ''}`} data-breadcrumb-target={activeFolderId ? "root" : undefined}>
-                  {!activeFolderId && <Library size={18} className="mr-1" />}
-                  {activeFolderId && <ArrowLeft size={16} className="mr-1" />}
-                  <span className="truncate flex-1 leading-tight">{!activeFolderId ? 'Listelerim' : 'Geri'}</span>
-                </button>
-              </div>
-              {breadcrumbs.map((bc, idx) => (
-                <div key={bc.id} className="flex items-center mt-1 w-full" style={{ paddingLeft: `${(idx + 1) * 16}px` }}>
-                  <CornerDownRight size={14} className="text-zinc-400 shrink-0 mr-1.5" />
-                  <button onClick={() => setActiveFolderId(bc.id)} className={`text-left transition-all w-full px-2 py-1 rounded-lg border ${(activeFolderId === bc.id) ? 'text-zinc-900 font-bold bg-zinc-50 border-transparent' : 'text-zinc-600 font-medium hover:bg-zinc-50 hover:text-zinc-900 border-transparent'} ${(draggedId && overTarget && overTarget.type === 'folder' && overTarget.id === bc.id && overTarget.source === 'breadcrumb') ? 'ring-2 ring-zinc-900 border-dashed bg-zinc-100' : ''}`} data-breadcrumb-target={bc.id}>
-                    {bc.name}
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+      </div>
 
       <div className="flex-1 overflow-y-auto pt-4 pr-4 pb-24 pl-[10px]" data-dnd-scroll data-folder-target={activeFolderId || "root"}>
         {isSearching ? (
