@@ -14,15 +14,15 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
 
   return (
     <div className="relative">
-      {isDropBefore && <div className="absolute -top-1 left-4 right-4 h-0.5 bg-zinc-900 rounded-full z-10" />}
+      {isDropBefore && <div className="absolute -top-1 left-4 right-4 h-0.5 bg-orange-600 rounded-full z-10" />}
       <div
         ref={cardRef}
         data-item-target={folder.id}
         data-item-type="folder"
         data-item-folder={folder.parentId || 'root'}
-        className={`group flex items-center justify-between p-3.5 rounded-xl transition-all border shadow-sm cursor-pointer ml-2 sm:ml-4 relative select-none
-          ${isDropInside ? 'bg-zinc-900/5 border-zinc-900 border-dashed scale-[1.02]' : 'bg-white border-zinc-200 hover:border-zinc-300 hover:shadow-md'}
-          ${isBeingDragged ? 'opacity-0' : ''}`}
+        className={`group flex items-center justify-between pt-[9.8px] pr-3.5 pb-3.5 pl-[9.8px] rounded-xl transition-all border shadow-sm cursor-pointer ml-[6.4px] sm:ml-[12.8px] relative select-none
+            ${isDropInside ? 'bg-orange-600/5 border-orange-600 border-dashed scale-[1.02]' : 'bg-zinc-50 border-zinc-200 hover:border-zinc-300 hover:shadow-md'}
+            ${isBeingDragged ? 'opacity-0' : ''}`}
         onPointerDown={isLibraryView ? undefined : handlePointerDown}
         onClick={handleClick}
       >
@@ -49,7 +49,7 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
           )}
         </div>
       </div>
-      {isDropAfter && <div className="absolute -bottom-1 left-4 right-4 h-0.5 bg-zinc-900 rounded-full z-10" />}
+      {isDropAfter && <div className="absolute -bottom-1 left-4 right-4 h-0.5 bg-orange-600 rounded-full z-10" />}
     </div>
   );
 });
