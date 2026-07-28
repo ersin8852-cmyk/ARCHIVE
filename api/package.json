@@ -1,7 +1,9 @@
 {
-  "name": "ktaplik-api",
+  "name": "ktaplik",
   "version": "1.0.0",
-  "description": "Serverless API for K-TAPLIK",
+  "scripts": {
+    "build": "echo 'No build'"
+  },
   "dependencies": {
     "axios": "^1.6.2",
     "cheerio": "^1.0.0-rc.12"

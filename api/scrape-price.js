@@ -18,7 +18,8 @@ module.exports = async (req, res) => {
 
   const fetchPrice = async (siteName, url, parseCallback) => {
     try {
-      const response = await axios.get(url, { headers, timeout: 8000 });
+      // Vercel function timeout is 10s, so we must fail fast (4s max per request)
+      const response = await axios.get(url, { headers, timeout: 4000 });
       const $ = cheerio.load(response.data);
       let price = parseCallback($);
       
@@ -26,7 +27,6 @@ module.exports = async (req, res) => {
         results.push({ site: siteName, price: price });
       }
     } catch (error) {
-      // Sessizce hatayı yut (site engellemiş veya zaman aşımı olabilir)
       console.log(`[Scraper] ${siteName} hatası: ${error.message}`);
     }
   };
@@ -52,23 +52,6 @@ module.exports = async (req, res) => {
       const priceText = $('.current-price').first().text().trim();
       if (!priceText) return null;
       return parseFloat(priceText.replace(',', '.').replace(/[^0-9.]/g, ''));
-    }),
-
-    // 4. D&R
-    fetchPrice('D&R', `https://www.dr.com.tr/search?q=${isbn}`, ($) => {
-      const priceText = $('.prd-price').first().text().trim();
-      if (!priceText) return null;
-      // D&R'da fiyat "120,50 TL" formatında, virgülden sonrası için özel ayar
-      const clean = priceText.replace(' TL', '').replace(',', '.');
-      return parseFloat(clean);
-    }),
-
-    // 5. Idefix
-    fetchPrice('Idefix', `https://www.idefix.com/Arama?q=${isbn}`, ($) => {
-      const priceText = $('.product-price').first().text().trim();
-      if (!priceText) return null;
-      const clean = priceText.replace(' TL', '').replace(',', '.');
-      return parseFloat(clean);
     })
   ]);
 
