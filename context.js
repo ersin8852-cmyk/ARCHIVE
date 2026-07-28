@@ -253,23 +253,43 @@ const ArchiveProvider = ({ children }) => {
       inLibrary: false,
       isRead: false,
     };
-    updateData(prev => ({ ...prev, books: [...prev.books, newBook] }));
-    showToast('Kitap başarıyla eklendi.');
 
-    // Arka planda fiyat tarama (Fire and Forget)
+    // Kullanıcıya yükleniyor uyarısı verelim
     if (newBook.isbn) {
+      showToast('Fiyat aranıyor, lütfen bekleyin...');
+      
+      // Asenkron olarak fiyatı bekle
       fetch(`/api/scrape-price?isbn=${newBook.isbn}`)
-        .then(res => res.json())
+        .then(async (res) => {
+          if (!res.ok) {
+            // Hata detayını yakala
+            const errText = await res.text();
+            throw new Error(`HTTP ${res.status}: ${errText.substring(0, 50)}`);
+          }
+          return res.json();
+        })
         .then(data => {
           if (data && data.cheapest) {
-            updateData(prev => ({
-              ...prev,
-              books: prev.books.map(b => b.id === newBook.id ? { ...b, price: data.cheapest.price } : b)
-            }));
-            showToast('✨ ' + (newBook.title.length > 15 ? newBook.title.substring(0,15)+'...' : newBook.title) + ' için en ucuz fiyat (₺' + data.cheapest.price + ') bulundu ve eklendi!');
+            newBook.price = data.cheapest.price;
+            showToast('Fiyat bulundu: ₺' + data.cheapest.price);
+          } else {
+             showToast('Fiyat bulunamadı.');
           }
         })
-        .catch(err => console.log('Fiyat tarama hatası:', err));
+        .catch(err => {
+          console.log('Fiyat tarama hatası:', err);
+          showToast('Tarama Hatası: ' + err.message, 'error');
+        })
+        .finally(() => {
+          // İşlem bitince (başarılı ya da başarısız) kitabı ekle
+          updateData(prev => ({ ...prev, books: [...prev.books, newBook] }));
+          showToast('Kitap başarıyla eklendi.');
+        });
+        
+    } else {
+      // ISBN yoksa direkt ekle
+      updateData(prev => ({ ...prev, books: [...prev.books, newBook] }));
+      showToast('Kitap başarıyla eklendi.');
     }
 
     return true;
