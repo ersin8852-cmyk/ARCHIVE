@@ -96,7 +96,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
       </div>
       
       <div className="sticky top-14 bg-white/95 backdrop-blur-sm z-10 border-b border-zinc-100 shadow-sm transition-all">
-        <div className="px-5 py-2 min-h-[25px] flex flex-col justify-center">
+        <div className="px-5 py-1 min-h-[25px] flex flex-col justify-center">
           {isSearching ? (
             <div className="flex items-center w-full gap-3 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="relative flex-1">
@@ -111,7 +111,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
             <div className="flex items-center justify-between w-full animate-in fade-in slide-in-from-left-4 duration-300">
               <div className="flex flex-col flex-1 overflow-hidden">
                 {!activeFolderId ? (
-                   <h1 className="text-2xl font-extrabold text-zinc-900 tracking-tight">Listelerim</h1>
+                   <h1 className="text-xl font-extrabold text-zinc-900 tracking-tight">Listelerim</h1>
                 ) : (
                   <>
                     <div className="flex items-center gap-2">
@@ -142,7 +142,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto pt-4 pr-4 pb-24 pl-[10px]" data-dnd-scroll data-folder-target={activeFolderId || "root"}>
+      <div className="flex-1 overflow-y-auto pt-[12.8px] pr-4 pb-24 pl-[10px]" data-dnd-scroll data-folder-target={activeFolderId || "root"}>
         {isSearching ? (
           searchTerm.trim() === '' ? (
             <div className="h-full flex flex-col items-center justify-center text-zinc-400 space-y-3 pb-20">
