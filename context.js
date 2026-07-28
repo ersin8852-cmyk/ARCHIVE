@@ -255,6 +255,23 @@ const ArchiveProvider = ({ children }) => {
     };
     updateData(prev => ({ ...prev, books: [...prev.books, newBook] }));
     showToast('Kitap başarıyla eklendi.');
+
+    // Arka planda fiyat tarama (Fire and Forget)
+    if (newBook.isbn) {
+      fetch(`/api/scrape-price?isbn=${newBook.isbn}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.cheapest) {
+            updateData(prev => ({
+              ...prev,
+              books: prev.books.map(b => b.id === newBook.id ? { ...b, price: data.cheapest.price } : b)
+            }));
+            showToast('✨ ' + (newBook.title.length > 15 ? newBook.title.substring(0,15)+'...' : newBook.title) + ' için en ucuz fiyat (₺' + data.cheapest.price + ') bulundu ve eklendi!');
+          }
+        })
+        .catch(err => console.log('Fiyat tarama hatası:', err));
+    }
+
     return true;
   };
 
