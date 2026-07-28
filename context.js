@@ -37,6 +37,7 @@ const Download = pickIcon('Download');
 const Upload = pickIcon('Upload');
 const CornerDownRight = pickIcon('CornerDownRight');
 const Settings = pickIcon('Settings');
+const MoreVertical = pickIcon('MoreVertical');
 const LogOut = pickIcon('LogOut');
 const User = pickIcon('User');
 const Mail = pickIcon('Mail');
@@ -356,7 +357,7 @@ const ArchiveProvider = ({ children }) => {
     }}>
       {children}
       {toast && window.ReactDOM.createPortal(
-        <div className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full shadow-lg z-[9999] text-sm font-medium flex items-center gap-2 ${toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-zinc-900 text-white'}`}>
+        <div className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full shadow-lg z-[9999] text-sm font-medium flex items-center gap-2 ${toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-orange-600 text-white'}`}>
           {toast.type === 'error' && <AlertCircle size={14} />}
           {toast.msg}
         </div>,

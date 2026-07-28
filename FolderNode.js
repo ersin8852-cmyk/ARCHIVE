@@ -45,7 +45,7 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
 
         <div className="flex items-center gap-1.5 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity shrink-0 ml-2 relative z-30">
           {!isLibraryView && (
-            <button onClick={(e) => { e.stopPropagation(); onEdit(folder.id); }} className="p-2 text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 rounded-xl transition-colors pointer-events-auto" title="Ayarlar"><Settings size={16} /></button>
+            <button onClick={(e) => { e.stopPropagation(); onEdit(folder.id); }} className="p-2 text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 rounded-xl transition-colors pointer-events-auto" title="Ayarlar"><MoreVertical size={16} /></button>
           )}
         </div>
       </div>
