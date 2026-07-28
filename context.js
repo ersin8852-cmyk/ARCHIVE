@@ -207,7 +207,6 @@ const ArchiveProvider = ({ children }) => {
       const updatedFolders = prev.folders.filter(f => !folderIdsToDelete.includes(f.id));
       return { ...prev, books: updatedBooks, folders: updatedFolders };
     });
-    showToast('Liste ve icindeki tum veriler silindi.');
   };
 
   const deleteAllData = () => {
@@ -245,7 +244,7 @@ const ArchiveProvider = ({ children }) => {
 
   const addBook = (bookData, folderId = null) => {
     if (!bookData.title || !bookData.title.trim()) {
-      showToast('Kitap baÅŸlÄ±ÄŸÄ± boÅŸ olamaz.', 'error');
+      showToast('Kitap başlığı boş olamaz.', 'error');
       return false;
     }
     const isDuplicate = data.books.some(b => {
@@ -254,7 +253,7 @@ const ArchiveProvider = ({ children }) => {
              normalize(b.author) === normalize(bookData.author);
     });
     if (isDuplicate) {
-      showToast('Bu kitap zaten arÅŸivinizde mevcut!', 'error');
+      showToast('Bu kitap zaten arşivinizde mevcut!', 'error');
       return false;
     }
     const siblings = data.books.filter(b => b.folderId === folderId);
@@ -268,15 +267,15 @@ const ArchiveProvider = ({ children }) => {
       isRead: false,
     };
 
-    // 1. KitabÄ± anÄ±nda kÃ¼tÃ¼phaneye ekle
+    // 1. Kitabı anında kütüphaneye ekle
     updateData(prev => ({ ...prev, books: [...prev.books, newBook] }));
-    showToast('Kitap baÅŸarÄ±yla eklendi.');
+    showToast('Kitap başarıyla eklendi.');
 
-    // 2. Arka planda (Fire and Forget) fiyatÄ± tarayÄ±p bulursa gÃ¼ncelle
+    // 2. Arka planda (Fire and Forget) fiyatı tarayıp bulursa güncelle
     if (newBook.isbn) {
       fetch(`/api/scrape-price?isbn=${newBook.isbn}`)
         .then(async (res) => {
-          if (!res.ok) throw new Error('API HatasÄ±');
+          if (!res.ok) throw new Error('API Hatası');
           return res.json();
         })
         .then(data => {
@@ -289,8 +288,8 @@ const ArchiveProvider = ({ children }) => {
           }
         })
         .catch(err => {
-          // Arka planda sessizce yut, kullanÄ±cÄ±yÄ± rahatsÄ±z etme
-          console.log('Arka plan fiyat taramasÄ± baÅŸarÄ±sÄ±z:', err.message);
+          // Arka planda sessizce yut, kullanıcıyı rahatsız etme
+          console.log('Arka plan fiyat taraması başarısız:', err.message);
         });
     }
 
@@ -370,11 +369,11 @@ const ArchiveProvider = ({ children }) => {
 
   const importData = (importedData) => {
     if (!importedData || !Array.isArray(importedData.books) || !Array.isArray(importedData.folders)) {
-      showToast('GeÃ§ersiz yedekleme dosyasÄ± formatÄ±!', 'error');
+      showToast('Geçersiz yedekleme dosyası formatı!', 'error');
       return false;
     }
     updateData(importedData);
-    showToast('Veriler baÅŸarÄ±yla cihaza yÃ¼klendi!');
+    showToast('Veriler başarıyla cihaza yüklendi!');
     return true;
   };
 
