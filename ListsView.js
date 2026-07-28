@@ -95,14 +95,15 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
           </button>
         </div>
         
-        {isSearching && (
-          <div className="px-4 py-3 bg-stone-900/95 border-b border-stone-800">
-            <div className="relative">
-              <Search className="absolute left-3 top-2.5 text-stone-500" size={18} />
-              <input autoFocus type="text" placeholder="Kitap veya yazar ara..." className="w-full pl-9 pr-3 py-2 bg-stone-800 text-stone-100 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 placeholder-stone-500" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+          {isSearching && (
+            <div className="px-4 py-3 bg-stone-900/95 border-b border-stone-800">
+              <div className="relative">
+                <Search className="absolute left-3 top-2.5 text-stone-500" size={18} />
+                <input autoFocus type="text" placeholder="Kitap veya yazar ara..." className="w-full pl-9 pr-3 py-2 bg-stone-800 text-stone-100 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 placeholder-stone-500" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+              </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         {!isSearching && (
           <div className="p-4 py-3 min-h-[60px] flex items-center bg-white border-b border-zinc-100">
@@ -123,9 +124,8 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
                 </div>
               ))}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+        )}
 
       <div className="flex-1 overflow-y-auto p-4 pb-24" data-dnd-scroll data-folder-target={activeFolderId || "root"}>
         {isSearching ? (

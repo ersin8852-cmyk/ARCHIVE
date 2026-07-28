@@ -128,9 +128,8 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
                 </div>
               ))}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+        )}
 
      <div className="flex-1 overflow-y-auto p-4 pb-24" data-dnd-scroll data-folder-target={activeFolderId || "root"}>
         {isSearching ? (
