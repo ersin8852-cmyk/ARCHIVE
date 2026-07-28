@@ -271,47 +271,27 @@ const ArchiveProvider = ({ children }) => {
     updateData(prev => ({ ...prev, books: [...prev.books, newBook] }));
     showToast('Kitap başarıyla eklendi.');
 
-    // 2. Arka planda (Fire and Forget) ISBN ve Fiyat işlemlerini yap
-    (async () => {
-      let currentIsbn = newBook.isbn;
-      
-      // Eğer ISBN yoksa ama detay linki (href) varsa, önce ISBN'i çek
-      if (!currentIsbn && newBook.href) {
-        try {
-          const detailRes = await fetch(`/api/scrape-details?url=${encodeURIComponent(newBook.href)}`);
-          if (detailRes.ok) {
-            const details = await detailRes.json();
-            if (details.isbn) {
-              currentIsbn = details.isbn;
-              updateData(prev => ({
-                ...prev,
-                books: prev.books.map(b => b.id === newBook.id ? { ...b, isbn: currentIsbn, pageCount: details.pageCount || b.pageCount, year: details.year || b.year } : b)
-              }));
-            }
+    // 2. Arka planda (Fire and Forget) fiyatı tarayıp bulursa güncelle
+    if (newBook.isbn) {
+      fetch(`/api/scrape-price?isbn=${newBook.isbn}`)
+        .then(async (res) => {
+          if (!res.ok) throw new Error('API Hatası');
+          return res.json();
+        })
+        .then(data => {
+          if (data && data.cheapest) {
+            updateData(prev => ({
+              ...prev,
+              books: prev.books.map(b => b.id === newBook.id ? { ...b, price: data.cheapest.price } : b)
+            }));
+            // Fiyat bulununca bildirim gosterme iptal edildi
           }
-        } catch (err) {
-          console.log('Arka plan ISBN taraması başarısız:', err.message);
-        }
-      }
-
-      // ISBN bulunduysa fiyatı bul
-      if (currentIsbn) {
-        try {
-          const priceRes = await fetch(`/api/scrape-price?isbn=${currentIsbn}`);
-          if (priceRes.ok) {
-            const data = await priceRes.json();
-            if (data && data.cheapest) {
-              updateData(prev => ({
-                ...prev,
-                books: prev.books.map(b => b.id === newBook.id ? { ...b, price: data.cheapest.price } : b)
-              }));
-            }
-          }
-        } catch (err) {
+        })
+        .catch(err => {
+          // Arka planda sessizce yut, kullanıcıyı rahatsız etme
           console.log('Arka plan fiyat taraması başarısız:', err.message);
-        }
-      }
-    })();
+        });
+    }
 
     return true;
   };
