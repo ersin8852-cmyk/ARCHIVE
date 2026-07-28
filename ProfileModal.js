@@ -75,7 +75,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
       await window.firebaseAuth.signOut();
       onClose();
     } catch (err) {
-      showToast('Ã‡Ä±kÄ±ÅŸ yapÄ±lamadÄ±.', 'error');
+      showToast('Çıkış yapılamadı.', 'error');
       setLoggingOut(false);
     }
   };
@@ -89,7 +89,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
           </button>
           <span className="font-bold text-lg text-zinc-800">Profilim</span>
         </div>
-        <button onClick={handleLogout} disabled={loggingOut} className="p-2 -mr-2 text-red-500 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50 flex items-center justify-center" title="Ã‡Ä±kÄ±ÅŸ Yap">
+        <button onClick={handleLogout} disabled={loggingOut} className="p-2 -mr-2 text-red-500 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50 flex items-center justify-center" title="Çıkış Yap">
           {loggingOut ? <div className="w-5 h-5 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin"></div> : <LogOut size={20} />}
         </button>
       </div>
@@ -123,16 +123,16 @@ const ProfileModal = ({ isOpen, onClose }) => {
               </>
             )}
           </div>
-          <h2 className="text-xl font-bold text-zinc-900">{fullName || 'Ä°simsiz KullanÄ±cÄ±'}</h2>
+          <h2 className="text-xl font-bold text-zinc-900">{fullName || 'İsimsiz Kullanıcı'}</h2>
         </div>
 
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-zinc-100 space-y-4">
           <div className="flex justify-between items-center mb-2">
             <h3 className="font-bold text-zinc-800 text-sm flex items-center gap-2">
-              <User size={16} className="text-orange-500" /> KiÅŸisel Bilgiler
+              <User size={16} className="text-orange-500" /> Kişisel Bilgiler
             </h3>
             <button onClick={() => { if(isEditing) { setFullName(profile?.fullName || ''); setUsername(profile?.username || ''); setGender(profile?.gender || ''); setDob(profile?.dob || ''); setPhoto(profile?.photo || ''); setIsEditing(false); } else { setIsEditing(true); } }} className="text-xs font-semibold text-orange-600 hover:text-orange-700 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors">
-              {isEditing ? 'Ä°ptal' : 'DÃ¼zenle'}
+              {isEditing ? 'İptal' : 'Düzenle'}
             </button>
           </div>
           
@@ -146,7 +146,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-zinc-500 mb-1.5 ml-1">KullanÄ±cÄ± AdÄ±</label>
+            <label className="block text-xs font-semibold text-zinc-500 mb-1.5 ml-1">Kullanıcı Adı</label>
             {isEditing ? (
               <div className="relative">
                 <span className="absolute left-3 top-2.5 font-bold text-sm text-zinc-400">@</span>
@@ -163,18 +163,20 @@ const ProfileModal = ({ isOpen, onClose }) => {
             <div className="flex-1">
               <label className="block text-xs font-semibold text-zinc-500 mb-1.5 ml-1">Cinsiyet</label>
               {isEditing ? (
-                <select value={gender} onChange={e => setGender(e.target.value)} className="w-full px-3 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 appearance-none text-zinc-700">
-                  <option value="" disabled>Bilgilerinizi girin</option>
-                  <option value="Kadin">KadÄ±n</option>
-                  <option value="Erkek">Erkek</option>
-                  <option value="Belirtmek Istemiyorum">Belirtmek Ä°stemiyorum</option>
+                <select value={gender} onChange={e => setGender(e.target.value)} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 text-zinc-700 appearance-none">
+                  <option value="">Belirtilmemiş</option>
+                  <option value="female">Kadın</option>
+                  <option value="male">Erkek</option>
+                  <option value="other">Diğer</option>
                 </select>
               ) : (
-                <div className="w-full px-1 py-2.5 text-sm font-medium text-zinc-900">{gender || '-'}</div>
+                <div className="w-full px-1 py-2.5 text-sm font-medium text-zinc-900">
+                  {gender === 'female' ? 'Kadın' : gender === 'male' ? 'Erkek' : gender === 'other' ? 'Diğer' : '-'}
+                </div>
               )}
             </div>
             <div className="flex-1">
-              <label className="block text-xs font-semibold text-zinc-500 mb-1.5 ml-1">DoÄŸum Tarihi</label>
+              <label className="block text-xs font-semibold text-zinc-500 mb-1.5 ml-1">Doğum Tarihi</label>
               {isEditing ? (
                 <div className="relative">
                   <Calendar className="absolute left-3 top-2.5 text-zinc-400" size={16} />
