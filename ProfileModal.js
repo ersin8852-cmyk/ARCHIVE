@@ -37,11 +37,11 @@ const ProfileModal = ({ isOpen, onClose }) => {
       }
       
       updateProfileData({ fullName, username, gender, dob, photo });
-      showToast('Profil bilgileriniz gÃ¼ncellendi.');
+      showToast('Profil bilgileriniz güncellendi.');
       setIsEditing(false);
     } catch (err) {
       console.error(err);
-      showToast('Profil gÃ¼ncellenemedi.', 'error');
+      showToast('Profil güncellenemedi.', 'error');
     } finally {
       setLoading(false);
     }
@@ -49,20 +49,20 @@ const ProfileModal = ({ isOpen, onClose }) => {
 
   const handlePasswordChange = async () => {
     if (!password || password.length < 6) {
-      showToast('Åifre en az 6 karakter olmalÄ±dÄ±r.', 'error');
+      showToast('Şifre en az 6 karakter olmalıdır.', 'error');
       return;
     }
     setLoading(true);
     try {
       await user.updatePassword(password);
       setPassword('');
-      showToast('Åifreniz baÅŸarÄ±yla deÄŸiÅŸtirildi.');
+      showToast('Şifreniz başarıyla değiştirildi.');
     } catch (err) {
       console.error(err);
       if (err.code === 'auth/requires-recent-login') {
-        showToast('GÃ¼venlik nedeniyle ÅŸifre deÄŸiÅŸtirmeden Ã¶nce tekrar giriÅŸ yapmalÄ±sÄ±nÄ±z.', 'error');
+        showToast('Güvenlik nedeniyle şifre değiştirmeden önce tekrar giriş yapmalısınız.', 'error');
       } else {
-        showToast('Åifre deÄŸiÅŸtirilemedi: ' + err.message, 'error');
+        showToast('Şifre değiştirilemedi: ' + err.message, 'error');
       }
     } finally {
       setLoading(false);

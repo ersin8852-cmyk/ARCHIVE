@@ -305,7 +305,6 @@ const ArchiveProvider = ({ children }) => {
 
   const deleteBook = (id) => {
     updateData(prev => ({ ...prev, books: prev.books.filter(b => b.id !== id) }));
-    showToast('Kitap silindi.');
   };
 
   const moveItemToPosition = (itemId, itemType, targetFolderId, anchorId = null, placement = 'end') => {
