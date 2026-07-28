@@ -82,8 +82,8 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
 
   return (
     <div className="h-full flex flex-col bg-white relative">
-      <div className="sticky top-0 bg-stone-900/95 backdrop-blur-md z-10 shadow-md flex flex-col">
-        <div className="h-14 px-4 flex items-center justify-between border-b border-stone-800">
+      <div className="sticky top-0 bg-[#3d3430] backdrop-blur-md z-10 shadow-md flex flex-col">
+        <div className="h-14 px-4 flex items-center justify-between border-b border-[#2a2421]">
           <button onClick={onOpenProfile} className="p-2 -ml-2 text-stone-300 hover:bg-stone-800 rounded-full transition-colors">
             <User size={22} />
           </button>
@@ -97,7 +97,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
         </div>
         
           {isSearching && (
-            <div className="px-4 py-3 bg-stone-900/95 border-b border-stone-800">
+            <div className="px-4 py-3 bg-[#3d3430] border-b border-[#2a2421]">
               <div className="relative">
                 <Search className="absolute left-3 top-2.5 text-stone-500" size={18} />
                 <input autoFocus type="text" placeholder="Kitap veya yazar ara..." className="w-full pl-9 pr-3 py-2 bg-stone-800 text-stone-100 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 placeholder-stone-500" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
@@ -128,7 +128,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
           </div>
         )}
 
-      <div className="flex-1 overflow-y-auto p-4 pb-24" data-dnd-scroll data-folder-target={activeFolderId || "root"}>
+      <div className="flex-1 overflow-y-auto pt-4 pr-4 pb-24 pl-[10px]" data-dnd-scroll data-folder-target={activeFolderId || "root"}>
         {isSearching ? (
           searchTerm.trim() === '' ? (
             <div className="h-full flex flex-col items-center justify-center text-zinc-400 space-y-3 pb-20">
@@ -136,7 +136,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
               <p className="text-center text-sm font-medium">Aramak istediğiniz kitabın adını yazın.</p>
             </div>
           ) : filteredBooks.length > 0 ? (
-            <div className="space-y-1">
+            <div className="space-y-[3.6px]">
               {filteredBooks.map(book => <BookCard key={book.id} book={book} onOpen={handleOpenBook} showIndicator={true} folderPath={getFolderPath(book.folderId)} onNavigate={handleNavigate} />)}
             </div>
           ) : (
@@ -153,7 +153,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
                 <p className="text-center text-sm font-medium">Bu liste boş. Kitap veya yeni liste ekleyin.</p>
               </div>
             ) : (
-              <div className="space-y-1 min-h-[60px] rounded-xl transition-colors" data-folder-target={activeFolderId || "root"}>
+              <div className="space-y-[3.6px] min-h-[60px] rounded-xl transition-colors" data-folder-target={activeFolderId || "root"}>
                   <ItemList 
                     ids={currentItems.map(i => i.id)}
                     folderKey={activeFolderId || 'root'}

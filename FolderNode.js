@@ -20,7 +20,7 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
         data-item-target={folder.id}
         data-item-type="folder"
         data-item-folder={folder.parentId || 'root'}
-        className={`group flex items-center justify-between pt-[9.8px] pr-3.5 pb-3.5 pl-[9.8px] rounded-xl transition-all border shadow-sm cursor-pointer ml-[6.4px] sm:ml-[12.8px] relative select-none
+        className={`group flex items-center justify-between pt-[8.4px] pr-3 pb-3 pl-[8.4px] rounded-xl transition-all border shadow-sm cursor-pointer relative select-none
             ${isDropInside ? 'bg-orange-600/5 border-orange-600 border-dashed scale-[1.02]' : 'bg-zinc-50 border-zinc-200 hover:border-zinc-300 hover:shadow-md'}
             ${isBeingDragged ? 'opacity-0' : ''}`}
         onPointerDown={isLibraryView ? undefined : handlePointerDown}
