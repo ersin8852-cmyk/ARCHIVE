@@ -1,5 +1,5 @@
-﻿const StatRow = ({ label, value, isLast }) => (
-  <div className={lex justify-between items-center py-2.5 }>
+const StatRow = ({ label, value, isLast }) => (
+  <div className={`flex justify-between items-center py-2.5 ${!isLast ? 'border-b border-zinc-100' : ''}`}>
     <span className="text-xs font-medium text-zinc-500 uppercase tracking-wide">{label}</span>
     <span className="text-sm font-bold text-zinc-900">{value}</span>
   </div>
@@ -105,19 +105,19 @@ const StatsView = ({ onOpenProfile }) => {
             <h2 className="text-sm font-bold text-stone-100">Okuma Durumu</h2>
           </div>
           <div className="px-4 py-1">
-            <div className={lex justify-between items-center py-2.5 border-b border-[#3d3430]}>
+            <div className={`flex justify-between items-center py-2.5 border-b border-[#3d3430]`}>
               <span className="text-xs font-medium text-stone-400 uppercase tracking-wide">Okunan Kitap</span>
               <span className="text-sm font-bold text-orange-500">{stats.read.rCount}</span>
             </div>
-            <div className={lex justify-between items-center py-2.5 border-b border-[#3d3430]}>
+            <div className={`flex justify-between items-center py-2.5 border-b border-[#3d3430]`}>
               <span className="text-xs font-medium text-stone-400 uppercase tracking-wide">Okunan Sayfa</span>
               <span className="text-sm font-bold text-orange-500">{stats.read.rPages.toLocaleString()}</span>
             </div>
-            <div className={lex justify-between items-center py-2.5 border-b border-[#3d3430]}>
+            <div className={`flex justify-between items-center py-2.5 border-b border-[#3d3430]`}>
               <span className="text-xs font-medium text-stone-400 uppercase tracking-wide">Okunmayan Kitap</span>
               <span className="text-sm font-bold text-stone-100">{stats.read.uCount}</span>
             </div>
-            <div className={lex justify-between items-center py-2.5}>
+            <div className={`flex justify-between items-center py-2.5`}>
               <span className="text-xs font-medium text-stone-400 uppercase tracking-wide">Okunmayan Sayfa</span>
               <span className="text-sm font-bold text-stone-100">{stats.read.uPages.toLocaleString()}</span>
             </div>
