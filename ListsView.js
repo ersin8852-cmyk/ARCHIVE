@@ -87,9 +87,10 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
           <button onClick={onOpenProfile} className="p-2 -ml-2 text-stone-300 hover:bg-stone-800 rounded-full transition-colors">
             <User size={22} />
           </button>
-          <div className="font-bold text-lg text-stone-50 tracking-tight flex items-center gap-2">
-            K-TAPLIK
-          </div>
+            <div className="flex items-center justify-center text-stone-50">
+              <Library size={24} strokeWidth={2.5} />
+              <span className="font-mono text-xl font-bold tracking-[0.25em] ml-2 mt-0.5">ARCHIVE</span>
+            </div>
           <button onClick={() => { setIsSearching(!isSearching); if(isSearching) setSearchTerm(''); }} className="p-2 -mr-2 text-stone-300 hover:bg-stone-800 rounded-full transition-colors">
             {isSearching ? <X size={22} /> : <Search size={22} />}
           </button>

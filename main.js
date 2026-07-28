@@ -76,19 +76,18 @@ const AppLayout = () => {
             {activeTab === 'library' && <LibraryView activeFolderId={libraryFolderId} setActiveFolderId={changeLibraryFolder} onOpenProfile={openProfileModal} />}
             {activeTab === 'stats' && <StatsView onOpenProfile={openProfileModal} />}
           </div>
-          <div className="absolute bottom-0 left-0 right-0 bg-stone-900/90 backdrop-blur-xl border-t border-stone-800 pb-safe z-30 shadow-[0_-8px_30px_rgba(0,0,0,0.12)]">
-            <div className="flex justify-around items-center px-2 py-2">
+          <div className="absolute bottom-0 left-0 right-0 bg-stone-800/95 backdrop-blur-xl border-t border-stone-700 pb-safe z-30 shadow-[0_-8px_30px_rgba(0,0,0,0.12)]">
+            <div className="flex justify-around items-center px-4 py-1.5">
               {[
-                { id: 'lists', icon: List, label: 'Listelerim' },
-                { id: 'library', icon: Library, label: 'Kütüphanem' },
-                { id: 'stats', icon: BarChart3, label: 'Verilerim' }
+                { id: 'lists', icon: List },
+                { id: 'library', icon: Library },
+                { id: 'stats', icon: BarChart3 }
               ].map(tab => (
                 <button
                   key={tab.id} onClick={() => handleTabClick(tab.id)}
-                  className={`flex flex-col items-center p-2 rounded-xl transition-all w-20 ${activeTab === tab.id ? 'text-orange-500' : 'text-stone-500 hover:text-stone-300'}`}
+                  className={`flex flex-col items-center p-3 rounded-2xl transition-all ${activeTab === tab.id ? 'text-orange-500 bg-stone-700/50' : 'text-stone-400 hover:text-stone-200 hover:bg-stone-700/30'}`}
                 >
-                  <tab.icon size={22} strokeWidth={activeTab === tab.id ? 2.5 : 2} className={activeTab === tab.id ? 'mb-1' : 'mb-1'} />
-                  <span className={`text-[10px] uppercase tracking-wide transition-all ${activeTab === tab.id ? 'font-bold text-orange-500' : 'font-medium text-stone-500'}`}>{tab.label}</span>
+                  <tab.icon size={24} strokeWidth={activeTab === tab.id ? 2.5 : 2} />
                 </button>
               ))}
             </div>
