@@ -254,42 +254,31 @@ const ArchiveProvider = ({ children }) => {
       isRead: false,
     };
 
-    // Kullanıcıya yükleniyor uyarısı verelim
+    // 1. Kitabı anında kütüphaneye ekle
+    updateData(prev => ({ ...prev, books: [...prev.books, newBook] }));
+    showToast('Kitap başarıyla eklendi.');
+
+    // 2. Arka planda (Fire and Forget) fiyatı tarayıp bulursa güncelle
     if (newBook.isbn) {
-      showToast('Fiyat aranıyor, lütfen bekleyin...');
-      
-      // Asenkron olarak fiyatı bekle
       fetch(`/api/scrape-price?isbn=${newBook.isbn}`)
         .then(async (res) => {
-          if (!res.ok) {
-            // Hata detayını yakala
-            const errText = await res.text();
-            throw new Error(`HTTP ${res.status}: ${errText.substring(0, 50)}`);
-          }
+          if (!res.ok) throw new Error('API Hatası');
           return res.json();
         })
         .then(data => {
           if (data && data.cheapest) {
-            newBook.price = data.cheapest.price;
-            showToast('Fiyat bulundu: ₺' + data.cheapest.price);
-          } else {
-             showToast('Fiyat bulunamadı.');
+            updateData(prev => ({
+              ...prev,
+              books: prev.books.map(b => b.id === newBook.id ? { ...b, price: data.cheapest.price } : b)
+            }));
+            const shortTitle = newBook.title.length > 15 ? newBook.title.substring(0,15) + '...' : newBook.title;
+            showToast(`✨ ${shortTitle} için en ucuz fiyat (₺${data.cheapest.price}) arka planda bulundu!`);
           }
         })
         .catch(err => {
-          console.log('Fiyat tarama hatası:', err);
-          showToast('Tarama Hatası: ' + err.message, 'error');
-        })
-        .finally(() => {
-          // İşlem bitince (başarılı ya da başarısız) kitabı ekle
-          updateData(prev => ({ ...prev, books: [...prev.books, newBook] }));
-          showToast('Kitap başarıyla eklendi.');
+          // Arka planda sessizce yut, kullanıcıyı rahatsız etme
+          console.log('Arka plan fiyat taraması başarısız:', err.message);
         });
-        
-    } else {
-      // ISBN yoksa direkt ekle
-      updateData(prev => ({ ...prev, books: [...prev.books, newBook] }));
-      showToast('Kitap başarıyla eklendi.');
     }
 
     return true;
