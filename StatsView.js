@@ -64,7 +64,7 @@ const StatsView = ({ onOpenProfile }) => {
       
       <div className="sticky top-14 bg-white/95 backdrop-blur-sm z-10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-all">
         <div className="px-5 py-1 min-h-[25px] flex flex-col justify-center">
-          <div className="flex items-center justify-between w-full animate-in fade-in slide-in-from-left-4 duration-300">
+          <div className="flex items-center justify-between w-full min-h-[38px] animate-in fade-in slide-in-from-left-4 duration-300">
              <h1 className="text-xl font-extrabold text-zinc-900 tracking-tight">Verilerim</h1>
           </div>
         </div>
