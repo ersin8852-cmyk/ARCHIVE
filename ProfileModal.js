@@ -13,6 +13,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -209,24 +210,36 @@ const ProfileModal = ({ isOpen, onClose }) => {
           </div>
         )}
 
-        <div className="bg-red-50 rounded-2xl p-4 shadow-sm border border-red-100 space-y-3 mb-8">
-          <h3 className="font-bold text-red-600 text-sm flex items-center gap-2 mb-1">
-             Tehlikeli Bölge
-          </h3>
-          <p className="text-xs text-red-500 leading-relaxed">
-            Tüm listeleriniz ve kütüphanenizdeki kitaplar kalıcı olarak silinecektir. Bu işlem geri alınamamakla birlikte bütün verileriniz yok olacaktır.
-          </p>
-          <button onClick={() => {
-            if (window.confirm('Tüm kütüphaneniz ve listeleriniz KALICI olarak silinecektir. Emin misiniz?')) {
-              deleteAllData();
-              onClose();
-            }
-          }} className="w-full py-3 mt-2 bg-white text-red-600 border border-red-200 rounded-xl font-medium hover:bg-red-100 transition-colors flex justify-center items-center gap-2 text-sm">
+        <div className="mb-8 mt-4">
+          <button onClick={() => setShowDeleteConfirm(true)} className="w-full py-3 bg-white text-red-600 border border-orange-600 rounded-xl font-medium hover:bg-orange-50 transition-colors flex justify-center items-center gap-2 text-sm">
              Tüm Verileri Sil
           </button>
         </div>
 
       </div>
+
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/50 z-[200] flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-xs p-6 shadow-2xl transform transition-all">
+            <h3 className="font-bold text-lg text-zinc-900 mb-2">Emin misiniz?</h3>
+            <p className="text-zinc-600 text-sm mb-6 leading-relaxed">
+              Tüm kütüphane ve listeleriniz kalıcı olarak silinecektir, emin misiniz?
+            </p>
+            <div className="flex gap-3">
+              <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 py-3 font-medium text-zinc-600 bg-zinc-100 hover:bg-zinc-200 rounded-xl transition-colors">
+                İptal
+              </button>
+              <button onClick={() => {
+                deleteAllData();
+                setShowDeleteConfirm(false);
+                onClose();
+              }} className="flex-1 py-3 font-medium text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors">
+                Tamam
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>,
     document.body
   );
