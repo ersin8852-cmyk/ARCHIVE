@@ -50,7 +50,7 @@ const StatsView = ({ onOpenProfile }) => {
   return (
     <div className="h-full flex flex-col bg-zinc-50 relative">
       <div className="sticky top-0 bg-[#3d3430] backdrop-blur-md z-20 shadow-sm flex flex-col">
-        <div className="h-14 px-4 flex items-center justify-between border-b border-[#2a2421]">
+        <div className="h-14 px-4 flex items-center justify-between border-b border-white/5">
           <button onClick={onOpenProfile} className="p-2 -ml-2 text-stone-300 hover:bg-stone-800 rounded-full transition-colors">
             <User size={22} />
           </button>
@@ -62,7 +62,7 @@ const StatsView = ({ onOpenProfile }) => {
         </div>
       </div>
       
-      <div className="sticky top-14 bg-white/95 backdrop-blur-sm z-10 border-b border-zinc-100 shadow-sm transition-all">
+      <div className="sticky top-14 bg-white/95 backdrop-blur-sm z-10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-all">
         <div className="px-5 py-1 min-h-[25px] flex flex-col justify-center">
           <div className="flex items-center justify-between w-full animate-in fade-in slide-in-from-left-4 duration-300">
              <h1 className="text-xl font-extrabold text-zinc-900 tracking-tight">Verilerim</h1>
@@ -100,7 +100,7 @@ const StatsView = ({ onOpenProfile }) => {
         </section>
 
         <section className="bg-[#2a2421] border border-[#3d3430] rounded-2xl shadow-md overflow-hidden">
-          <div className="bg-[#3d3430] border-b border-[#2a2421] px-4 py-2.5 flex items-center gap-2">
+          <div className="bg-[#3d3430] border-b border-white/5 px-4 py-2.5 flex items-center gap-2">
             <BookOpen size={16} className="text-orange-500" />
             <h2 className="text-sm font-bold text-stone-100">Okuma Durumu</h2>
           </div>

@@ -76,7 +76,7 @@ const AppLayout = () => {
             {activeTab === 'library' && <LibraryView activeFolderId={libraryFolderId} setActiveFolderId={changeLibraryFolder} onOpenProfile={openProfileModal} />}
             {activeTab === 'stats' && <StatsView onOpenProfile={openProfileModal} />}
           </div>
-          <div className="absolute bottom-0 left-0 right-0 bg-[#2a2421] backdrop-blur-xl border-t border-stone-700 pb-safe z-30 shadow-[0_-8px_30px_rgba(0,0,0,0.12)]">
+          <div className="absolute bottom-0 left-0 right-0 bg-[#2a2421] backdrop-blur-xl border-t border-white/5 pb-safe z-30 shadow-[0_-8px_30px_rgba(0,0,0,0.12)]">
             <div className="flex justify-around items-center px-4 py-1.5">
               {[
                 { id: 'lists', icon: List },
