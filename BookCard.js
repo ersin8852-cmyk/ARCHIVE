@@ -55,7 +55,7 @@ const BookCard = React.memo(({ book, onOpen, showIndicator = false, folderPath =
           )}
         </div>
         {showIndicator && book.inLibrary && (
-          <span className="ml-auto w-2 h-2 rounded-full bg-zinc-900 shrink-0" title="Kütüphanemde"></span>
+          <span className="ml-auto w-2 h-2 rounded-full bg-amber-500 shrink-0" title="Kütüphanemde"></span>
         )}
       </div>
     </div>

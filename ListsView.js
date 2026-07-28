@@ -100,7 +100,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
             <div className="flex w-full items-center gap-2">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-2.5 text-zinc-400" size={16} />
-                <input autoFocus type="text" placeholder="Kitap veya yazar ara..." className="w-full pl-9 pr-3 py-2 bg-zinc-100 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+                <input autoFocus type="text" placeholder="Kitap veya yazar ara..." className="w-full pl-9 pr-3 py-2 bg-zinc-100 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
               </div>
             </div>
           ) : (
@@ -189,7 +189,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
           )}
           <button
             onClick={() => fabMenuOpen ? closeFabMenu() : openFabMenu()}
-            className={`w-14 h-14 bg-zinc-900 hover:bg-zinc-800 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center active:scale-95 ${fabMenuOpen ? 'rotate-45 bg-zinc-700' : ''}`}
+            className={`w-14 h-14 text-white rounded-full shadow-lg shadow-orange-600/30 hover:shadow-xl hover:shadow-orange-600/40 transition-all duration-200 flex items-center justify-center active:scale-95 ${fabMenuOpen ? 'rotate-45 bg-zinc-700' : 'bg-orange-600 hover:bg-orange-700'}`}
             title="Ekle"
           >
             <Plus size={24} />

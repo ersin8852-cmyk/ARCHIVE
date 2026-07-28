@@ -85,10 +85,10 @@ const AppLayout = () => {
               ].map(tab => (
                 <button
                   key={tab.id} onClick={() => handleTabClick(tab.id)}
-                  className={`flex flex-col items-center p-2 rounded-xl transition-all w-20 ${activeTab === tab.id ? 'text-zinc-900' : 'text-zinc-400 hover:text-zinc-600'}`}
+                  className={`flex flex-col items-center p-2 rounded-xl transition-all w-20 ${activeTab === tab.id ? 'text-orange-600' : 'text-zinc-400 hover:text-zinc-600'}`}
                 >
                   <tab.icon size={22} strokeWidth={activeTab === tab.id ? 2.5 : 2} className={activeTab === tab.id ? 'mb-1' : 'mb-1'} />
-                  <span className={`text-[10px] uppercase tracking-wide transition-all ${activeTab === tab.id ? 'font-bold' : 'font-medium'}`}>{tab.label}</span>
+                  <span className={`text-[10px] uppercase tracking-wide transition-all ${activeTab === tab.id ? 'font-bold text-orange-600' : 'font-medium text-zinc-500'}`}>{tab.label}</span>
                 </button>
               ))}
             </div>
@@ -117,7 +117,7 @@ class ErrorBoundary extends React.Component {
           <AlertCircle size={40} className="text-red-500" />
           <h2 className="font-bold text-zinc-800">Bir şeyler ters gitti</h2>
           <p className="text-sm text-zinc-500">Sayfayı yenilemeyi deneyin. Verileriniz tarayıcınızda saklı kalmaya devam eder.</p>
-          <button onClick={() => window.location.reload()} className="mt-2 px-4 py-2 bg-zinc-900 text-white rounded-xl text-sm font-medium">Sayfayı Yenile</button>
+          <button onClick={() => window.location.reload()} className="mt-2 px-4 py-2 bg-orange-600 text-white rounded-xl text-sm font-medium">Sayfayı Yenile</button>
         </div>
       );
     }
