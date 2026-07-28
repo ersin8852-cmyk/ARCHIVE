@@ -26,7 +26,7 @@ const ListCreateModal = ({ isOpen, onClose, onCreate, parentId }) => {
   const colors = ['#71717a', '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
 
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-[15vh]">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       <div className="bg-white w-full max-w-sm rounded-2xl shadow-xl z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <div className="flex justify-between items-center p-4 border-b border-zinc-100">
@@ -42,7 +42,7 @@ const ListCreateModal = ({ isOpen, onClose, onCreate, parentId }) => {
               value={name} 
               onChange={e => setName(e.target.value)} 
               className="w-full px-3 py-2 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent text-zinc-900 font-medium"
-              autoFocus
+              
             />
           </div>
           <div className="mb-6">
@@ -59,7 +59,7 @@ const ListCreateModal = ({ isOpen, onClose, onCreate, parentId }) => {
               ))}
             </div>
           </div>
-          <button type="submit" className="w-full py-3 bg-zinc-900 text-white rounded-xl font-semibold hover:bg-zinc-800 transition-colors">
+          <button type="submit" className="w-full py-3 bg-orange-600 text-white rounded-xl font-semibold hover:bg-orange-700 transition-colors">
             Oluştur
           </button>
         </form>
@@ -107,7 +107,7 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
   const colors = ['#71717a', '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
 
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-[15vh]">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       <div className="bg-white w-full max-w-sm rounded-2xl shadow-xl z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <div className="flex justify-between items-center p-4 border-b border-zinc-100">
@@ -139,7 +139,7 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
                 value={name} 
                 onChange={e => setName(e.target.value)} 
                 className="w-full px-3 py-2 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent text-zinc-900 font-medium"
-                autoFocus
+                
               />
             </div>
             <div className="mb-6">
@@ -160,7 +160,7 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
               <button type="button" onClick={() => setShowDelConfirm(true)} className="py-3 px-4 bg-red-50 text-red-600 rounded-xl font-semibold hover:bg-red-100 transition-colors flex items-center justify-center">
                 <Trash2 size={20} />
               </button>
-              <button type="submit" className="flex-1 py-3 bg-zinc-900 text-white rounded-xl font-semibold hover:bg-zinc-800 transition-colors">
+              <button type="submit" className="flex-1 py-3 bg-orange-600 text-white rounded-xl font-semibold hover:bg-orange-700 transition-colors">
                 Kaydet
               </button>
             </div>
