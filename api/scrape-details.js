@@ -19,11 +19,12 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const response = await axios.get(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-      },
-      timeout: 10000
+    const SCRAPER_API_KEY = 'c0d4a59821e1421aaaae1b259259c38e';
+    const targetUrl = url;
+    const scraperUrl = `http://api.scraperapi.com/?api_key=${SCRAPER_API_KEY}&url=${encodeURIComponent(targetUrl)}`;
+
+    const response = await axios.get(scraperUrl, {
+      timeout: 15000 // ScraperAPI can be a bit slower
     });
 
     const $ = cheerio.load(response.data);
