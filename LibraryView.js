@@ -85,30 +85,33 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
     openListEditModal();
   }, [openListEditModal]);
 
-  return (
-    <div className="h-full flex flex-col bg-white">
-      <div className="sticky top-0 bg-white/90 backdrop-blur-md z-10 shadow-sm flex flex-col">
-        <div className="h-14 px-4 flex items-center justify-between border-b border-zinc-200">
-          <button onClick={onOpenProfile} className="p-2 -ml-2 text-zinc-600 hover:bg-zinc-100 rounded-full transition-colors">
-            <User size={22} />
-          </button>
-          <div className="flex-1 flex justify-center items-center">
-            {/* İleride buraya Logo gelecek */}
+    return (
+      <div className="h-full flex flex-col bg-white">
+        <div className="sticky top-0 bg-stone-900/95 backdrop-blur-md z-10 shadow-md flex flex-col">
+          <div className="h-14 px-4 flex items-center justify-between border-b border-stone-800">
+            <button onClick={onOpenProfile} className="p-2 -ml-2 text-stone-300 hover:bg-stone-800 rounded-full transition-colors">
+              <User size={22} />
+            </button>
+            <div className="font-bold text-lg text-stone-50 tracking-tight flex items-center gap-2">
+              K-TAPLIK
+            </div>
+            <button onClick={() => { setIsSearching(!isSearching); if(isSearching) setSearchTerm(''); }} className="p-2 -mr-2 text-stone-300 hover:bg-stone-800 rounded-full transition-colors">
+              {isSearching ? <X size={22} /> : <Search size={22} />}
+            </button>
           </div>
-          <button onClick={() => { setIsSearching(!isSearching); if(isSearching) setSearchTerm(''); }} className={`p-2 -mr-2 rounded-full transition-colors ${isSearching ? 'bg-zinc-100 text-zinc-900' : 'text-zinc-600 hover:bg-zinc-100'}`}>
-            {isSearching ? <X size={22} /> : <Search size={22} />}
-          </button>
-        </div>
-
-        <div className="p-4 py-3 min-h-[60px] flex items-center border-b border-zinc-100">
-          {isSearching ? (
-            <div className="flex w-full items-center gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-2.5 text-zinc-400" size={16} />
-                <input autoFocus type="text" placeholder="Kütüphanede ara..." className="w-full pl-9 pr-3 py-2 bg-zinc-100 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+          
+          {isSearching && (
+            <div className="px-4 py-3 bg-stone-900/95 border-b border-stone-800">
+              <div className="relative">
+                <Search className="absolute left-3 top-2.5 text-stone-500" size={18} />
+                <input autoFocus type="text" placeholder="Kütüphanede ara..." className="w-full pl-9 pr-3 py-2 bg-stone-800 text-stone-100 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 placeholder-stone-500" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
               </div>
             </div>
-          ) : (
+          )}
+        </div>
+        
+        {!isSearching && (
+          <div className="p-4 py-3 min-h-[60px] flex flex-col justify-center bg-white border-b border-zinc-100">
             <div className="flex flex-col w-full">
               <div className="flex w-full justify-between items-start">
                 <button onClick={() => setActiveFolderId(null)} className={`text-left flex items-center gap-1.5 transition-all w-full px-2 py-1 rounded-lg border ${(!activeFolderId) ? 'text-zinc-900 font-bold bg-zinc-50 border-transparent' : 'text-zinc-600 font-medium hover:bg-zinc-50 hover:text-zinc-900 border-transparent'} ${(draggedId && overTarget && overTarget.type === 'folder' && overTarget.id === 'root' && overTarget.source === 'breadcrumb') ? 'ring-2 ring-zinc-900 border-dashed bg-zinc-100' : ''}`} data-breadcrumb-target="root">

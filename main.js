@@ -76,7 +76,7 @@ const AppLayout = () => {
             {activeTab === 'library' && <LibraryView activeFolderId={libraryFolderId} setActiveFolderId={changeLibraryFolder} onOpenProfile={openProfileModal} />}
             {activeTab === 'stats' && <StatsView onOpenProfile={openProfileModal} />}
           </div>
-          <div className="absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-zinc-200 pb-safe z-30">
+          <div className="absolute bottom-0 left-0 right-0 bg-stone-900/90 backdrop-blur-xl border-t border-stone-800 pb-safe z-30 shadow-[0_-8px_30px_rgba(0,0,0,0.12)]">
             <div className="flex justify-around items-center px-2 py-2">
               {[
                 { id: 'lists', icon: List, label: 'Listelerim' },
@@ -85,10 +85,10 @@ const AppLayout = () => {
               ].map(tab => (
                 <button
                   key={tab.id} onClick={() => handleTabClick(tab.id)}
-                  className={`flex flex-col items-center p-2 rounded-xl transition-all w-20 ${activeTab === tab.id ? 'text-orange-600' : 'text-zinc-400 hover:text-zinc-600'}`}
+                  className={`flex flex-col items-center p-2 rounded-xl transition-all w-20 ${activeTab === tab.id ? 'text-orange-500' : 'text-stone-500 hover:text-stone-300'}`}
                 >
                   <tab.icon size={22} strokeWidth={activeTab === tab.id ? 2.5 : 2} className={activeTab === tab.id ? 'mb-1' : 'mb-1'} />
-                  <span className={`text-[10px] uppercase tracking-wide transition-all ${activeTab === tab.id ? 'font-bold text-orange-600' : 'font-medium text-zinc-500'}`}>{tab.label}</span>
+                  <span className={`text-[10px] uppercase tracking-wide transition-all ${activeTab === tab.id ? 'font-bold text-orange-500' : 'font-medium text-stone-500'}`}>{tab.label}</span>
                 </button>
               ))}
             </div>
