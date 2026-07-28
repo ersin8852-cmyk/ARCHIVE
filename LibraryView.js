@@ -101,7 +101,7 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
         </div>
         
         <div className="sticky top-14 bg-white/95 backdrop-blur-sm z-10 border-b border-zinc-100 shadow-sm transition-all">
-          <div className="px-5 py-3 min-h-[60px] flex flex-col justify-center">
+          <div className="px-5 py-2 min-h-[45px] flex flex-col justify-center">
             {isSearching ? (
               <div className="flex items-center w-full gap-3 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="relative flex-1">
