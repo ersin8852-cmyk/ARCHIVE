@@ -8,7 +8,7 @@ const FallbackIcon = ({ size = 24, ...props }) => (
 );
 function pickIcon(name) {
   const icon = window.LucideReact && window.LucideReact[name];
-  if (!icon) console.warn(`Lucide ikonu bulunamadı, yedek gösteriliyor: ${name}`);
+  if (!icon) console.warn(`Lucide ikonu bulunamadÄ±, yedek gÃ¶steriliyor: ${name}`);
   return icon || FallbackIcon;
 }
 const Library = pickIcon('Library');
@@ -75,7 +75,7 @@ const initialState = {
 const processImageFile = (file) => {
   return new Promise((resolve, reject) => {
     if (!file || !file.type.startsWith('image/')) {
-      reject(new Error('Lütfen geçerli bir resim dosyası seçin.'));
+      reject(new Error('LÃ¼tfen geÃ§erli bir resim dosyasÄ± seÃ§in.'));
       return;
     }
 
@@ -111,10 +111,10 @@ const processImageFile = (file) => {
         const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
         resolve(dataUrl);
       };
-      img.onerror = () => reject(new Error('Resim yüklenemedi.'));
+      img.onerror = () => reject(new Error('Resim yÃ¼klenemedi.'));
       img.src = event.target.result;
     };
-    reader.onerror = () => reject(new Error('Dosya okunamadı.'));
+    reader.onerror = () => reject(new Error('Dosya okunamadÄ±.'));
     reader.readAsDataURL(file);
   });
 };
@@ -190,15 +190,29 @@ const ArchiveProvider = ({ children }) => {
     }));
   };
 
+  const getDescendantFolderIds = (folders, parentId) => {
+    let ids = [];
+    const children = folders.filter(f => f.parentId === parentId);
+    for (const child of children) {
+      ids.push(child.id);
+      ids = ids.concat(getDescendantFolderIds(folders, child.id));
+    }
+    return ids;
+  };
+
   const deleteFolder = (id) => {
     updateData(prev => {
-      const updatedBooks = prev.books.map(b => b.folderId === id ? { ...b, folderId: null } : b);
-      const updatedFolders = prev.folders
-        .filter(f => f.id !== id)
-        .map(f => f.parentId === id ? { ...f, parentId: null } : f);
+      const folderIdsToDelete = [id, ...getDescendantFolderIds(prev.folders, id)];
+      const updatedBooks = prev.books.filter(b => !folderIdsToDelete.includes(b.folderId));
+      const updatedFolders = prev.folders.filter(f => !folderIdsToDelete.includes(f.id));
       return { ...prev, books: updatedBooks, folders: updatedFolders };
     });
-    showToast('Klasör silindi, içerikler ana dizine taşındı.');
+    showToast('Liste ve icindeki tum veriler silindi.');
+  };
+
+  const deleteAllData = () => {
+    updateData(prev => ({ ...prev, books: [], folders: [] }));
+    showToast('Tum verileriniz basariyla silindi.');
   };
 
   const reorderFolder = (id, direction) => {
@@ -231,7 +245,7 @@ const ArchiveProvider = ({ children }) => {
 
   const addBook = (bookData, folderId = null) => {
     if (!bookData.title || !bookData.title.trim()) {
-      showToast('Kitap başlığı boş olamaz.', 'error');
+      showToast('Kitap baÅŸlÄ±ÄŸÄ± boÅŸ olamaz.', 'error');
       return false;
     }
     const isDuplicate = data.books.some(b => {
@@ -240,7 +254,7 @@ const ArchiveProvider = ({ children }) => {
              normalize(b.author) === normalize(bookData.author);
     });
     if (isDuplicate) {
-      showToast('Bu kitap zaten arşivinizde mevcut!', 'error');
+      showToast('Bu kitap zaten arÅŸivinizde mevcut!', 'error');
       return false;
     }
     const siblings = data.books.filter(b => b.folderId === folderId);
@@ -254,15 +268,15 @@ const ArchiveProvider = ({ children }) => {
       isRead: false,
     };
 
-    // 1. Kitabı anında kütüphaneye ekle
+    // 1. KitabÄ± anÄ±nda kÃ¼tÃ¼phaneye ekle
     updateData(prev => ({ ...prev, books: [...prev.books, newBook] }));
-    showToast('Kitap başarıyla eklendi.');
+    showToast('Kitap baÅŸarÄ±yla eklendi.');
 
-    // 2. Arka planda (Fire and Forget) fiyatı tarayıp bulursa güncelle
+    // 2. Arka planda (Fire and Forget) fiyatÄ± tarayÄ±p bulursa gÃ¼ncelle
     if (newBook.isbn) {
       fetch(`/api/scrape-price?isbn=${newBook.isbn}`)
         .then(async (res) => {
-          if (!res.ok) throw new Error('API Hatası');
+          if (!res.ok) throw new Error('API HatasÄ±');
           return res.json();
         })
         .then(data => {
@@ -271,13 +285,12 @@ const ArchiveProvider = ({ children }) => {
               ...prev,
               books: prev.books.map(b => b.id === newBook.id ? { ...b, price: data.cheapest.price } : b)
             }));
-            const shortTitle = newBook.title.length > 15 ? newBook.title.substring(0,15) + '...' : newBook.title;
-            showToast(`✨ ${shortTitle} için en ucuz fiyat (₺${data.cheapest.price}) arka planda bulundu!`);
+            // Fiyat bulununca bildirim gosterme iptal edildi
           }
         })
         .catch(err => {
-          // Arka planda sessizce yut, kullanıcıyı rahatsız etme
-          console.log('Arka plan fiyat taraması başarısız:', err.message);
+          // Arka planda sessizce yut, kullanÄ±cÄ±yÄ± rahatsÄ±z etme
+          console.log('Arka plan fiyat taramasÄ± baÅŸarÄ±sÄ±z:', err.message);
         });
     }
 
@@ -357,11 +370,11 @@ const ArchiveProvider = ({ children }) => {
 
   const importData = (importedData) => {
     if (!importedData || !Array.isArray(importedData.books) || !Array.isArray(importedData.folders)) {
-      showToast('Geçersiz yedekleme dosyası formatı!', 'error');
+      showToast('GeÃ§ersiz yedekleme dosyasÄ± formatÄ±!', 'error');
       return false;
     }
     updateData(importedData);
-    showToast('Veriler başarıyla cihaza yüklendi!');
+    showToast('Veriler baÅŸarÄ±yla cihaza yÃ¼klendi!');
     return true;
   };
 
@@ -376,7 +389,7 @@ const ArchiveProvider = ({ children }) => {
     <ArchiveContext.Provider value={{
       user, loadingAuth,
       books: data.books, folders: data.folders, profile: data.profile || initialState.profile,
-      addFolder, updateFolder, deleteFolder, reorderFolder,
+      addFolder, updateFolder, deleteFolder, reorderFolder, deleteAllData,
       addBook, updateBook, deleteBook, moveItemToPosition,
       importData, updateProfileData,
       showToast, processImageFile
@@ -392,5 +405,7 @@ const ArchiveProvider = ({ children }) => {
     </ArchiveContext.Provider>
   );
 };
+
+
 
 

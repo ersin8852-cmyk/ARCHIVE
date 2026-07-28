@@ -1,4 +1,4 @@
-﻿
+
 
 const ProfileModal = ({ isOpen, onClose }) => {
   const { user, profile, updateProfileData, showToast, processImageFile, deleteAllData } = useArchive();
@@ -194,18 +194,35 @@ const ProfileModal = ({ isOpen, onClose }) => {
         </div>
 
         {user.providerData.some(p => p.providerId === 'password') && (
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-zinc-100 space-y-4 mb-8">
+          <div className="bg-white rounded-2xl p-4 shadow-sm border border-zinc-100 space-y-4 mb-4">
             <h3 className="font-bold text-zinc-800 text-sm flex items-center gap-2 mb-2">
-              <Lock size={16} className="text-orange-500" /> Åifre DeÄŸiÅŸtir
+              <Lock size={16} className="text-orange-500" /> Şifre Değiştir
             </h3>
             <div>
-              <input type="password" placeholder="Yeni ÅŸifrenizi girin" value={password} onChange={e => setPassword(e.target.value)} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50" />
+              <input type="password" placeholder="Yeni şifrenizi girin" value={password} onChange={e => setPassword(e.target.value)} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50" />
             </div>
             <button onClick={handlePasswordChange} disabled={loading || !password} className="w-full py-3 bg-white text-orange-600 border border-orange-200 rounded-xl font-medium hover:bg-orange-50 transition-colors disabled:opacity-50 flex justify-center items-center gap-2 text-sm">
-              <Lock size={16} /> Åifreyi GÃ¼ncelle
+              <Lock size={16} /> Şifreyi Güncelle
             </button>
           </div>
         )}
+
+        <div className="bg-red-50 rounded-2xl p-4 shadow-sm border border-red-100 space-y-3 mb-8">
+          <h3 className="font-bold text-red-600 text-sm flex items-center gap-2 mb-1">
+             Tehlikeli Bölge
+          </h3>
+          <p className="text-xs text-red-500 leading-relaxed">
+            Tüm listeleriniz ve kütüphanenizdeki kitaplar kalıcı olarak silinecektir. Bu işlem geri alınamamakla birlikte bütün verileriniz yok olacaktır.
+          </p>
+          <button onClick={() => {
+            if (window.confirm('Tüm kütüphaneniz ve listeleriniz KALICI olarak silinecektir. Emin misiniz?')) {
+              deleteAllData();
+              onClose();
+            }
+          }} className="w-full py-3 mt-2 bg-white text-red-600 border border-red-200 rounded-xl font-medium hover:bg-red-100 transition-colors flex justify-center items-center gap-2 text-sm">
+             Tüm Verileri Sil
+          </button>
+        </div>
 
       </div>
     </div>,
