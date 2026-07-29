@@ -180,12 +180,43 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
     const q = (searchQuery ?? query).trim();
     if (!q) return;
     setLoading(true); setResults([]); setHasSearched(true);
-    const cleanQuery = q.replace(/[- ]/g, '');
-    const isIsbn = q.length > 0 && /^\d{10,13}$/.test(cleanQuery);
+    
+    const cleanQuery = q.replace(/-/g, '');
+    const isbnMatches = cleanQuery.match(/\b\d{10,13}\b/g);
+    
     try {
-      const items = isIsbn ? await window.api.fetchByIsbn(cleanQuery) : await window.api.fetchByTitle(q);
-      setResults(items);
-      if (items.length === 0) showToast('Sonuç bulunamadı.', 'error');
+      if (isbnMatches && isbnMatches.length > 0) {
+        // Bulk ISBN Search
+        const uniqueIsbns = [...new Set(isbnMatches)];
+        const allItems = [];
+        const notFoundIsbns = [];
+        
+        await Promise.all(uniqueIsbns.map(async (isbn) => {
+          try {
+            const items = await window.api.fetchByIsbn(isbn);
+            if (items && items.length > 0) {
+              allItems.push(...items);
+            } else {
+              notFoundIsbns.push(isbn);
+            }
+          } catch (err) {
+            notFoundIsbns.push(isbn);
+          }
+        }));
+        
+        setResults(allItems);
+        
+        if (allItems.length === 0 && notFoundIsbns.length > 0) {
+          showToast('Hiçbir sonuç bulunamadı.', 'error');
+        } else if (notFoundIsbns.length > 0) {
+          showToast(`Şu numaralı kitaplar bulunamadı: ${notFoundIsbns.join(', ')}`, 'warning');
+        }
+      } else {
+        // Single text search
+        const items = await window.api.fetchByTitle(q);
+        setResults(items);
+        if (items.length === 0) showToast('Sonuç bulunamadı.', 'error');
+      }
     } catch (err) {
       showToast('Arama başarısız oldu.', 'error');
     }
@@ -202,7 +233,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
         <div className="p-4 border-b flex justify-between items-center bg-zinc-50">
           <div className="flex items-center gap-3">
             <h2 className="text-lg font-semibold text-zinc-800">Yeni Kitap Ekle</h2>
-            <button onClick={() => { if(onOpenManualAdd) onOpenManualAdd(); }} className="px-3 py-1.5 bg-zinc-900 text-white text-xs font-semibold rounded-full hover:bg-zinc-800 transition-colors flex items-center gap-1.5 shadow-sm">
+            <button onClick={() => { if(onOpenManualAdd) onOpenManualAdd(); }} className="px-3 py-1.5 bg-orange-600 text-white text-xs font-semibold rounded-full hover:bg-orange-700 transition-colors flex items-center gap-1.5 shadow-sm">
               <Plus size={14} /> Manuel Ekle
             </button>
           </div>
@@ -212,13 +243,20 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 text-zinc-400" size={18} />
-              <input type="text" placeholder="Kitap Adı veya ISBN..." className="w-full pl-9 pr-4 py-2.5 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-800 bg-zinc-50 text-sm" value={query} onChange={e => setQuery(e.target.value)} onKeyDown={e => e.key === 'Enter' && performSearch()} />
+              <textarea 
+                placeholder="Kitap Adı veya ISBN (Birden fazla girebilirsiniz)..." 
+                className="w-full pl-9 pr-4 py-2.5 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 bg-zinc-50 text-sm min-h-[44px] max-h-[120px] resize-y overflow-y-auto" 
+                value={query} 
+                onChange={e => setQuery(e.target.value)} 
+                onKeyDown={e => { if (e.key === 'Enter' && e.ctrlKey) performSearch(); }} 
+                rows="1"
+              />
             </div>
             <button onClick={() => setShowCamera(!showCamera)} className={`p-2.5 rounded-xl border transition-colors flex items-center justify-center ${showCamera ? 'bg-red-50 text-red-600 border-red-200' : 'bg-zinc-100 text-zinc-600 border-zinc-200 hover:bg-zinc-200'}`}>
               <Camera size={20} />
             </button>
           </div>
-          <button onClick={() => performSearch()} disabled={loading || !query.trim()} className="w-full py-2.5 bg-zinc-900 text-white rounded-xl hover:bg-zinc-800 font-medium transition-colors disabled:opacity-50">
+          <button onClick={() => performSearch()} disabled={loading || !query.trim()} className="w-full py-2.5 bg-orange-600 text-white rounded-xl hover:bg-orange-700 font-medium transition-colors disabled:opacity-50">
             {loading ? 'Aranıyor...' : 'Ara'}
           </button>
         </div>

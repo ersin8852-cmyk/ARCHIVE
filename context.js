@@ -394,16 +394,14 @@ const ArchiveProvider = ({ children }) => {
     }}>
       {children}
       {toast && window.ReactDOM.createPortal(
-        <div className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 px-4 py-2 rounded-full shadow-lg z-[9999] text-sm font-medium flex items-center gap-2 ${toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-orange-600 text-white'}`}>
-          {toast.type === 'error' && <AlertCircle size={14} />}
-          {toast.msg}
+        <div className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 px-5 py-3 rounded-2xl shadow-xl z-[9999] text-sm font-medium flex items-center justify-center text-center gap-2 max-w-[90vw] w-max break-words ${toast.type === 'error' ? 'bg-red-600 text-white' : toast.type === 'warning' ? 'bg-amber-400 text-amber-950' : 'bg-orange-600 text-white'}`}>
+          {toast.type === 'error' && <AlertCircle size={16} className="shrink-0" />}
+          {toast.type === 'warning' && <AlertCircle size={16} className="shrink-0" />}
+          <span className="leading-tight">{toast.msg}</span>
         </div>,
         document.body
       )}
     </ArchiveContext.Provider>
   );
+
 };
-
-
-
-
