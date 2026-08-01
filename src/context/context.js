@@ -48,6 +48,7 @@ const Calendar = pickIcon('Calendar');
 const CheckSquare = pickIcon('CheckSquare');
 const Square = pickIcon('Square');
 const ArrowLeft = pickIcon('ArrowLeft');
+const Sparkles = pickIcon('Sparkles');
 
 const STORAGE_KEY = 'archive_app_data_v3';
 
