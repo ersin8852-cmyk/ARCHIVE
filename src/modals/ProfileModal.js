@@ -11,7 +11,6 @@ const ProfileModal = ({ isOpen, onClose }) => {
   const [gender, setGender] = useState(profile?.gender || '');
   const [dob, setDob] = useState(profile?.dob || '');
   const [photo, setPhoto] = useState(profile?.photo || '');
-  const [geminiApiKey, setGeminiApiKey] = useState(localStorage.getItem('gemini_api_key') || '');
   
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -27,7 +26,6 @@ const ProfileModal = ({ isOpen, onClose }) => {
       setDob(profile?.dob || '');
       setPhoto(profile?.photo || '');
       setPassword('');
-      setGeminiApiKey(localStorage.getItem('gemini_api_key') || '');
     }
   }, [isOpen, profile]);
 
@@ -41,7 +39,6 @@ const ProfileModal = ({ isOpen, onClose }) => {
       }
       
       updateProfileData({ fullName, username, gender, dob, photo });
-      localStorage.setItem('gemini_api_key', geminiApiKey);
       showToast('Profil bilgileriniz güncellendi.');
       setIsEditing(false);
     } catch (err) {
@@ -201,23 +198,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
           )}
         </div>
 
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-zinc-100 space-y-4 mb-4">
-          <div className="flex justify-between items-center mb-2">
-            <h3 className="font-bold text-zinc-800 text-sm flex items-center gap-2">
-              <Sparkles size={16} className="text-indigo-500" /> Yapay Zeka (Gemini)
-            </h3>
-          </div>
-          <div>
-            <label className="block text-xs font-semibold text-zinc-500 mb-1.5 ml-1">API Anahtarı</label>
-            {isEditing ? (
-              <input type="text" placeholder="Gemini API Key yapıştırın" value={geminiApiKey} onChange={e => setGeminiApiKey(e.target.value)} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/50 text-zinc-700" />
-            ) : (
-              <div className="w-full px-1 py-2.5 text-sm font-medium font-mono text-zinc-900 truncate">
-                {geminiApiKey ? '••••••••••••••••••••' + geminiApiKey.slice(-4) : 'Ayarlanmadı (Zorunlu)'}
-              </div>
-            )}
-          </div>
-        </div>
+
 
         {user.providerData.some(p => p.providerId === 'password') && (
           <div className="bg-white rounded-2xl p-4 shadow-sm border border-zinc-100 space-y-4 mb-4">

@@ -13,7 +13,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
   const [fabMenuOpen, openFabMenu, closeFabMenu, setFabMenuOpen] = window.useHistoryModal('fab');
   const [listCreateModalOpen, openListCreateModal, closeListCreateModal] = window.useHistoryModal('list-create');
   const [manualAddModalOpen, openManualAddModal, closeManualAddModal] = window.useHistoryModal('manual-add');
-  const [aiModalOpen, openAiModal, closeAiModal] = window.useHistoryModal('ai-assistant');
+
 
   const currentFolders = React.useMemo(() => folders.filter(f => f.parentId === activeFolderId), [folders, activeFolderId]);
   const currentBooks = React.useMemo(() => books.filter(b => b.folderId === activeFolderId), [books, activeFolderId]);
@@ -172,15 +172,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
             </div>
           )}
           
-          {!fabMenuOpen && (
-            <button
-              onClick={openAiModal}
-              className="w-14 h-14 bg-gradient-to-tr from-indigo-500 to-purple-500 text-white rounded-full shadow-lg shadow-indigo-600/30 hover:shadow-xl hover:shadow-indigo-600/40 transition-all duration-200 flex items-center justify-center active:scale-95 animate-in fade-in"
-              title="Yapay Zeka Asistanı"
-            >
-              <Sparkles size={24} />
-            </button>
-          )}
+
 
           <button
             onClick={() => fabMenuOpen ? closeFabMenu() : openFabMenu()}
@@ -197,7 +189,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
       <BookDetailModal isOpen={detailModalOpen} onClose={closeDetailModal} bookId={activeBookId} />
       <ListCreateModal isOpen={listCreateModalOpen} onClose={closeListCreateModal} onCreate={addFolder} parentId={activeFolderId} />
       <ListEditModal isOpen={listEditModalOpen} onClose={closeListEditModal} folderId={activeFolderForEdit} />
-      <AiAssistantModal isOpen={aiModalOpen} onClose={closeAiModal} />
+
     </div>
   );
 };
