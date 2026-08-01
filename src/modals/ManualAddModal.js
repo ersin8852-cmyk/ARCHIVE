@@ -35,8 +35,8 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
   };
 
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 z-[100]">
-      <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col max-h-[90vh] sm:h-auto animate-in slide-in-from-bottom-10">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-4 pt-12 sm:pt-4 z-[100]">
+      <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col max-h-[85vh] animate-in slide-in-from-top-10 fade-in duration-200">
         <div className="p-4 border-b flex justify-between items-start bg-zinc-50 relative gap-3">
           <div className="w-16 h-24 shrink-0 relative group rounded-lg overflow-hidden border border-zinc-200 bg-zinc-100 cursor-pointer flex items-center justify-center shadow-sm">
             <BookOpen size={24} className="text-zinc-400 absolute z-0" />

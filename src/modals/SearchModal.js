@@ -259,8 +259,8 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
           <button onClick={() => performSearch()} disabled={loading || !query.trim()} className="w-full py-2.5 bg-orange-600 text-white rounded-xl hover:bg-orange-700 font-medium transition-colors disabled:opacity-50">
             {loading ? 'Aranıyor...' : 'Ara'}
           </button>
-          <button onClick={() => { if(onOpenManualAdd) onOpenManualAdd(); }} className="w-full py-2.5 bg-zinc-100 text-zinc-700 border border-zinc-200 rounded-xl hover:bg-zinc-200 font-medium transition-colors flex justify-center items-center gap-2">
-            <Plus size={16} /> Manuel Ekle
+          <button onClick={() => { if(onOpenManualAdd) onOpenManualAdd(); }} className="w-full py-2.5 bg-zinc-900 text-white rounded-xl hover:bg-zinc-800 font-medium transition-colors flex justify-center items-center">
+             Manuel Ekle
           </button>
         </div>
         {showCamera && (
