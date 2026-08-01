@@ -56,7 +56,9 @@ const StatsView = ({ onOpenProfile }) => {
             <User size={22} />
           </button>
           <div className="flex items-center justify-center text-stone-50">
-            <Library size={24} strokeWidth={2.5} />
+            <div className="w-8 h-8 overflow-hidden flex items-start justify-center">
+              <img src="./icon.png" alt="Logo" className="w-8 h-auto object-cover object-top" />
+            </div>
             <span className="font-mono text-xl font-bold tracking-[0.25em] ml-2 mt-0.5">ARCHIVE</span>
           </div>
           <div className="w-[38px]"></div>
