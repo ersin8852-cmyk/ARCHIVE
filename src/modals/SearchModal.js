@@ -145,6 +145,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
             {
               fps: 10,
               qrbox: { width: 300, height: 180 },
+              aspectRatio: 1,
               videoConstraints: { facingMode: "environment", width: { ideal: 1280 }, height: { ideal: 720 } }
             },
             onScanSuccess,
@@ -247,6 +248,18 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
           <h2 className="text-lg font-semibold text-zinc-800">Yeni Kitap Ekle</h2>
           <button onClick={onClose} className="p-2 hover:bg-zinc-200 rounded-full transition-colors"><X size={20} /></button>
         </div>
+        {showCamera && (
+          <div className="px-4 pt-4 pb-1 shrink-0 animate-in fade-in slide-in-from-top-4">
+            <div className="bg-black rounded-xl overflow-hidden shadow-inner relative flex justify-center">
+              {!isIOS ? (
+                <div id="reader" className="w-full"></div>
+              ) : (
+                <video id="zxing-reader" className="w-full" autoPlay playsInline muted></video>
+              )}
+              <p className="absolute bottom-2 w-full text-center text-white text-xs z-10 bg-black/50 py-1">Kitabın barkodunu okutun</p>
+            </div>
+          </div>
+        )}
         <div className="p-4 flex flex-col gap-3 shrink-0">
           <div className="flex gap-2">
             <div className="relative flex-1">
@@ -271,18 +284,6 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
              Manuel Ekle
           </button>
         </div>
-        {showCamera && (
-          <div className="px-4 pb-2 shrink-0">
-            <div className="bg-black rounded-xl overflow-hidden shadow-inner relative flex justify-center">
-              {!isIOS ? (
-                <div id="reader" className="w-full"></div>
-              ) : (
-                <video id="zxing-reader" className="w-full" autoPlay playsInline muted></video>
-              )}
-              <p className="absolute bottom-2 w-full text-center text-white text-xs z-10 bg-black/50 py-1">Kitabın barkodunu okutun</p>
-            </div>
-          </div>
-        )}
         <div className="flex-1 overflow-y-auto p-4 bg-zinc-50/50">
           {loading ? (
             <div className="text-center py-8 text-zinc-500 text-sm animate-pulse">Veritabanlarında aranıyor...</div>
