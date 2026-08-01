@@ -169,7 +169,11 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
       isComponentMounted = false;
       if (optimizeTimeout) clearTimeout(optimizeTimeout);
       if (html5Scanner && html5Scanner.isScanning) {
-        html5Scanner.stop().catch(() => {});
+        html5Scanner.stop().then(() => {
+          html5Scanner.clear();
+        }).catch(() => {});
+      } else if (html5Scanner) {
+        html5Scanner.clear();
       }
       if (zxingScanner) {
         zxingScanner.reset();

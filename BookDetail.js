@@ -9,7 +9,7 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
 
   useEffect(() => {
     if (book) { setFormData(book); setShowDeleteConfirm(false); setIsEditing(false); setShowMove(false); }
-  }, [book?.id, isOpen]);
+  }, [book, isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;

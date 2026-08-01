@@ -12,26 +12,31 @@ const useHistoryModal = (modalId) => {
   }, [isOpen, modalId]);
 
   const openModal = React.useCallback(() => {
-    if (!isOpen) {
-      React_setIsOpen(true);
-      const s = window.history.state || {};
-      if (s.modal) {
-        window.history.replaceState({ ...s, modal: modalId }, '');
-      } else {
-        window.history.pushState({ ...s, modal: modalId }, '');
+    React_setIsOpen(prev => {
+      if (!prev) {
+        const s = window.history.state || {};
+        if (s.modal) {
+          window.history.replaceState({ ...s, modal: modalId }, '');
+        } else {
+          window.history.pushState({ ...s, modal: modalId }, '');
+        }
       }
-    }
-  }, [isOpen, modalId]);
+      return true;
+    });
+  }, [modalId]);
 
   const closeModal = React.useCallback(() => {
-    if (isOpen) {
-      if (window.history.state?.modal === modalId) {
-        window.history.back();
-      } else {
-        React_setIsOpen(false);
+    React_setIsOpen(prev => {
+      if (prev) {
+        if (window.history.state?.modal === modalId) {
+          window.history.back();
+        } else {
+          // React_setIsOpen is handled by return false
+        }
       }
-    }
-  }, [isOpen, modalId]);
+      return false;
+    });
+  }, [modalId]);
 
   return [isOpen, openModal, closeModal, React_setIsOpen];
 };
