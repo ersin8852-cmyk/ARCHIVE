@@ -70,11 +70,13 @@ const ListCreateModal = ({ isOpen, onClose, onCreate, parentId }) => {
 };
 
 const ListEditModal = ({ isOpen, onClose, folderId }) => {
-  const { folders, updateFolder, deleteFolder } = useData();
+  const { folders, updateFolder, deleteFolder, processImageFile } = useData();
   const [name, setName] = useState('');
   const [color, setColor] = useState('#71717a');
+  const [customCover, setCustomCover] = useState(null);
   const [showDelConfirm, setShowDelConfirm] = useState(false);
   const inputRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const folder = folders.find(f => f.id === folderId);
 
@@ -82,6 +84,7 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
     if (isOpen && folder) {
       setName(folder.name || '');
       setColor(folder.color || '#71717a');
+      setCustomCover(folder.customCover || null);
       setShowDelConfirm(false);
       setTimeout(() => {
         if (inputRef.current) inputRef.current.select();
@@ -94,7 +97,7 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (name.trim()) {
-      updateFolder(folder.id, name.trim(), color);
+      updateFolder(folder.id, name.trim(), color, customCover);
       onClose();
     }
   };
@@ -102,6 +105,18 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
   const handleDelete = () => {
     deleteFolder(folder.id);
     onClose();
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const dataUrl = await processImageFile(file);
+      setCustomCover(dataUrl);
+    } catch (err) {
+      alert(err.message);
+    }
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const colors = ['#71717a', '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
@@ -142,7 +157,7 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
                 
               />
             </div>
-            <div className="mb-6">
+            <div className="mb-4">
               <label className="block text-sm font-medium text-zinc-700 mb-2">Renk Seçimi</label>
               <div className="flex gap-2 flex-wrap">
                 {colors.map(c => (
@@ -154,6 +169,28 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
                     style={{ backgroundColor: c }}
                   />
                 ))}
+              </div>
+            </div>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-zinc-700 mb-2">Liste Kapağı (İsteğe Bağlı)</label>
+              <div className="flex items-center gap-4">
+                <div 
+                  className="w-16 h-16 rounded-xl border border-dashed border-zinc-300 flex items-center justify-center bg-zinc-50 overflow-hidden cursor-pointer hover:bg-zinc-100 transition-colors shrink-0"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {customCover ? (
+                     <img src={customCover} alt="Cover" className="w-full h-full object-cover" />
+                  ) : (
+                     <Camera size={24} className="text-zinc-400" />
+                  )}
+                </div>
+                <div className="flex flex-col gap-1">
+                  <button type="button" onClick={() => fileInputRef.current?.click()} className="text-sm font-semibold text-zinc-700 hover:text-zinc-900 text-left">Görsel Yükle</button>
+                  {customCover && (
+                    <button type="button" onClick={() => setCustomCover(null)} className="text-xs font-medium text-red-500 hover:text-red-600 text-left">Görseli Kaldır</button>
+                  )}
+                </div>
+                <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
               </div>
             </div>
             <div className="flex gap-3">

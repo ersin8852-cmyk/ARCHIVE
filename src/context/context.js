@@ -219,23 +219,23 @@ const DataProvider = ({ children }) => {
     });
   }, [user, showToast]);
 
-  const addFolder = useCallback((name, parentId = null, color = '#71717a') => {
+  const addFolder = useCallback((name, parentId = null, color = '#71717a', customCover = null) => {
     const trimmed = name.trim();
     if (!trimmed) return;
     updateData(prev => {
       const siblings = prev.folders.filter(f => f.parentId === parentId);
       const order = siblings.length > 0 ? Math.max(...siblings.map(s => s.order)) + 1 : 0;
-      const newFolder = { id: generateId(), name: trimmed, parentId, order, color };
+      const newFolder = { id: generateId(), name: trimmed, parentId, order, color, customCover };
       return { ...prev, folders: [...prev.folders, newFolder] };
     });
   }, [updateData]);
 
-  const updateFolder = useCallback((id, name, color) => {
+  const updateFolder = useCallback((id, name, color, customCover = null) => {
     const trimmed = name.trim();
     if (!trimmed) return;
     updateData(prev => ({
       ...prev,
-      folders: prev.folders.map(f => f.id === id ? { ...f, name: trimmed, color } : f)
+      folders: prev.folders.map(f => f.id === id ? { ...f, name: trimmed, color, customCover } : f)
     }));
   }, [updateData]);
 

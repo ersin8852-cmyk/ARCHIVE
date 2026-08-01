@@ -2,7 +2,8 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
   const { overTarget } = useOverTarget();
   const { draggedId } = useDraggedItem();
 
-  const childBooksCount = allBooks.filter(b => b.folderId === folder.id).length;
+  const childBooks = allBooks.filter(b => b.folderId === folder.id);
+  const childBooksCount = childBooks.length;
   const childFoldersCount = allFolders.filter(f => f.parentId === folder.id).length;
 
   const isTarget = draggedId && overTarget && overTarget.type === 'folder' && overTarget.id === folder.id;
@@ -31,8 +32,20 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
           {index != null && (
             <span className="text-zinc-400 font-semibold text-sm w-5 text-right shrink-0">{index}.</span>
           )}
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm text-white" style={{ backgroundColor: folder.color || '#71717a' }}>
-            <List size={20} />
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm text-white overflow-hidden relative" style={{ backgroundColor: folder.color || '#71717a' }}>
+            {folder.customCover ? (
+              <img src={folder.customCover} alt="Folder Cover" className="w-full h-full object-cover" />
+            ) : childBooks.length > 0 ? (
+              <div className={`w-full h-full grid gap-[1px] ${childBooks.length >= 3 ? 'grid-cols-2 grid-rows-2' : childBooks.length === 2 ? 'grid-cols-2 grid-rows-1' : 'grid-cols-1 grid-rows-1'}`}>
+                {childBooks.slice(0, 4).map((b) => (
+                  <div key={b.id} className="relative w-full h-full overflow-hidden bg-black/10">
+                    <img src={b.cover || 'default-cover.png'} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; }} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <List size={20} />
+            )}
           </div>
           <div className="flex flex-col overflow-hidden">
             <span className="font-bold text-zinc-800 text-[15px] truncate">{folder.name}</span>
