@@ -13,11 +13,12 @@ const CopyButton = ({ text }) => {
 };
 
 const formatMessage = (text) => {
-  // Extract ISBNs and other numbers to make them easily copyable
-  const parts = text.split(/(\b\d{10,13}\b)/g);
+  // Extract ISBNs and basic markdown (bold, italic)
+  const parts = text.split(/(\*\*[\s\S]*?\*\*|\*[\s\S]*?\*|\b\d{10,13}\b)/g);
   return (
     <div className="whitespace-pre-wrap leading-relaxed text-[15px]">
       {parts.map((part, i) => {
+        if (!part) return null;
         if (/^\d{10,13}$/.test(part)) {
           return (
             <span key={i} className="inline-flex items-center bg-zinc-100 border border-zinc-200 px-1.5 py-0.5 rounded text-zinc-900 font-mono text-sm mx-0.5">
@@ -25,6 +26,10 @@ const formatMessage = (text) => {
               <CopyButton text={part} />
             </span>
           );
+        } else if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
+          return <strong key={i} className="font-bold text-zinc-900">{part.slice(2, -2)}</strong>;
+        } else if (part.startsWith('*') && part.endsWith('*') && part.length >= 2) {
+          return <em key={i} className="italic text-zinc-800">{part.slice(1, -1)}</em>;
         }
         return <span key={i}>{part}</span>;
       })}
