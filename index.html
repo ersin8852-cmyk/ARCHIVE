@@ -217,24 +217,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!window.Babel) throw new Error('Babel yüklendi ama window.Babel oluşmadı');
 
                 const files = [
-                    './firebase.js',
-                    './api.js',
-                    './hooks.js',
-                    './context.js',
-                    './dndContext.js',
-                    './AuthModal.js',
-                    './ProfileModal.js',
-                    './BookCard.js',
-                    './FolderNode.js',
-                    './ItemList.js',
-                    './FolderModals.js',
-                    './SearchModal.js',
-                    './ManualAddModal.js',
-                    './BookDetail.js',
-                    './ListsView.js',
-                    './LibraryView.js',
-                    './StatsView.js',
-                    './main.js'
+                    './src/services/firebase.js',
+                    './src/services/api.js',
+                    './src/utils/hooks.js',
+                    './src/context/context.js',
+                    './src/context/dndContext.js',
+                    './src/modals/AuthModal.js',
+                    './src/modals/ProfileModal.js',
+                    './src/components/BookCard.js',
+                    './src/components/FolderNode.js',
+                    './src/components/ItemList.js',
+                    './src/modals/FolderModals.js',
+                    './src/modals/SearchModal.js',
+                    './src/modals/ManualAddModal.js',
+                    './src/modals/BookDetail.js',
+                    './src/views/ListsView.js',
+                    './src/views/LibraryView.js',
+                    './src/views/StatsView.js',
+                    './src/main.js'
                 ];
 
                 let fullSource = '';
