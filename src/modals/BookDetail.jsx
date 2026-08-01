@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
 import { createRoot } from 'react-dom/client';
 import * as LucideIcons from 'lucide-react';
 import { useAuth, useData, useToast } from '../context/context.jsx';
@@ -132,7 +132,7 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
 };
 
 
-export default BookDetail;
+export default BookDetailModal;
 
 
 
