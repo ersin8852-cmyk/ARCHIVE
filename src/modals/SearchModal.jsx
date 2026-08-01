@@ -97,7 +97,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
     };
 
     if (isIOS && window.ZXing) {
-      console.log("iOS tespit edildi, ZXing baÅŸlatılıyor...");
+      console.log("iOS tespit edildi, ZXing başlatılıyor...");
       zxingScanner = new window.ZXing.BrowserMultiFormatReader();
       scannerRef.current = {
         stop: async () => zxingScanner.reset(),
@@ -110,10 +110,10 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
           onScanSuccess(result.getText());
         }
       }).catch(err => {
-        console.warn("ZXing baÅŸlatılamadı:", err);
+        console.warn("ZXing başlatılamadı:", err);
         if (isComponentMounted) {
           setShowCamera(false);
-          showToast('Kamera baÅŸlatılamadı.', 'error');
+          showToast('Kamera başlatılamadı.', 'error');
         }
       });
 
@@ -132,7 +132,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
       applyZXingZoom();
 
     } else {
-      console.log("Android/DiÄŸer tespit edildi, Html5Qrcode baÅŸlatılıyor...");
+      console.log("Android/Diğer tespit edildi, Html5Qrcode başlatılıyor...");
       html5Scanner = new window.Html5Qrcode("reader");
       scannerRef.current = html5Scanner;
 
@@ -147,7 +147,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
           );
         } catch (err) {
           setShowCamera(false);
-          showToast('Kamera hiçbir ÅŸekilde baÅŸlatılamadı.', 'error');
+          showToast('Kamera hiçbir şekilde başlatılamadı.', 'error');
         }
       };
 
@@ -236,7 +236,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
         if (items.length === 0) showToast('Sonuç bulunamadı.', 'error');
       }
     } catch (err) {
-      showToast('Arama baÅŸarısız oldu.', 'error');
+      showToast('Arama başarısız oldu.', 'error');
     }
     setLoading(false);
   };

@@ -73,13 +73,13 @@ const ProfileModal = ({ isOpen, onClose }) => {
     try {
       await user.updatePassword(password);
       setPassword('');
-      showToast('Şifreniz baÅŸarıyla deÄŸiÅŸtirildi.');
+      showToast('Şifreniz başarıyla değiştirildi.');
     } catch (err) {
       console.error(err);
       if (err.code === 'auth/requires-recent-login') {
-        showToast('Güvenlik nedeniyle ÅŸifre deÄŸiÅŸtirmeden önce tekrar giriÅŸ yapmalısınız.', 'error');
+        showToast('Güvenlik nedeniyle şifre değiştirmeden önce tekrar giriş yapmalısınız.', 'error');
       } else {
-        showToast('Şifre deÄŸiÅŸtirilemedi: ' + err.message, 'error');
+        showToast('Şifre değiştirilemedi: ' + err.message, 'error');
       }
     } finally {
       setLoading(false);
@@ -93,7 +93,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
       await auth.signOut();
       onClose();
     } catch (err) {
-      showToast('Ã‡ıkıÅŸ yapılamadı.', 'error');
+      showToast('Çıkış yapılamadı.', 'error');
       setLoggingOut(false);
     }
   };
@@ -107,7 +107,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
           </button>
           <span className="font-bold text-lg text-zinc-800">Profilim</span>
         </div>
-        <button onClick={handleLogout} disabled={loggingOut} className="p-2 -mr-2 text-red-500 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50 flex items-center justify-center" title="Ã‡ıkıÅŸ Yap">
+        <button onClick={handleLogout} disabled={loggingOut} className="p-2 -mr-2 text-red-500 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50 flex items-center justify-center" title="Çıkış Yap">
           {loggingOut ? <div className="w-5 h-5 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin"></div> : <LogOut size={20} />}
         </button>
       </div>
@@ -147,7 +147,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-zinc-100 space-y-4">
           <div className="flex justify-between items-center mb-2">
             <h3 className="font-bold text-zinc-800 text-sm flex items-center gap-2">
-              <User size={16} className="text-orange-500" /> KiÅŸisel Bilgiler
+              <User size={16} className="text-orange-500" /> Kişisel Bilgiler
             </h3>
             <button onClick={() => { if(isEditing) { setFullName(profile?.fullName || ''); setUsername(profile?.username || ''); setGender(profile?.gender || ''); setDob(profile?.dob || ''); setPhoto(profile?.photo || ''); setIsEditing(false); } else { setIsEditing(true); } }} className="text-xs font-semibold text-orange-600 hover:text-orange-700 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors">
               {isEditing ? 'İptal' : 'Düzenle'}
@@ -182,19 +182,19 @@ const ProfileModal = ({ isOpen, onClose }) => {
               <label className="block text-xs font-semibold text-zinc-500 mb-1.5 ml-1">Cinsiyet</label>
               {isEditing ? (
                 <select value={gender} onChange={e => setGender(e.target.value)} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 text-zinc-700 appearance-none">
-                  <option value="">BelirtilmemiÅŸ</option>
+                  <option value="">Belirtilmemiş</option>
                   <option value="female">Kadın</option>
                   <option value="male">Erkek</option>
-                  <option value="other">DiÄŸer</option>
+                  <option value="other">Diğer</option>
                 </select>
               ) : (
                 <div className="w-full px-1 py-2.5 text-sm font-medium text-zinc-900">
-                  {gender === 'female' ? 'Kadın' : gender === 'male' ? 'Erkek' : gender === 'other' ? 'DiÄŸer' : '-'}
+                  {gender === 'female' ? 'Kadın' : gender === 'male' ? 'Erkek' : gender === 'other' ? 'Diğer' : '-'}
                 </div>
               )}
             </div>
             <div className="flex-1">
-              <label className="block text-xs font-semibold text-zinc-500 mb-1.5 ml-1">DoÄŸum Tarihi</label>
+              <label className="block text-xs font-semibold text-zinc-500 mb-1.5 ml-1">Doğum Tarihi</label>
               {isEditing ? (
                 <div className="relative">
                   <Calendar className="absolute left-3 top-2.5 text-zinc-400" size={16} />
@@ -216,10 +216,10 @@ const ProfileModal = ({ isOpen, onClose }) => {
         {user.providerData.some(p => p.providerId === 'password') && (
           <div className="bg-white rounded-2xl p-4 shadow-sm border border-zinc-100 space-y-4 mb-4">
             <h3 className="font-bold text-zinc-800 text-sm flex items-center gap-2 mb-2">
-              <Lock size={16} className="text-orange-500" /> Şifre DeÄŸiÅŸtir
+              <Lock size={16} className="text-orange-500" /> Şifre Değiştir
             </h3>
             <div>
-              <input type="password" placeholder="Yeni ÅŸifrenizi girin" value={password} onChange={e => setPassword(e.target.value)} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50" />
+              <input type="password" placeholder="Yeni şifrenizi girin" value={password} onChange={e => setPassword(e.target.value)} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50" />
             </div>
             <button onClick={handlePasswordChange} disabled={loading || !password} className="w-full py-3 bg-white text-orange-600 border border-orange-200 rounded-xl font-medium hover:bg-orange-50 transition-colors disabled:opacity-50 flex justify-center items-center gap-2 text-sm">
               <Lock size={16} /> Şifreyi Güncelle

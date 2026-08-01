@@ -24,7 +24,7 @@ document.addEventListener('touchmove', (e) => {
   }
 }, { passive: false, capture: true });
 
-// BoÅŸ touchstart listener kaldırıldı (gereksiz olay döngüsü yükü oluÅŸturuyordu)
+// Boş touchstart listener kaldırıldı (gereksiz olay döngüsü yükü oluşturuyordu)
 
 const useDraggableItem = (item, containerFolderId, onClick, itemType) => {
   const { startDrag, updateDrag, endDrag, cancelDrag } = useDragApi();

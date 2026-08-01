@@ -17,11 +17,13 @@ const db = app.firestore();
 
 db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
   if (err.code === 'failed-precondition') {
-    console.warn('Firestore persistence: Birden fazla sekme açık, yalnızca biri offline çalıÅŸabilir.');
+    console.warn('Firestore persistence: Birden fazla sekme açık, yalnızca biri offline çalışabilir.');
   } else if (err.code === 'unimplemented') {
     console.warn('Firestore persistence: Bu tarayıcı desteklemiyor.');
   }
 });
 
-export { app, auth, db };
+const GoogleAuthProvider = firebase.auth.GoogleAuthProvider;
+export { app, auth, db, GoogleAuthProvider };
+
 

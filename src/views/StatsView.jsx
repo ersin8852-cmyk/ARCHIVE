@@ -107,7 +107,7 @@ const StatsView = ({ onOpenProfile }) => {
           <div className="px-4 py-1">
             <StatRow label="Toplam Kitap" value={stats.lib.total} />
             <StatRow label="Toplam Sayfa" value={stats.lib.pages.toLocaleString()} />
-            <StatRow label="Toplam DeÄŸer" value={'â‚º' + stats.lib.price.toLocaleString()} />
+            <StatRow label="Toplam Değer" value={'â‚º' + stats.lib.price.toLocaleString()} />
             <StatRow label="Favori Yazar" value={stats.lib.fav} isLast={true} />
           </div>
         </section>

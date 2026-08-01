@@ -33,7 +33,7 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
 
   const handleSave = () => {
     if (!formData.title || !formData.title.trim()) {
-      showToast('Kitap baÅŸlıÄŸı boÅŸ olamaz.', 'error');
+      showToast('Kitap başlığı boş olamaz.', 'error');
       return;
     }
     const success = addBook(formData, folderId);

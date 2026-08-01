@@ -131,7 +131,7 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
            searchTerm.trim() === '' ? (
             <div className="h-full flex flex-col items-center justify-center text-zinc-400 space-y-3 pb-20">
               <Search size={48} className="opacity-20" />
-              <p className="text-center text-sm font-medium">Aramak istediÄŸiniz kitabın adını yazın.</p>
+              <p className="text-center text-sm font-medium">Aramak istediğiniz kitabın adını yazın.</p>
             </div>
           ) : filteredBooks.length > 0 ? (
             <div className="space-y-[3.6px]">
@@ -146,7 +146,7 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
         ) : libraryBooks.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-zinc-400 space-y-3 pb-20">
             <Library size={48} className="opacity-20" />
-            <p className="text-center text-sm font-medium px-4">Kütüphanenizde kitap yok.<br/><span className="text-xs font-normal">Listelerinizdeki kitapları "Kütüphanemde" olarak iÅŸaretleyin.</span></p>
+            <p className="text-center text-sm font-medium px-4">Kütüphanenizde kitap yok.<br/><span className="text-xs font-normal">Listelerinizdeki kitapları "Kütüphanemde" olarak işaretleyin.</span></p>
           </div>
         ) : (
           <div className="space-y-[3.6px] min-h-[60px] rounded-xl transition-colors" data-folder-target={activeFolderId || "root"}>

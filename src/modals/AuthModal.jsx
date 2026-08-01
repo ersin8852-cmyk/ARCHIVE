@@ -1,8 +1,6 @@
 ﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
 import { createRoot } from 'react-dom/client';
-import firebase from 'firebase/app';
-import 'firebase/auth';
-import { auth, db } from '../services/firebase.js';
+import { auth, db, GoogleAuthProvider } from '../services/firebase.js';
 import { Library, User, Calendar, Mail, Lock, CheckSquare, Square, LogIn, UserPlus, Save } from 'lucide-react';
 import { useAuth, useData, useToast } from '../context/context.jsx';
 import { api } from '../services/api.js';
@@ -38,11 +36,11 @@ const AuthModal = ({ isVisible }) => {
 
     if (!isLogin) {
       if (password !== confirmPassword) {
-        setError('Şifreler eÅŸleÅŸmiyor!');
+        setError('Şifreler eşleşmiyor!');
         return;
       }
       if (!acceptedTerms) {
-        setError('Kullanıcı sözleÅŸmesini onaylamanız gerekmektedir.');
+        setError('Kullanıcı sözleşmesini onaylamanız gerekmektedir.');
         return;
       }
       if (!fullName || !username || !gender || !dob) {
@@ -52,7 +50,7 @@ const AuthModal = ({ isVisible }) => {
     }
 
     if (!email || !password) {
-      setError('Lütfen e-posta ve ÅŸifrenizi girin.');
+      setError('Lütfen e-posta ve şifrenizi girin.');
       return;
     }
     
@@ -92,12 +90,12 @@ const AuthModal = ({ isVisible }) => {
         try {
           const parsed = JSON.parse(err.message);
           if (parsed.error && parsed.error.message) {
-            setError('Bir hata oluÅŸtu: ' + parsed.error.message);
+            setError('Bir hata oluştu: ' + parsed.error.message);
           } else {
-            setError('Bir hata oluÅŸtu: ' + err.message);
+            setError('Bir hata oluştu: ' + err.message);
           }
         } catch {
-          setError('Bir hata oluÅŸtu: ' + err.message);
+          setError('Bir hata oluştu: ' + err.message);
         }
       }
     } finally {
@@ -109,11 +107,11 @@ const AuthModal = ({ isVisible }) => {
     setLoading(true);
     setError('');
     try {
-      const provider = new firebase.auth.GoogleAuthProvider();
+      const provider = new GoogleAuthProvider();
       await auth.signInWithPopup(provider);
     } catch (err) {
       console.error(err);
-      setError('Google ile giriÅŸ baÅŸarısız oldu.');
+      setError('Google ile giriş başarısız oldu.');
       setLoading(false);
     }
   };
@@ -127,9 +125,9 @@ const AuthModal = ({ isVisible }) => {
           <div className="w-20 h-20 bg-gradient-to-tr from-blue-500 to-indigo-600 rounded-[1.5rem] mx-auto mb-6 flex items-center justify-center shadow-lg shadow-blue-500/30">
             <Library size={40} className="text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-zinc-900">{isLogin ? 'HoÅŸ Geldiniz' : 'Hesap OluÅŸturun'}</h2>
+          <h2 className="text-2xl font-bold text-zinc-900">{isLogin ? 'Hoş Geldiniz' : 'Hesap Oluşturun'}</h2>
           <p className="text-zinc-500 text-sm mt-2">
-            {isLogin ? 'KitaplıÄŸınıza eriÅŸmek için giriÅŸ yapın' : 'Bulut kütüphanenizi hemen oluÅŸturun'}
+            {isLogin ? 'Kitaplığınıza erişmek için giriş yapın' : 'Bulut kütüphanenizi hemen oluşturun'}
           </p>
         </div>
 
@@ -189,7 +187,7 @@ const AuthModal = ({ isVisible }) => {
                   {acceptedTerms ? <CheckSquare size={18} className="text-blue-500" /> : <Square size={18} />}
                 </button>
                 <span className="text-xs text-zinc-500 leading-tight flex-1">
-                  Kullanıcı SözleÅŸmesi: "Bunu okuyan tosun, okuyana kosun." Okudum ve onaylıyorum.
+                  Kullanıcı Sözleşmesi: "Bunu okuyan tosun, okuyana kosun." Okudum ve onaylıyorum.
                 </span>
               </label>
             </>
@@ -199,7 +197,7 @@ const AuthModal = ({ isVisible }) => {
             {loading ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
             ) : isLogin ? (
-              <><LogIn size={18} /> GiriÅŸ Yap</>
+              <><LogIn size={18} /> Giriş Yap</>
             ) : (
               <><UserPlus size={18} /> Kayıt Ol</>
             )}
@@ -225,7 +223,7 @@ const AuthModal = ({ isVisible }) => {
         <p className="text-center text-sm text-zinc-500 mt-6">
           {isLogin ? 'Hesabınız yok mu?' : 'Zaten hesabınız var mı?'}
           <button onClick={() => { setIsLogin(!isLogin); setError(''); }} className="ml-1 text-blue-600 font-medium hover:underline focus:outline-none">
-            {isLogin ? 'Kayıt Olun' : 'GiriÅŸ Yapın'}
+            {isLogin ? 'Kayıt Olun' : 'Giriş Yapın'}
           </button>
         </p>
       </div>
@@ -236,6 +234,8 @@ const AuthModal = ({ isVisible }) => {
 
 
 export default AuthModal;
+
+
 
 
 
