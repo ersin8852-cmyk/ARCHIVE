@@ -16,8 +16,7 @@ const CopyButton = ({ text }) => {
 
 const formatMessage = (text) => {
   return (
-    <div>
-      <div className="text-[15px] leading-relaxed flex flex-col gap-0.5">
+    <div className="text-[15px] leading-relaxed flex flex-col gap-0.5">
         {text.split('\n').map((line, lineIdx) => {
         if (!line.trim()) return <div key={lineIdx} className="h-1.5"></div>;
         
