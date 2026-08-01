@@ -1,11 +1,11 @@
 const ManualAddModal = ({ isOpen, onClose, folderId }) => {
   const { addBook, processImageFile } = useData();
   const { showToast } = useToast();
-  const [formData, setFormData] = useState({ title: '', author: '', publisher: '', pageCount: '', year: '', price: '', cover: '' });
+  const [formData, setFormData] = useState({ title: '', author: '', publisher: '', pageCount: '', year: '', price: '', cover: '', isbn: '' });
 
   useEffect(() => {
     if (isOpen) {
-      setFormData({ title: '', author: '', publisher: '', pageCount: '', year: '', price: '', cover: '' });
+      setFormData({ title: '', author: '', publisher: '', pageCount: '', year: '', price: '', cover: '', isbn: '' });
     }
   }, [isOpen]);
 
@@ -63,7 +63,7 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
         </div>
         <div className="p-5 flex-1 overflow-y-auto space-y-4 bg-white">
           <div className="grid grid-cols-2 gap-4">
-            {[{ label: 'Yayınevi', name: 'publisher', col: 2 }, { label: 'Sayfa', name: 'pageCount', type: 'number', col: 1 }, { label: 'Yıl', name: 'year', type: 'number', col: 1 }, { label: 'Fiyat (₺)', name: 'price', type: 'number', col: 2 }].map(field => (
+            {[{ label: 'Yayınevi', name: 'publisher', col: 2 }, { label: 'ISBN', name: 'isbn', col: 1 }, { label: 'Fiyat (₺)', name: 'price', type: 'number', col: 1 }, { label: 'Sayfa', name: 'pageCount', type: 'number', col: 1 }, { label: 'Yıl', name: 'year', type: 'number', col: 1 }].map(field => (
               <div key={field.name} className={`flex flex-col ${field.col === 2 ? 'col-span-2' : 'col-span-1'} bg-zinc-50 p-3 rounded-xl border border-zinc-100`}>
                 <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">{field.label}</label>
                 <input type={field.type || 'text'} name={field.name} placeholder="-" value={formData[field.name]} onChange={handleChange} className="w-full text-sm border-b border-zinc-300 focus:outline-none focus:border-zinc-800 bg-transparent py-0.5" />
