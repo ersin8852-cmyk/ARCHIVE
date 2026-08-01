@@ -1,17 +1,3 @@
-﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
-import { createRoot } from 'react-dom/client';
-import { auth, db, GoogleAuthProvider } from '../services/firebase.js';
-import { Library, User, Calendar, Mail, Lock, CheckSquare, Square, LogIn, UserPlus, Save } from 'lucide-react';
-import { useAuth, useData, useToast } from '../context/context.jsx';
-import { api } from '../services/api.js';
-import BookCard from '../components/BookCard.jsx';
-import FolderNode from '../components/FolderNode.jsx';
-import ItemList from '../components/ItemList.jsx';
-import SearchAddModal from '../modals/SearchModal.jsx';
-import ManualAddModal from '../modals/ManualAddModal.jsx';
-import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
-import BookDetailModal from '../modals/BookDetail.jsx';
-import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 
 
 const AuthModal = ({ isVisible }) => {
@@ -58,15 +44,15 @@ const AuthModal = ({ isVisible }) => {
 
     try {
       if (isLogin) {
-        await auth.signInWithEmailAndPassword(email, password);
+        await window.firebaseAuth.signInWithEmailAndPassword(email, password);
       } else {
-        const cred = await auth.createUserWithEmailAndPassword(email, password);
+        const cred = await window.firebaseAuth.createUserWithEmailAndPassword(email, password);
         
         // Update display name in Firebase Auth
         await cred.user.updateProfile({ displayName: fullName });
         
         // Save extra profile data in Firestore
-        await db.collection('users').doc(cred.user.uid).set({
+        await window.firebaseDb.collection('users').doc(cred.user.uid).set({
           books: [],
           folders: [],
           profile: {
@@ -107,8 +93,8 @@ const AuthModal = ({ isVisible }) => {
     setLoading(true);
     setError('');
     try {
-      const provider = new GoogleAuthProvider();
-      await auth.signInWithPopup(provider);
+      const provider = new window.firebase.auth.GoogleAuthProvider();
+      await window.firebaseAuth.signInWithPopup(provider);
     } catch (err) {
       console.error(err);
       setError('Google ile giriş başarısız oldu.');
@@ -230,14 +216,4 @@ const AuthModal = ({ isVisible }) => {
     </div>
   );
 };
-
-
-
-export default AuthModal;
-
-
-
-
-
-
-
+window.AuthModal = AuthModal;

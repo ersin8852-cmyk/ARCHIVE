@@ -1,4 +1,4 @@
-export const api = {
+window.api = {
   fetchByIsbn: async (isbn) => {
     const res = await fetch(`https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&format=json&jscmd=data`);
     if (!res.ok) throw new Error();
@@ -27,7 +27,7 @@ export const api = {
       const isbnCandidate = doc.isbn && doc.isbn[0];
       if (isbnCandidate) {
         try {
-          const enriched = await api.fetchByIsbn(isbnCandidate);
+          const enriched = await window.api.fetchByIsbn(isbnCandidate);
           if (enriched.length && (enriched[0].publisher !== 'Yayınevi Belirtilmemiş' || enriched[0].pageCount)) {
             return { ...enriched[0], title: enriched[0].title || doc.title, author: enriched[0].author || doc.author_name?.join(', '), cover: enriched[0].cover || cover, year: enriched[0].year || doc.first_publish_year };
           }

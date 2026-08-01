@@ -1,16 +1,3 @@
-﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
-import { createRoot } from 'react-dom/client';
-import { Map } from 'lucide-react';
-import { useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
-import { useAuth, useData, useToast } from '../context/context.jsx';
-import { api } from '../services/api.js';
-import BookCard from '../components/BookCard.jsx';
-import FolderNode from '../components/FolderNode.jsx';
-import SearchAddModal from '../modals/SearchModal.jsx';
-import ManualAddModal from '../modals/ManualAddModal.jsx';
-import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
-import BookDetailModal from '../modals/BookDetail.jsx';
-import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const ItemList = React.memo(({ ids, items, folders, books, folderKey, onOpenBook, onOpenFolder, onEditFolder, showIndicator = false, isLibraryView = false }) => {
   const { draggedId, cardSize } = useDraggedItem();
   const { overTarget } = useOverTarget();
@@ -18,7 +5,7 @@ const ItemList = React.memo(({ ids, items, folders, books, folderKey, onOpenBook
   const prevRects = React.useRef(new Map());
   const prevDraggedId = React.useRef(null);
 
-  // Sürüklenen kart listeden çıkarılmaz â€” opacity:0 ile görünmez ama yeri korunur, diğer kartlar kaymaz
+  // Sürüklenen kart listeden çıkarılmaz — opacity:0 ile görünmez ama yeri korunur, diğer kartlar kaymaz
   const visibleIds = ids;
 
   let previewIndex = null;
@@ -118,12 +105,3 @@ const ItemList = React.memo(({ ids, items, folders, books, folderKey, onOpenBook
     );
   });
 });
-
-
-export default ItemList;
-
-
-
-
-
-

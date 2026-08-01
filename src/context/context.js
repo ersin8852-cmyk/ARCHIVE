@@ -1,11 +1,5 @@
-﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
-import { createRoot } from 'react-dom/client';
-import { createPortal } from 'react-dom';
-import { auth, db } from '../services/firebase.js';
-import * as LucideIcons from 'lucide-react';
-
-
-
+const { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback } = React;
+const { createRoot } = ReactDOM;
 
 const FallbackIcon = ({ size = 24, ...props }) => (
   <svg {...props} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -13,8 +7,8 @@ const FallbackIcon = ({ size = 24, ...props }) => (
   </svg>
 );
 function pickIcon(name) {
-  const icon = LucideIcons && LucideIcons[name];
-  if (!icon) console.warn(`Lucide ikonu bulunamadÃ„Â±, yedek gÃƒÂ¶steriliyor: ${name}`);
+  const icon = window.LucideReact && window.LucideReact[name];
+  if (!icon) console.warn(`Lucide ikonu bulunamadı, yedek gösteriliyor: ${name}`);
   return icon || FallbackIcon;
 }
 const Library = pickIcon('Library');
@@ -81,7 +75,7 @@ const initialState = {
 const processImageFile = (file) => {
   return new Promise((resolve, reject) => {
     if (!file || !file.type.startsWith('image/')) {
-      reject(new Error('LÃƒÂ¼tfen geÃƒÂ§erli bir resim dosyasÃ„Â± seÃƒÂ§in.'));
+      reject(new Error('Lütfen geçerli bir resim dosyası seçin.'));
       return;
     }
 
@@ -117,10 +111,10 @@ const processImageFile = (file) => {
         const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
         resolve(dataUrl);
       };
-      img.onerror = () => reject(new Error('Resim yÃƒÂ¼klenemedi.'));
+      img.onerror = () => reject(new Error('Resim yüklenemedi.'));
       img.src = event.target.result;
     };
-    reader.onerror = () => reject(new Error('Dosya okunamadÃ„Â±.'));
+    reader.onerror = () => reject(new Error('Dosya okunamadı.'));
     reader.readAsDataURL(file);
   });
 };
@@ -143,7 +137,7 @@ const ToastProvider = ({ children }) => {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      {toast && createPortal(
+      {toast && window.ReactDOM.createPortal(
         <div className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 px-5 py-3 rounded-2xl shadow-xl z-[9999] text-sm font-medium flex items-center justify-center text-center gap-2 max-w-[90vw] w-max break-words ${toast.type === 'error' ? 'bg-red-600 text-white' : toast.type === 'warning' ? 'bg-amber-400 text-amber-950' : 'bg-orange-600 text-white'}`}>
           {toast.type === 'error' && <AlertCircle size={16} className="shrink-0" />}
           {toast.type === 'warning' && <AlertCircle size={16} className="shrink-0" />}
@@ -164,7 +158,7 @@ const AuthProvider = ({ children }) => {
   const [loadingAuth, setLoadingAuth] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(currentUser => {
+    const unsubscribe = window.firebaseAuth.onAuthStateChanged(currentUser => {
       setUser(currentUser);
       setLoadingAuth(false);
     });
@@ -192,12 +186,12 @@ const DataProvider = ({ children }) => {
   useEffect(() => {
     if (user) {
       setLoadingData(true);
-      const docRef = db.collection('users').doc(user.uid);
+      const docRef = window.firebaseDb.collection('users').doc(user.uid);
       const unsubscribeDb = docRef.onSnapshot(doc => {
         if (doc.exists) {
           setData({ ...initialState, ...doc.data() });
         } else {
-          // KRÃ„Â°TÃ„Â°K HATA DÃƒÅ“ZELTÃ„Â°LDÃ„Â°: ArtÃ„Â±k boÃ…Å¸ veriyi zorla Firestore'a yazmÃ„Â±yoruz. Sadece lokal state'i temizliyoruz.
+          // KRİTİK HATA DÜZELTİLDİ: Artık boş veriyi zorla Firestore'a yazmıyoruz. Sadece lokal state'i temizliyoruz.
           setData(initialState);
         }
         setLoadingData(false);
@@ -216,7 +210,7 @@ const DataProvider = ({ children }) => {
     setData(prev => {
       const newData = typeof updater === 'function' ? updater(prev) : updater;
       if (user) {
-        db.collection('users').doc(user.uid).set(newData).catch(err => {
+        window.firebaseDb.collection('users').doc(user.uid).set(newData).catch(err => {
           console.error(err);
           showToast('Veri buluta kaydedilemedi!', 'error');
         });
@@ -266,7 +260,7 @@ const DataProvider = ({ children }) => {
 
   const deleteAllData = useCallback(() => {
     updateData(prev => ({ ...prev, books: [], folders: [] }));
-    showToast('TÃƒÂ¼m verileriniz baÃ…Å¸arÃ„Â±yla silindi.');
+    showToast('Tüm verileriniz başarıyla silindi.');
   }, [updateData, showToast]);
 
   const reorderFolder = useCallback((id, direction) => {
@@ -299,7 +293,7 @@ const DataProvider = ({ children }) => {
 
   const addBook = useCallback((bookData, folderId = null) => {
     if (!bookData.title || !bookData.title.trim()) {
-      showToast('Kitap baÃ…Å¸lÃ„Â±Ã„Å¸Ã„Â± boÃ…Å¸ olamaz.', 'error');
+      showToast('Kitap başlığı boş olamaz.', 'error');
       return false;
     }
     let isDuplicate = false;
@@ -328,16 +322,16 @@ const DataProvider = ({ children }) => {
     });
 
     if (isDuplicate) {
-      showToast('Bu kitap zaten arÃ…Å¸ivinizde mevcut!', 'error');
+      showToast('Bu kitap zaten arşivinizde mevcut!', 'error');
       return false;
     }
 
-    showToast('Kitap baÃ…Å¸arÃ„Â±yla eklendi.');
+    showToast('Kitap başarıyla eklendi.');
 
     if (newBook && newBook.isbn) {
       fetch(`/api/scrape-price?isbn=${newBook.isbn}`)
         .then(async (res) => {
-          if (!res.ok) throw new Error('API HatasÃ„Â±');
+          if (!res.ok) throw new Error('API Hatası');
           return res.json();
         })
         .then(result => {
@@ -349,7 +343,7 @@ const DataProvider = ({ children }) => {
           }
         })
         .catch(err => {
-          console.log('Arka plan fiyat taramasÃ„Â± baÃ…Å¸arÃ„Â±sÃ„Â±z:', err.message);
+          console.log('Arka plan fiyat taraması başarısız:', err.message);
         });
     }
 
@@ -428,11 +422,11 @@ const DataProvider = ({ children }) => {
 
   const importData = useCallback((importedData) => {
     if (!importedData || !Array.isArray(importedData.books) || !Array.isArray(importedData.folders)) {
-      showToast('GeÃƒÂ§ersiz yedekleme dosyasÃ„Â± formatÃ„Â±!', 'error');
+      showToast('Geçersiz yedekleme dosyası formatı!', 'error');
       return false;
     }
     updateData(importedData);
-    showToast('Veriler baÃ…Å¸arÃ„Â±yla cihaza yÃƒÂ¼klendi!');
+    showToast('Veriler başarıyla cihaza yüklendi!');
     return true;
   }, [updateData, showToast]);
 
@@ -460,7 +454,7 @@ const DataProvider = ({ children }) => {
   );
 };
 
-// Kombine Provider (Geriye DÃƒÂ¶nÃƒÂ¼k Uyumluluk ve Root SarÃ„Â±mÃ„Â± Ã„Â°ÃƒÂ§in)
+// Kombine Provider (Geriye Dönük Uyumluluk ve Root Sarımı İçin)
 const ArchiveProvider = ({ children }) => {
   return (
     <ToastProvider>
@@ -472,13 +466,3 @@ const ArchiveProvider = ({ children }) => {
     </ToastProvider>
   );
 };
-
-
-export { ToastProvider, useToast, AuthProvider, useAuth, DataProvider, useData, ArchiveProvider };
-
-
-
-
-
-
-

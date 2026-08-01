@@ -1,16 +1,3 @@
-﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
-import { createRoot } from 'react-dom/client';
-import { createPortal } from 'react-dom';
-import { BookOpen, Camera, Check , X } from 'lucide-react';
-import { useAuth, useData, useToast } from '../context/context.jsx';
-import { api } from '../services/api.js';
-import BookCard from '../components/BookCard.jsx';
-import FolderNode from '../components/FolderNode.jsx';
-import ItemList from '../components/ItemList.jsx';
-import SearchAddModal from '../modals/SearchModal.jsx';
-import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
-import BookDetailModal from '../modals/BookDetail.jsx';
-import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const ManualAddModal = ({ isOpen, onClose, folderId }) => {
   const { addBook, processImageFile } = useData();
   const { showToast } = useToast();
@@ -47,7 +34,7 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  return createPortal(
+  return ReactDOM.createPortal(
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 z-[100]">
       <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col max-h-[90vh] sm:h-auto animate-in slide-in-from-bottom-10">
         <div className="p-4 border-b flex justify-between items-start bg-zinc-50 relative gap-3">
@@ -76,7 +63,7 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
         </div>
         <div className="p-5 flex-1 overflow-y-auto space-y-4 bg-white">
           <div className="grid grid-cols-2 gap-4">
-            {[{ label: 'Yayınevi', name: 'publisher', col: 2 }, { label: 'Sayfa', name: 'pageCount', type: 'number', col: 1 }, { label: 'Yıl', name: 'year', type: 'number', col: 1 }, { label: 'Fiyat (â‚º)', name: 'price', type: 'number', col: 2 }].map(field => (
+            {[{ label: 'Yayınevi', name: 'publisher', col: 2 }, { label: 'Sayfa', name: 'pageCount', type: 'number', col: 1 }, { label: 'Yıl', name: 'year', type: 'number', col: 1 }, { label: 'Fiyat (₺)', name: 'price', type: 'number', col: 2 }].map(field => (
               <div key={field.name} className={`flex flex-col ${field.col === 2 ? 'col-span-2' : 'col-span-1'} bg-zinc-50 p-3 rounded-xl border border-zinc-100`}>
                 <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">{field.label}</label>
                 <input type={field.type || 'text'} name={field.name} placeholder="-" value={formData[field.name]} onChange={handleChange} className="w-full text-sm border-b border-zinc-300 focus:outline-none focus:border-zinc-800 bg-transparent py-0.5" />
@@ -94,12 +81,3 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
     document.body
   );
 };
-
-
-export default ManualAddModal;
-
-
-
-
-
-

@@ -1,23 +1,9 @@
-﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
-import { createRoot } from 'react-dom/client';
-import { User, Library, Search, ArrowLeft, CornerDownRight, FileText } from 'lucide-react';
-import { useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
-import { useAuth, useData, useToast } from '../context/context.jsx';
-import { api } from '../services/api.js';
-import BookCard from '../components/BookCard.jsx';
-import FolderNode from '../components/FolderNode.jsx';
-import ItemList from '../components/ItemList.jsx';
-import SearchAddModal from '../modals/SearchModal.jsx';
-import ManualAddModal from '../modals/ManualAddModal.jsx';
-import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
-import BookDetailModal from '../modals/BookDetail.jsx';
-import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
   const { folders, books } = useData();
   const { overTarget } = useOverTarget();
   const { draggedId } = useDraggedItem();
-  const [detailModalOpen, openDetailModal, closeDetailModal] = useHistoryModal('detail-library');
-  const [listEditModalOpen, openListEditModal, closeListEditModal] = useHistoryModal('list-edit-library');
+  const [detailModalOpen, openDetailModal, closeDetailModal] = window.useHistoryModal('detail-library');
+  const [listEditModalOpen, openListEditModal, closeListEditModal] = window.useHistoryModal('list-edit-library');
   const [activeFolderForEdit, setActiveFolderForEdit] = useState(null);
   const [activeBookId, setActiveBookId] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
@@ -46,7 +32,7 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
     ...currentBooks.map(b => ({ ...b, _type: 'book' }))
   ].sort((a, b) => a.order - b.order), [currentFolders, currentBooks]);
 
-  const { breadcrumbs, getFolderPath, handleNavigate } = useFolderUtils(folders, activeFolderId, setActiveFolderId, setIsSearching, setSearchTerm);
+  const { breadcrumbs, getFolderPath, handleNavigate } = window.useFolderUtils(folders, activeFolderId, setActiveFolderId, setIsSearching, setSearchTerm);
 
   const filteredBooks = React.useMemo(() => searchTerm 
     ? libraryBooks.filter(b => b.title.toLowerCase().includes(searchTerm.toLowerCase()) || (b.author && b.author.toLowerCase().includes(searchTerm.toLowerCase())))
@@ -169,11 +155,3 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
     </div>
   );
 };
-
-
-export default LibraryView;
-
-
-
-
-

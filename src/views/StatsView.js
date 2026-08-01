@@ -1,16 +1,3 @@
-﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
-import { createRoot } from 'react-dom/client';
-import { User, Library, List, BookOpen, Infinity } from 'lucide-react';
-import { useAuth, useData, useToast } from '../context/context.jsx';
-import { api } from '../services/api.js';
-import BookCard from '../components/BookCard.jsx';
-import FolderNode from '../components/FolderNode.jsx';
-import ItemList from '../components/ItemList.jsx';
-import SearchAddModal from '../modals/SearchModal.jsx';
-import ManualAddModal from '../modals/ManualAddModal.jsx';
-import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
-import BookDetailModal from '../modals/BookDetail.jsx';
-import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const StatRow = ({ label, value, isLast }) => (
   <div className={`flex justify-between items-center py-2.5 ${!isLast ? 'border-b border-zinc-100' : ''}`}>
     <span className="text-xs font-medium text-zinc-500 uppercase tracking-wide">{label}</span>
@@ -107,7 +94,7 @@ const StatsView = ({ onOpenProfile }) => {
           <div className="px-4 py-1">
             <StatRow label="Toplam Kitap" value={stats.lib.total} />
             <StatRow label="Toplam Sayfa" value={stats.lib.pages.toLocaleString()} />
-            <StatRow label="Toplam Değer" value={'â‚º' + stats.lib.price.toLocaleString()} />
+            <StatRow label="Toplam Değer" value={'₺' + stats.lib.price.toLocaleString()} />
             <StatRow label="Favori Yazar" value={stats.lib.fav} isLast={true} />
           </div>
         </section>
@@ -141,9 +128,3 @@ const StatsView = ({ onOpenProfile }) => {
     </div>
   );
 };
-
-
-export default StatsView;
-
-
-

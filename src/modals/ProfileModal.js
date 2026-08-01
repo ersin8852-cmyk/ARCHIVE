@@ -1,18 +1,3 @@
-﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
-import { createRoot } from 'react-dom/client';
-import { createPortal } from 'react-dom';
-import { auth } from '../services/firebase.js';
-import { ArrowLeft, LogOut, User, Camera, Calendar, Check, Lock } from 'lucide-react';
-import { useAuth, useData, useToast } from '../context/context.jsx';
-import { api } from '../services/api.js';
-import BookCard from '../components/BookCard.jsx';
-import FolderNode from '../components/FolderNode.jsx';
-import ItemList from '../components/ItemList.jsx';
-import SearchAddModal from '../modals/SearchModal.jsx';
-import ManualAddModal from '../modals/ManualAddModal.jsx';
-import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
-import BookDetailModal from '../modals/BookDetail.jsx';
-import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 
 
 const ProfileModal = ({ isOpen, onClose }) => {
@@ -90,7 +75,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
     try {
       setLoggingOut(true);
       await new Promise(r => setTimeout(r, 800));
-      await auth.signOut();
+      await window.firebaseAuth.signOut();
       onClose();
     } catch (err) {
       showToast('Çıkış yapılamadı.', 'error');
@@ -98,7 +83,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
     }
   };
 
-  return createPortal(
+  return ReactDOM.createPortal(
     <div className="fixed inset-0 bg-white z-[100] flex flex-col sm:max-w-md sm:mx-auto sm:shadow-2xl">
       <div className="h-14 px-4 flex items-center justify-between border-b border-zinc-200 bg-white sticky top-0 z-10 shrink-0">
         <div className="flex items-center gap-3">
@@ -262,13 +247,5 @@ const ProfileModal = ({ isOpen, onClose }) => {
   );
 };
 
-
-
-
-
-export default ProfileModal;
-
-
-
-
+window.ProfileModal = ProfileModal;
 

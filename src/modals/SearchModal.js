@@ -1,16 +1,3 @@
-﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
-import { createRoot } from 'react-dom/client';
-import { createPortal } from 'react-dom';
-import { Plus, Search, Camera, BookOpen, WifiOff , X } from 'lucide-react';
-import { useAuth, useData, useToast } from '../context/context.jsx';
-import { api } from '../services/api.js';
-import BookCard from '../components/BookCard.jsx';
-import FolderNode from '../components/FolderNode.jsx';
-import ItemList from '../components/ItemList.jsx';
-import ManualAddModal from '../modals/ManualAddModal.jsx';
-import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
-import BookDetailModal from '../modals/BookDetail.jsx';
-import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
@@ -211,7 +198,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
         
         await Promise.all(uniqueIsbns.map(async (isbn) => {
           try {
-            const items = await api.fetchByIsbn(isbn);
+            const items = await window.api.fetchByIsbn(isbn);
             if (items && items.length > 0) {
               allItems.push(...items);
             } else {
@@ -231,7 +218,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
         }
       } else {
         // Single text search
-        const items = await api.fetchByTitle(q);
+        const items = await window.api.fetchByTitle(q);
         setResults(items);
         if (items.length === 0) showToast('Sonuç bulunamadı.', 'error');
       }
@@ -245,7 +232,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
 
   if (!isOpen) return null;
 
-  return createPortal(
+  return ReactDOM.createPortal(
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 z-[100]">
       <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-lg overflow-hidden flex flex-col h-[85vh] sm:h-[80vh] shadow-2xl animate-in slide-in-from-bottom-10">
         <div className="p-4 border-b flex justify-between items-center bg-zinc-50">
@@ -301,7 +288,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
                     {book.cover ? <img src={book.cover} alt="" className="w-10 h-14 object-cover rounded-md border border-zinc-200 shrink-0 bg-zinc-100" /> : <div className="w-10 h-14 bg-zinc-100 rounded-md border border-zinc-200 shrink-0 flex items-center justify-center"><BookOpen size={14} className="text-zinc-300" /></div>}
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-zinc-800 leading-tight mb-1 truncate">{book.title}</h3>
-                      <p className="text-xs text-zinc-500 mb-0.5 truncate">{book.author} â€¢ {book.publisher}</p>
+                      <p className="text-xs text-zinc-500 mb-0.5 truncate">{book.author} • {book.publisher}</p>
                       <p className="text-[10px] text-zinc-400">ISBN: {book.isbn || 'Yok'} | {book.pageCount || 0} Sayfa</p>
                     </div>
                   </div>
@@ -320,14 +307,3 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
     document.body
   );
 };
-
-
-export default SearchAddModal;
-
-
-
-
-
-
-
-
