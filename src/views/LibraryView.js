@@ -58,9 +58,7 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
               <User size={22} />
             </button>
             <div className="flex items-center justify-center text-stone-50">
-              <div className="w-8 h-8 overflow-hidden flex items-start justify-center">
-                <img src="./icon.png" alt="Logo" className="w-8 h-auto object-cover object-top" />
-              </div>
+              <img src="./logo.png" alt="Logo" className="w-8 h-8 object-contain drop-shadow-sm" />
               <span className="font-mono text-xl font-bold tracking-[0.25em] ml-2 mt-0.5">ARCHIVE</span>
             </div>
             <div className="w-[38px]"></div>
