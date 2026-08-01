@@ -21,7 +21,7 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
         data-item-target={folder.id}
         data-item-type="folder"
         data-item-folder={folder.parentId || 'root'}
-        className={`group flex items-center justify-between pt-[8.4px] pr-3 pb-3 pl-[8.4px] rounded-xl transition-all border shadow-sm cursor-pointer relative select-none
+        className={`group flex items-center justify-between py-[5px] pl-[5px] pr-3 rounded-xl transition-all border shadow-sm cursor-pointer relative select-none
             ${isDropInside ? 'bg-orange-600/5 border-orange-600 border-dashed scale-[1.02]' : 'bg-zinc-50 border-zinc-200 hover:border-zinc-300 hover:shadow-md'}
             ${isBeingDragged ? 'opacity-0' : ''}`}
         onPointerDown={isLibraryView ? undefined : handlePointerDown}
@@ -32,7 +32,7 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
           {index != null && (
             <span className="text-zinc-400 font-semibold text-sm w-5 text-right shrink-0">{index}.</span>
           )}
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-sm text-white overflow-hidden relative" style={{ backgroundColor: folder.color || '#71717a' }}>
+          <div className="w-[50px] h-[50px] rounded-xl flex items-center justify-center shrink-0 shadow-sm text-white overflow-hidden relative" style={{ backgroundColor: folder.color || '#71717a' }}>
             {folder.customCover ? (
               <img src={folder.customCover} alt="Folder Cover" className="w-full h-full object-cover" />
             ) : childBooks.length > 0 ? (
@@ -44,7 +44,7 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
                 ))}
               </div>
             ) : (
-              <List size={20} />
+              <List size={24} />
             )}
           </div>
           <div className="flex flex-col overflow-hidden">

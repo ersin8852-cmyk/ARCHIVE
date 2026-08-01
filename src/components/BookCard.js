@@ -16,7 +16,7 @@ const BookCard = React.memo(({ book, onOpen, showIndicator = false, folderPath =
       data-item-target={book.id}
       data-item-type="book"
       data-item-folder={containerFolderId || 'root'}
-      className={`group flex items-center justify-between pt-[8.4px] pr-3 pb-3 pl-[8.4px] bg-white border border-zinc-100 rounded-xl shadow-sm hover:border-zinc-300 cursor-pointer transition-colors select-none ${isBeingDragged ? 'opacity-0' : ''}`}
+      className={`group flex items-center justify-between py-[5px] pl-[5px] pr-3 bg-white border border-zinc-100 rounded-xl shadow-sm hover:border-zinc-300 cursor-pointer transition-colors select-none ${isBeingDragged ? 'opacity-0' : ''}`}
       onPointerDown={isLibraryView ? undefined : handlePointerDown}
       onClick={handleClick}
     >
@@ -24,7 +24,7 @@ const BookCard = React.memo(({ book, onOpen, showIndicator = false, folderPath =
         {index != null && (
           <span className="text-zinc-400 font-semibold text-sm w-5 text-right shrink-0">{index}.</span>
         )}
-        <div className="bg-zinc-50 rounded-lg text-zinc-400 border border-zinc-100 shrink-0 overflow-hidden w-8 h-11 flex items-center justify-center relative">
+        <div className="bg-zinc-50 rounded-lg text-zinc-400 border border-zinc-100 shrink-0 overflow-hidden w-[39px] h-[54px] flex items-center justify-center relative">
           <BookOpen size={16} className="absolute z-0" />
           <img 
             src={book.cover || 'default-cover.png'} 
