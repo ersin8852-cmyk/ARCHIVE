@@ -1,3 +1,12 @@
+import React, { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback, useLayoutEffect } from 'react';
+import * as LucideIcons from 'lucide-react';
+import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+import { auth, db } from '../services/firebase.jsx';
+import { api } from '../services/api.jsx';
+import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
+import { useData, useToast, useAuth } from '../context/context.jsx';
+import { useDragApi, useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
 
 
 const ProfileModal = ({ isOpen, onClose }) => {
@@ -75,7 +84,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
     try {
       setLoggingOut(true);
       await new Promise(r => setTimeout(r, 800));
-      await window.firebaseAuth.signOut();
+      await auth.signOut();
       onClose();
     } catch (err) {
       showToast('Çıkış yapılamadı.', 'error');
@@ -247,5 +256,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
   );
 };
 
-window.ProfileModal = ProfileModal;
 
+
+
+export default ProfileModal;

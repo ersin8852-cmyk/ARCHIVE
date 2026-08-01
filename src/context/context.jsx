@@ -1,5 +1,12 @@
-const { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback } = React;
-const { createRoot } = ReactDOM;
+import React, { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback, useLayoutEffect } from 'react';
+import * as LucideIcons from 'lucide-react';
+import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
+import { auth, db } from '../services/firebase.jsx';
+import { api } from '../services/api.jsx';
+import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
+
+
 
 const FallbackIcon = ({ size = 24, ...props }) => (
   <svg {...props} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -7,7 +14,7 @@ const FallbackIcon = ({ size = 24, ...props }) => (
   </svg>
 );
 function pickIcon(name) {
-  const icon = window.LucideReact && window.LucideReact[name];
+  const icon = LucideIcons && LucideIcons[name];
   if (!icon) console.warn(`Lucide ikonu bulunamadı, yedek gösteriliyor: ${name}`);
   return icon || FallbackIcon;
 }
@@ -137,7 +144,7 @@ const ToastProvider = ({ children }) => {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      {toast && window.ReactDOM.createPortal(
+      {toast && ReactDOM.createPortal(
         <div className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 px-5 py-3 rounded-2xl shadow-xl z-[9999] text-sm font-medium flex items-center justify-center text-center gap-2 max-w-[90vw] w-max break-words ${toast.type === 'error' ? 'bg-red-600 text-white' : toast.type === 'warning' ? 'bg-amber-400 text-amber-950' : 'bg-orange-600 text-white'}`}>
           {toast.type === 'error' && <AlertCircle size={16} className="shrink-0" />}
           {toast.type === 'warning' && <AlertCircle size={16} className="shrink-0" />}
@@ -158,7 +165,7 @@ const AuthProvider = ({ children }) => {
   const [loadingAuth, setLoadingAuth] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = window.firebaseAuth.onAuthStateChanged(currentUser => {
+    const unsubscribe = auth.onAuthStateChanged(currentUser => {
       setUser(currentUser);
       setLoadingAuth(false);
     });
@@ -186,7 +193,7 @@ const DataProvider = ({ children }) => {
   useEffect(() => {
     if (user) {
       setLoadingData(true);
-      const docRef = window.firebaseDb.collection('users').doc(user.uid);
+      const docRef = db.collection('users').doc(user.uid);
       const unsubscribeDb = docRef.onSnapshot(doc => {
         if (doc.exists) {
           setData({ ...initialState, ...doc.data() });
@@ -210,7 +217,7 @@ const DataProvider = ({ children }) => {
     setData(prev => {
       const newData = typeof updater === 'function' ? updater(prev) : updater;
       if (user) {
-        window.firebaseDb.collection('users').doc(user.uid).set(newData).catch(err => {
+        db.collection('users').doc(user.uid).set(newData).catch(err => {
           console.error(err);
           showToast('Veri buluta kaydedilemedi!', 'error');
         });
@@ -466,3 +473,5 @@ const ArchiveProvider = ({ children }) => {
     </ToastProvider>
   );
 };
+
+export { ToastContext, useToast, ToastProvider, AuthContext, useAuth, AuthProvider, DataContext, useData, DataProvider, ArchiveProvider };
