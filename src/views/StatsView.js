@@ -66,7 +66,7 @@ const StatsView = ({ onOpenProfile }) => {
             <img 
               src="./logo.png" 
               alt="Logo" 
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 mt-1.5 w-[180px] h-[180px] max-w-none object-contain drop-shadow-sm pointer-events-none" 
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[70px] h-[70px] max-w-none object-contain drop-shadow-sm pointer-events-none" 
             />
           </div>
         </div>
