@@ -236,25 +236,20 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 z-[100]">
       <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-lg overflow-hidden flex flex-col h-[85vh] sm:h-[80vh] shadow-2xl animate-in slide-in-from-bottom-10">
         <div className="p-4 border-b flex justify-between items-center bg-zinc-50">
-          <div className="flex items-center gap-3">
-            <h2 className="text-lg font-semibold text-zinc-800">Yeni Kitap Ekle</h2>
-            <button onClick={() => { if(onOpenManualAdd) onOpenManualAdd(); }} className="px-3 py-1.5 bg-orange-600 text-white text-xs font-semibold rounded-full hover:bg-orange-700 transition-colors flex items-center gap-1.5 shadow-sm">
-              <Plus size={14} /> Manuel Ekle
-            </button>
-          </div>
+          <h2 className="text-lg font-semibold text-zinc-800">Yeni Kitap Ekle</h2>
           <button onClick={onClose} className="p-2 hover:bg-zinc-200 rounded-full transition-colors"><X size={20} /></button>
         </div>
         <div className="p-4 flex flex-col gap-3 shrink-0">
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 text-zinc-400" size={18} />
-              <textarea 
-                placeholder="Kitap Adı veya ISBN (Birden fazla girebilirsiniz)..." 
-                className="w-full pl-9 pr-4 py-2.5 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 bg-zinc-50 text-sm min-h-[44px] max-h-[120px] resize-y overflow-y-auto" 
+              <input 
+                type="text"
+                placeholder="Kitap Adı veya ISBN girin..." 
+                className="w-full pl-9 pr-4 py-2.5 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 bg-zinc-50 text-sm h-11" 
                 value={query} 
                 onChange={e => setQuery(e.target.value)} 
-                onKeyDown={e => { if (e.key === 'Enter' && e.ctrlKey) performSearch(); }} 
-                rows="1"
+                onKeyDown={e => { if (e.key === 'Enter') performSearch(); }} 
               />
             </div>
             <button onClick={() => setShowCamera(!showCamera)} className={`p-2.5 rounded-xl border transition-colors flex items-center justify-center ${showCamera ? 'bg-red-50 text-red-600 border-red-200' : 'bg-zinc-100 text-zinc-600 border-zinc-200 hover:bg-zinc-200'}`}>
@@ -263,6 +258,9 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
           </div>
           <button onClick={() => performSearch()} disabled={loading || !query.trim()} className="w-full py-2.5 bg-orange-600 text-white rounded-xl hover:bg-orange-700 font-medium transition-colors disabled:opacity-50">
             {loading ? 'Aranıyor...' : 'Ara'}
+          </button>
+          <button onClick={() => { if(onOpenManualAdd) onOpenManualAdd(); }} className="w-full py-2.5 bg-zinc-100 text-zinc-700 border border-zinc-200 rounded-xl hover:bg-zinc-200 font-medium transition-colors flex justify-center items-center gap-2">
+            <Plus size={16} /> Manuel Ekle
           </button>
         </div>
         {showCamera && (
