@@ -84,23 +84,22 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
                      <h1 className="text-xl font-extrabold text-zinc-900 tracking-tight">Kütüphanem</h1>
                   ) : (
                     <>
-                      <div className="flex items-center gap-2">
-                        <button onClick={() => setActiveFolderId(null)} className="flex items-center gap-1 text-zinc-500 hover:text-zinc-900 transition-colors" data-breadcrumb-target="root">
-                           <ArrowLeft size={18} />
-                           <span className="font-medium text-sm">Geri</span>
-                        </button>
-                      </div>
-                      <div className="flex flex-col mt-1">
-                        {breadcrumbs.map((bc, idx) => (
-                          <div key={bc.id} className="flex items-center mt-1 w-full" style={{ paddingLeft: `${(idx) * 16}px` }}>
-                            <CornerDownRight size={14} className="text-zinc-400 shrink-0 mr-1.5" />
-                            <button onClick={() => setActiveFolderId(bc.id)} className={`text-left transition-all px-2 py-0.5 rounded-lg border ${(activeFolderId === bc.id) ? 'text-zinc-900 font-bold bg-zinc-50 border-transparent' : 'text-zinc-600 font-medium hover:bg-zinc-50 hover:text-zinc-900 border-transparent'} ${(draggedId && overTarget && overTarget.type === 'folder' && overTarget.id === bc.id && overTarget.source === 'breadcrumb') ? 'ring-2 ring-zinc-900 border-dashed bg-zinc-100' : ''}`} data-breadcrumb-target={bc.id}>
-                              <span className="truncate max-w-[200px] inline-block">{bc.name}</span>
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </>
+                    <div className="flex items-center mt-1 w-full">
+                      <button onClick={() => setActiveFolderId(null)} className={`flex-1 text-left flex items-center transition-all px-2 py-0.5 rounded-lg border ${(activeFolderId === null) ? 'text-zinc-900 font-bold bg-zinc-50 border-transparent' : 'text-zinc-600 font-medium hover:bg-zinc-50 hover:text-zinc-900 border-transparent'} ${(draggedId && overTarget && overTarget.type === 'folder' && overTarget.id === 'root' && overTarget.source === 'breadcrumb') ? 'ring-2 ring-zinc-900 border-dashed bg-zinc-100' : ''}`} data-breadcrumb-target="root">
+                         <span className="truncate inline-block">Kütüphanem</span>
+                      </button>
+                    </div>
+                    <div className="flex flex-col mt-1">
+                      {breadcrumbs.map((bc, idx) => (
+                        <div key={bc.id} className="flex items-center mt-1 w-full" style={{ paddingLeft: `${(idx + 1) * 16}px` }}>
+                          <CornerDownRight size={14} className="text-zinc-400 shrink-0 mr-1.5" />
+                          <button onClick={() => setActiveFolderId(bc.id)} className={`flex-1 text-left flex items-center transition-all px-2 py-0.5 rounded-lg border ${(activeFolderId === bc.id) ? 'text-zinc-900 font-bold bg-zinc-50 border-transparent' : 'text-zinc-600 font-medium hover:bg-zinc-50 hover:text-zinc-900 border-transparent'} ${(draggedId && overTarget && overTarget.type === 'folder' && overTarget.id === bc.id && overTarget.source === 'breadcrumb') ? 'ring-2 ring-zinc-900 border-dashed bg-zinc-100' : ''}`} data-breadcrumb-target={bc.id}>
+                            <span className="truncate inline-block">{bc.name}</span>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </>
                   )}
                 </div>
                 
