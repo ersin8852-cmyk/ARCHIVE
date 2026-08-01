@@ -12,10 +12,13 @@ const CopyButton = ({ text }) => {
   );
 };
 
+
+
 const formatMessage = (text) => {
   return (
-    <div className="text-[15px] leading-relaxed flex flex-col gap-0.5">
-      {text.split('\n').map((line, lineIdx) => {
+    <div>
+      <div className="text-[15px] leading-relaxed flex flex-col gap-0.5">
+        {text.split('\n').map((line, lineIdx) => {
         if (!line.trim()) return <div key={lineIdx} className="h-1.5"></div>;
         
         let isHeading = false;
@@ -29,11 +32,11 @@ const formatMessage = (text) => {
           content = headingMatch[2];
         }
         
-        const parts = content.split(/(\*\*[\s\S]*?\*\*|\*[\s\S]*?\*|\b\d{10,13}\b)/g);
+        const parts = content.split(/(\*\*[\s\S]*?\*\*|\*[\s\S]*?\*|\b\d{10,13}(?:[\s,-]+\d{10,13})*\b)/g);
         
         const lineContent = parts.map((part, i) => {
           if (!part) return null;
-          if (/^\d{10,13}$/.test(part)) {
+          if (/^\d{10,13}(?:[\s,-]+\d{10,13})*$/.test(part)) {
             return (
               <span key={i} className="inline-flex items-center bg-zinc-100 border border-zinc-200 px-1.5 py-0.5 rounded text-zinc-900 font-mono text-sm mx-0.5">
                 {part}

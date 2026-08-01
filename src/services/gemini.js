@@ -23,6 +23,9 @@ window.geminiAPI = {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
+          systemInstruction: {
+            parts: [{ text: "Kullanıcıya birden fazla ISBN numarası vereceksen, 'İstediğin kitapların ISBN numaraları aşağıda:' gibi kısa bir cümle kur ve ardından numaraları ALT ALTA DEĞİL, aralarında sadece virgül (,) olacak şekilde YAN YANA aynı satırda yaz. Asla aralarına satır başı (enter) koyma. Ayrıca asla ```text gibi markdown kod blokları kullanma." }]
+          },
           contents,
           generationConfig: {
             temperature: 0.7,
@@ -37,7 +40,9 @@ window.geminiAPI = {
       }
 
       const data = await response.json();
-      return data.candidates[0].content.parts[0].text;
+      let text = data.candidates[0].content.parts[0].text;
+      text = text.replace(/^```[a-z]*\n?/im, '').replace(/```\s*$/m, '');
+      return text;
     } catch (error) {
       console.error("Gemini API Error:", error);
       throw error;
