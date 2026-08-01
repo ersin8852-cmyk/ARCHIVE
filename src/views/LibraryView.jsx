@@ -85,17 +85,17 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
               <div className="flex items-center w-full gap-3 animate-in fade-in slide-in-from-right-4 duration-300">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-2.5 text-zinc-400" size={18} />
-                  <input autoFocus type="text" placeholder="KÃ¼tÃ¼phanede ara..." className="w-full pl-9 pr-3 py-2 bg-zinc-100 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-zinc-900" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+                  <input autoFocus type="text" placeholder="Kütüphanede ara..." className="w-full pl-9 pr-3 py-2 bg-zinc-100 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-zinc-900" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
                 </div>
                 <button onClick={() => { setIsSearching(false); setSearchTerm(''); }} className="text-zinc-500 hover:text-zinc-900 font-medium text-sm transition-colors shrink-0">
-                  Ä°ptal
+                  İptal
                 </button>
               </div>
             ) : (
               <div className="flex items-center justify-between w-full animate-in fade-in slide-in-from-left-4 duration-300">
                 <div className="flex flex-col flex-1 overflow-hidden">
                   {!activeFolderId ? (
-                     <h1 className="text-xl font-extrabold text-zinc-900 tracking-tight">KÃ¼tÃ¼phanem</h1>
+                     <h1 className="text-xl font-extrabold text-zinc-900 tracking-tight">Kütüphanem</h1>
                   ) : (
                     <>
                       <div className="flex items-center gap-2">
@@ -131,7 +131,7 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
            searchTerm.trim() === '' ? (
             <div className="h-full flex flex-col items-center justify-center text-zinc-400 space-y-3 pb-20">
               <Search size={48} className="opacity-20" />
-              <p className="text-center text-sm font-medium">Aramak istediÄŸiniz kitabÄ±n adÄ±nÄ± yazÄ±n.</p>
+              <p className="text-center text-sm font-medium">Aramak istediÄŸiniz kitabın adını yazın.</p>
             </div>
           ) : filteredBooks.length > 0 ? (
             <div className="space-y-[3.6px]">
@@ -140,13 +140,13 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-zinc-400 space-y-3 pb-20">
               <FileText size={48} className="opacity-20" />
-              <p className="text-center text-sm font-medium">KÃ¼tÃ¼phanenizde bu isimde kitap yok.</p>
+              <p className="text-center text-sm font-medium">Kütüphanenizde bu isimde kitap yok.</p>
             </div>
           )
         ) : libraryBooks.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-zinc-400 space-y-3 pb-20">
             <Library size={48} className="opacity-20" />
-            <p className="text-center text-sm font-medium px-4">KÃ¼tÃ¼phanenizde kitap yok.<br/><span className="text-xs font-normal">Listelerinizdeki kitaplarÄ± "KÃ¼tÃ¼phanemde" olarak iÅŸaretleyin.</span></p>
+            <p className="text-center text-sm font-medium px-4">Kütüphanenizde kitap yok.<br/><span className="text-xs font-normal">Listelerinizdeki kitapları "Kütüphanemde" olarak iÅŸaretleyin.</span></p>
           </div>
         ) : (
           <div className="space-y-[3.6px] min-h-[60px] rounded-xl transition-colors" data-folder-target={activeFolderId || "root"}>

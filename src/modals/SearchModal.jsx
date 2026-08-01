@@ -97,7 +97,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
     };
 
     if (isIOS && window.ZXing) {
-      console.log("iOS tespit edildi, ZXing baÅŸlatÄ±lÄ±yor...");
+      console.log("iOS tespit edildi, ZXing baÅŸlatılıyor...");
       zxingScanner = new window.ZXing.BrowserMultiFormatReader();
       scannerRef.current = {
         stop: async () => zxingScanner.reset(),
@@ -110,10 +110,10 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
           onScanSuccess(result.getText());
         }
       }).catch(err => {
-        console.warn("ZXing baÅŸlatÄ±lamadÄ±:", err);
+        console.warn("ZXing baÅŸlatılamadı:", err);
         if (isComponentMounted) {
           setShowCamera(false);
-          showToast('Kamera baÅŸlatÄ±lamadÄ±.', 'error');
+          showToast('Kamera baÅŸlatılamadı.', 'error');
         }
       });
 
@@ -132,7 +132,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
       applyZXingZoom();
 
     } else {
-      console.log("Android/DiÄŸer tespit edildi, Html5Qrcode baÅŸlatÄ±lÄ±yor...");
+      console.log("Android/DiÄŸer tespit edildi, Html5Qrcode baÅŸlatılıyor...");
       html5Scanner = new window.Html5Qrcode("reader");
       scannerRef.current = html5Scanner;
 
@@ -147,7 +147,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
           );
         } catch (err) {
           setShowCamera(false);
-          showToast('Kamera hiÃ§bir ÅŸekilde baÅŸlatÄ±lamadÄ±.', 'error');
+          showToast('Kamera hiçbir ÅŸekilde baÅŸlatılamadı.', 'error');
         }
       };
 
@@ -225,18 +225,18 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
         setResults(allItems);
         
         if (allItems.length === 0 && notFoundIsbns.length > 0) {
-          showToast('HiÃ§bir sonuÃ§ bulunamadÄ±.', 'error');
+          showToast('Hiçbir sonuç bulunamadı.', 'error');
         } else if (notFoundIsbns.length > 0) {
-          showToast(`Åu numaralÄ± kitaplar bulunamadÄ±: ${notFoundIsbns.join(', ')}`, 'warning');
+          showToast(`Şu numaralı kitaplar bulunamadı: ${notFoundIsbns.join(', ')}`, 'warning');
         }
       } else {
         // Single text search
         const items = await api.fetchByTitle(q);
         setResults(items);
-        if (items.length === 0) showToast('SonuÃ§ bulunamadÄ±.', 'error');
+        if (items.length === 0) showToast('Sonuç bulunamadı.', 'error');
       }
     } catch (err) {
-      showToast('Arama baÅŸarÄ±sÄ±z oldu.', 'error');
+      showToast('Arama baÅŸarısız oldu.', 'error');
     }
     setLoading(false);
   };
@@ -262,7 +262,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 text-zinc-400" size={18} />
               <textarea 
-                placeholder="Kitap AdÄ± veya ISBN (Birden fazla girebilirsiniz)..." 
+                placeholder="Kitap Adı veya ISBN (Birden fazla girebilirsiniz)..." 
                 className="w-full pl-9 pr-4 py-2.5 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 bg-zinc-50 text-sm min-h-[44px] max-h-[120px] resize-y overflow-y-auto" 
                 value={query} 
                 onChange={e => setQuery(e.target.value)} 
@@ -275,7 +275,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
             </button>
           </div>
           <button onClick={() => performSearch()} disabled={loading || !query.trim()} className="w-full py-2.5 bg-orange-600 text-white rounded-xl hover:bg-orange-700 font-medium transition-colors disabled:opacity-50">
-            {loading ? 'AranÄ±yor...' : 'Ara'}
+            {loading ? 'Aranıyor...' : 'Ara'}
           </button>
         </div>
         {showCamera && (
@@ -286,13 +286,13 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
               ) : (
                 <video id="zxing-reader" className="w-full" autoPlay playsInline muted></video>
               )}
-              <p className="absolute bottom-2 w-full text-center text-white text-xs z-10 bg-black/50 py-1">KitabÄ±n barkodunu okutun</p>
+              <p className="absolute bottom-2 w-full text-center text-white text-xs z-10 bg-black/50 py-1">Kitabın barkodunu okutun</p>
             </div>
           </div>
         )}
         <div className="flex-1 overflow-y-auto p-4 bg-zinc-50/50">
           {loading ? (
-            <div className="text-center py-8 text-zinc-500 text-sm animate-pulse">VeritabanlarÄ±nda aranÄ±yor...</div>
+            <div className="text-center py-8 text-zinc-500 text-sm animate-pulse">Veritabanlarında aranıyor...</div>
           ) : results.length > 0 ? (
             <div className="flex flex-col gap-3">
               {results.map((book, idx) => (
@@ -310,9 +310,9 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
               ))}
             </div>
           ) : hasSearched ? (
-            <div className="h-full flex flex-col items-center justify-center py-8 text-zinc-400 text-sm gap-2"><WifiOff size={32} className="opacity-20" /><p>SonuÃ§ bulunamadÄ±. FarklÄ± bir arama deneyin.</p></div>
+            <div className="h-full flex flex-col items-center justify-center py-8 text-zinc-400 text-sm gap-2"><WifiOff size={32} className="opacity-20" /><p>Sonuç bulunamadı. Farklı bir arama deneyin.</p></div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center py-8 text-zinc-400 text-sm gap-2"><Search size={32} className="opacity-20" /><p>SonuÃ§larÄ± gÃ¶rmek iÃ§in arama yapÄ±n.</p></div>
+            <div className="h-full flex flex-col items-center justify-center py-8 text-zinc-400 text-sm gap-2"><Search size={32} className="opacity-20" /><p>Sonuçları görmek için arama yapın.</p></div>
           )}
         </div>
       </div>

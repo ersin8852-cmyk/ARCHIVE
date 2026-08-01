@@ -33,7 +33,7 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
 
   const handleSave = () => {
     if (!formData.title || !formData.title.trim()) {
-      showToast('Kitap baÅŸlÄ±ÄŸÄ± boÅŸ olamaz.', 'error');
+      showToast('Kitap baÅŸlıÄŸı boÅŸ olamaz.', 'error');
       return;
     }
     const success = addBook(formData, folderId);
@@ -69,14 +69,14 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
             }} />
           </div>
           <div className="flex-1 pr-4 min-w-0 pt-1">
-            <input name="title" placeholder="Kitap AdÄ± *" value={formData.title} onChange={handleChange} className="w-full font-bold text-lg border-b border-zinc-300 focus:outline-none focus:border-zinc-800 bg-transparent mb-2 placeholder-zinc-400" autoFocus />
+            <input name="title" placeholder="Kitap Adı *" value={formData.title} onChange={handleChange} className="w-full font-bold text-lg border-b border-zinc-300 focus:outline-none focus:border-zinc-800 bg-transparent mb-2 placeholder-zinc-400" autoFocus />
             <input name="author" placeholder="Yazar" value={formData.author} onChange={handleChange} className="w-full text-sm border-b border-zinc-200 focus:outline-none focus:border-zinc-500 bg-transparent mb-1 placeholder-zinc-400" />
           </div>
           <button onClick={onClose} className="p-1.5 hover:bg-zinc-200 rounded-full transition-colors bg-zinc-100 shrink-0"><X size={18} /></button>
         </div>
         <div className="p-5 flex-1 overflow-y-auto space-y-4 bg-white">
           <div className="grid grid-cols-2 gap-4">
-            {[{ label: 'YayÄ±nevi', name: 'publisher', col: 2 }, { label: 'Sayfa', name: 'pageCount', type: 'number', col: 1 }, { label: 'YÄ±l', name: 'year', type: 'number', col: 1 }, { label: 'Fiyat (â‚º)', name: 'price', type: 'number', col: 2 }].map(field => (
+            {[{ label: 'Yayınevi', name: 'publisher', col: 2 }, { label: 'Sayfa', name: 'pageCount', type: 'number', col: 1 }, { label: 'Yıl', name: 'year', type: 'number', col: 1 }, { label: 'Fiyat (â‚º)', name: 'price', type: 'number', col: 2 }].map(field => (
               <div key={field.name} className={`flex flex-col ${field.col === 2 ? 'col-span-2' : 'col-span-1'} bg-zinc-50 p-3 rounded-xl border border-zinc-100`}>
                 <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">{field.label}</label>
                 <input type={field.type || 'text'} name={field.name} placeholder="-" value={formData[field.name]} onChange={handleChange} className="w-full text-sm border-b border-zinc-300 focus:outline-none focus:border-zinc-800 bg-transparent py-0.5" />

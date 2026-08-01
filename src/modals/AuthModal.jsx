@@ -38,21 +38,21 @@ const AuthModal = ({ isVisible }) => {
 
     if (!isLogin) {
       if (password !== confirmPassword) {
-        setError('Åifreler eÅŸleÅŸmiyor!');
+        setError('Şifreler eÅŸleÅŸmiyor!');
         return;
       }
       if (!acceptedTerms) {
-        setError('KullanÄ±cÄ± sÃ¶zleÅŸmesini onaylamanÄ±z gerekmektedir.');
+        setError('Kullanıcı sözleÅŸmesini onaylamanız gerekmektedir.');
         return;
       }
       if (!fullName || !username || !gender || !dob) {
-        setError('LÃ¼tfen tÃ¼m profil alanlarÄ±nÄ± doldurun.');
+        setError('Lütfen tüm profil alanlarını doldurun.');
         return;
       }
     }
 
     if (!email || !password) {
-      setError('LÃ¼tfen e-posta ve ÅŸifrenizi girin.');
+      setError('Lütfen e-posta ve ÅŸifrenizi girin.');
       return;
     }
     
@@ -82,11 +82,11 @@ const AuthModal = ({ isVisible }) => {
     } catch (err) {
       console.error(err);
       if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential' || (err.message && err.message.includes('INVALID_LOGIN_CREDENTIALS'))) {
-        setError('Åifre hatalÄ± veya kullanÄ±cÄ± bulunamadÄ±.');
+        setError('Şifre hatalı veya kullanıcı bulunamadı.');
       } else if (err.code === 'auth/email-already-in-use') {
-        setError('Bu e-posta adresi zaten kullanÄ±mda.');
+        setError('Bu e-posta adresi zaten kullanımda.');
       } else if (err.code === 'auth/weak-password') {
-        setError('Åifre Ã§ok zayÄ±f (en az 6 karakter olmalÄ±).');
+        setError('Şifre çok zayıf (en az 6 karakter olmalı).');
       } else {
         // Try to parse JSON message if it is a JSON string
         try {
@@ -113,7 +113,7 @@ const AuthModal = ({ isVisible }) => {
       await auth.signInWithPopup(provider);
     } catch (err) {
       console.error(err);
-      setError('Google ile giriÅŸ baÅŸarÄ±sÄ±z oldu.');
+      setError('Google ile giriÅŸ baÅŸarısız oldu.');
       setLoading(false);
     }
   };
@@ -129,7 +129,7 @@ const AuthModal = ({ isVisible }) => {
           </div>
           <h2 className="text-2xl font-bold text-zinc-900">{isLogin ? 'HoÅŸ Geldiniz' : 'Hesap OluÅŸturun'}</h2>
           <p className="text-zinc-500 text-sm mt-2">
-            {isLogin ? 'KitaplÄ±ÄŸÄ±nÄ±za eriÅŸmek iÃ§in giriÅŸ yapÄ±n' : 'Bulut kÃ¼tÃ¼phanenizi hemen oluÅŸturun'}
+            {isLogin ? 'KitaplıÄŸınıza eriÅŸmek için giriÅŸ yapın' : 'Bulut kütüphanenizi hemen oluÅŸturun'}
           </p>
         </div>
 
@@ -148,15 +148,15 @@ const AuthModal = ({ isVisible }) => {
               </div>
               <div className="relative">
                 <span className="absolute left-3 top-3.5 text-zinc-400 font-bold text-sm">@</span>
-                <input type="text" placeholder="KullanÄ±cÄ± AdÄ±" value={username} onChange={e => setUsername(e.target.value.toLowerCase().replace(/\s/g, ''))} className="w-full pl-10 pr-4 py-3 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-zinc-50 text-sm" />
+                <input type="text" placeholder="Kullanıcı Adı" value={username} onChange={e => setUsername(e.target.value.toLowerCase().replace(/\s/g, ''))} className="w-full pl-10 pr-4 py-3 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-zinc-50 text-sm" />
               </div>
               <div className="flex gap-3">
                 <div className="relative flex-1">
                   <select value={gender} onChange={e => setGender(e.target.value)} className="w-full px-3 py-3 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-zinc-50 text-sm text-zinc-700 appearance-none">
                     <option value="" disabled>Cinsiyet</option>
-                    <option value="Kadin">KadÄ±n</option>
+                    <option value="Kadin">Kadın</option>
                     <option value="Erkek">Erkek</option>
-                    <option value="Belirtmek Istemiyorum">Belirtmek Ä°stemiyorum</option>
+                    <option value="Belirtmek Istemiyorum">Belirtmek İstemiyorum</option>
                   </select>
                 </div>
                 <div className="relative flex-1">
@@ -174,14 +174,14 @@ const AuthModal = ({ isVisible }) => {
           
           <div className="relative">
             <Lock className="absolute left-3 top-3.5 text-zinc-400" size={18} />
-            <input type="password" placeholder="Åifre (en az 6 karakter)" value={password} onChange={e => setPassword(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-zinc-50 text-sm" required />
+            <input type="password" placeholder="Şifre (en az 6 karakter)" value={password} onChange={e => setPassword(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-zinc-50 text-sm" required />
           </div>
 
           {!isLogin && (
             <>
               <div className="relative">
                 <Lock className="absolute left-3 top-3.5 text-zinc-400" size={18} />
-                <input type="password" placeholder="Åifreyi Tekrar Girin" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-zinc-50 text-sm" required />
+                <input type="password" placeholder="Şifreyi Tekrar Girin" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-zinc-50 text-sm" required />
               </div>
               
               <label className="flex items-start gap-2 mt-2 cursor-pointer group">
@@ -189,7 +189,7 @@ const AuthModal = ({ isVisible }) => {
                   {acceptedTerms ? <CheckSquare size={18} className="text-blue-500" /> : <Square size={18} />}
                 </button>
                 <span className="text-xs text-zinc-500 leading-tight flex-1">
-                  KullanÄ±cÄ± SÃ¶zleÅŸmesi: "Bunu okuyan tosun, okuyana kosun." Okudum ve onaylÄ±yorum.
+                  Kullanıcı SözleÅŸmesi: "Bunu okuyan tosun, okuyana kosun." Okudum ve onaylıyorum.
                 </span>
               </label>
             </>
@@ -201,7 +201,7 @@ const AuthModal = ({ isVisible }) => {
             ) : isLogin ? (
               <><LogIn size={18} /> GiriÅŸ Yap</>
             ) : (
-              <><UserPlus size={18} /> KayÄ±t Ol</>
+              <><UserPlus size={18} /> Kayıt Ol</>
             )}
           </button>
         </form>
@@ -223,9 +223,9 @@ const AuthModal = ({ isVisible }) => {
         </button>
 
         <p className="text-center text-sm text-zinc-500 mt-6">
-          {isLogin ? 'HesabÄ±nÄ±z yok mu?' : 'Zaten hesabÄ±nÄ±z var mÄ±?'}
+          {isLogin ? 'Hesabınız yok mu?' : 'Zaten hesabınız var mı?'}
           <button onClick={() => { setIsLogin(!isLogin); setError(''); }} className="ml-1 text-blue-600 font-medium hover:underline focus:outline-none">
-            {isLogin ? 'KayÄ±t Olun' : 'GiriÅŸ YapÄ±n'}
+            {isLogin ? 'Kayıt Olun' : 'GiriÅŸ Yapın'}
           </button>
         </p>
       </div>

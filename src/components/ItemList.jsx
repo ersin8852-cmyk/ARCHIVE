@@ -18,7 +18,7 @@ const ItemList = React.memo(({ ids, items, folders, books, folderKey, onOpenBook
   const prevRects = React.useRef(new Map());
   const prevDraggedId = React.useRef(null);
 
-  // SÃ¼rÃ¼klenen kart listeden Ã§Ä±karÄ±lmaz â€” opacity:0 ile gÃ¶rÃ¼nmez ama yeri korunur, diÄŸer kartlar kaymaz
+  // Sürüklenen kart listeden çıkarılmaz â€” opacity:0 ile görünmez ama yeri korunur, diÄŸer kartlar kaymaz
   const visibleIds = ids;
 
   let previewIndex = null;
@@ -33,7 +33,7 @@ const ItemList = React.memo(({ ids, items, folders, books, folderKey, onOpenBook
         }
       }
     } else if (overTarget.type === 'folder' && overTarget.id === folderKey && overTarget.placement === 'inside') {
-      // KlasÃ¶rÃ¼n geneline (veya sayfanÄ±n altÄ±ndaki boÅŸluÄŸa) sÃ¼rÃ¼kleniyorsa boÅŸluÄŸu en sona ekle
+      // Klasörün geneline (veya sayfanın altındaki boÅŸluÄŸa) sürükleniyorsa boÅŸluÄŸu en sona ekle
       previewIndex = visibleIds.length;
     }
   }

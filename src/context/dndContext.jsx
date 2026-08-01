@@ -24,7 +24,7 @@ document.addEventListener('touchmove', (e) => {
   }
 }, { passive: false, capture: true });
 
-// BoÅŸ touchstart listener kaldÄ±rÄ±ldÄ± (gereksiz olay dÃ¶ngÃ¼sÃ¼ yÃ¼kÃ¼ oluÅŸturuyordu)
+// BoÅŸ touchstart listener kaldırıldı (gereksiz olay döngüsü yükü oluÅŸturuyordu)
 
 const useDraggableItem = (item, containerFolderId, onClick, itemType) => {
   const { startDrag, updateDrag, endDrag, cancelDrag } = useDragApi();
@@ -453,7 +453,7 @@ const DragDropProvider = ({ children, onDrop }) => {
   const draggedBook = draggedId ? books.find(b => b.id === draggedId) : null;
   const draggedFolder = !draggedBook && draggedId ? folders.find(f => f.id === draggedId) : null;
   const draggedTitle = draggedBook ? draggedBook.title : (draggedFolder ? draggedFolder.name : '');
-  const draggedSubtitle = draggedBook ? (draggedBook.publisher || 'YayÄ±nevi Yok') : (draggedFolder ? 'Liste' : '');
+  const draggedSubtitle = draggedBook ? (draggedBook.publisher || 'Yayınevi Yok') : (draggedFolder ? 'Liste' : '');
 
   const apiValue = useMemo(() => ({ startDrag, updateDrag, endDrag, cancelDrag }), []);
   const itemValue = useMemo(() => ({ draggedId, cardSize }), [draggedId, cardSize]);

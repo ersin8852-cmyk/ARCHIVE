@@ -88,7 +88,7 @@ const StatsView = ({ onOpenProfile }) => {
         <section className="bg-white border border-zinc-200 rounded-2xl shadow-sm overflow-hidden">
           <div className="bg-zinc-50 border-b border-zinc-200 px-4 py-2.5 flex items-center gap-2">
             <List size={16} className="text-orange-600" />
-            <h2 className="text-sm font-bold text-zinc-800">TÃ¼m Listelerim</h2>
+            <h2 className="text-sm font-bold text-zinc-800">Tüm Listelerim</h2>
           </div>
           <div className="px-4 py-1">
             <StatRow label="Toplam Kitap" value={stats.list.total} />
@@ -102,7 +102,7 @@ const StatsView = ({ onOpenProfile }) => {
         <section className="bg-white border border-zinc-200 rounded-2xl shadow-sm overflow-hidden">
           <div className="bg-zinc-50 border-b border-zinc-200 px-4 py-2.5 flex items-center gap-2">
             <Library size={16} className="text-orange-600" />
-            <h2 className="text-sm font-bold text-zinc-800">KÃ¼tÃ¼phanem</h2>
+            <h2 className="text-sm font-bold text-zinc-800">Kütüphanem</h2>
           </div>
           <div className="px-4 py-1">
             <StatRow label="Toplam Kitap" value={stats.lib.total} />

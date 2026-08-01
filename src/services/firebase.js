@@ -17,9 +17,9 @@ const db = app.firestore();
 
 db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
   if (err.code === 'failed-precondition') {
-    console.warn('Firestore persistence: Birden fazla sekme aÃ§Ä±k, yalnÄ±zca biri offline Ã§alÄ±ÅŸabilir.');
+    console.warn('Firestore persistence: Birden fazla sekme açık, yalnızca biri offline çalıÅŸabilir.');
   } else if (err.code === 'unimplemented') {
-    console.warn('Firestore persistence: Bu tarayÄ±cÄ± desteklemiyor.');
+    console.warn('Firestore persistence: Bu tarayıcı desteklemiyor.');
   }
 });
 

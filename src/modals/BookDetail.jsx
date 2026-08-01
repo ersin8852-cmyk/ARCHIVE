@@ -84,7 +84,7 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
         </div>
         <div className="p-5 flex-1 overflow-y-auto space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            {[{ label: 'Yazar', name: 'author', col: 2 }, { label: 'YayÃ„Â±nevi', name: 'publisher', col: 2 }, { label: 'Sayfa', name: 'pageCount', type: 'number', col: 1 }, { label: 'YÃ„Â±l', name: 'year', type: 'number', col: 1 }, { label: 'Fiyat (Ã¢â€šÂº)', name: 'price', type: 'number', col: 2 }].map(field => (
+            {[{ label: 'Yazar', name: 'author', col: 2 }, { label: 'YayÃ„Â±nevi', name: 'publisher', col: 2 }, { label: 'Sayfa', name: 'pageCount', type: 'number', col: 1 }, { label: 'YÃ„Â±l', name: 'year', type: 'number', col: 1 }, { label: 'Fiyat (ââ€šÂº)', name: 'price', type: 'number', col: 2 }].map(field => (
               <div key={field.name} className={`flex flex-col ${field.col === 2 ? 'col-span-2' : 'col-span-1'} bg-zinc-50 p-3 rounded-xl border border-zinc-100`}>
                 <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">{field.label}</label>
                 {isEditing ? <input type={field.type || 'text'} name={field.name} value={formData[field.name] || ''} onChange={handleChange} className="w-full text-sm border-b border-zinc-300 focus:outline-none focus:border-zinc-800 bg-transparent py-0.5" /> : <div className="text-zinc-800 text-sm font-medium">{book[field.name] || '-'}</div>}

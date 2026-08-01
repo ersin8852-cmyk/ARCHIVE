@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Archive KÃ¼tÃ¼phanesi</title>
+    <title>Archive Kütüphanesi</title>
 
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#ffffff" media="(max-width: 639px)">
@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="/styles.css">
 
     <style>
-        /* Animasyonlu AÃ§Ä±lÄ±ÅŸ EkranÄ± TasarÄ±mÄ± */
+        /* Animasyonlu AçılıÅŸ Ekranı Tasarımı */
         #custom-splash {
             position: fixed;
             inset: 0;
@@ -59,7 +59,7 @@
             min-height: 1.5rem;
         }
 
-        /* YanÄ±p sÃ¶nen siyah daktilo imleci */
+        /* Yanıp sönen siyah daktilo imleci */
         .cursor::after {
             content: '|';
             color: #18181b; 
@@ -83,7 +83,7 @@
 </head>
 <body class="bg-white sm:bg-zinc-100 flex justify-center text-zinc-900 overflow-x-hidden">
     
-    <!-- Ã–zel AÃ§Ä±lÄ±ÅŸ EkranÄ± -->
+    <!-- Ã–zel AçılıÅŸ Ekranı -->
     <div id="custom-splash">
         <div class="splash-content">
             <div id="splash-title"></div>
@@ -93,14 +93,14 @@
 
     <div id="root" class="w-full h-full sm:max-w-md bg-white sm:shadow-2xl relative overflow-hidden flex flex-col h-[100dvh]"></div>
 
-    <!-- Animasyon MantÄ±ÄŸÄ± -->
+    <!-- Animasyon MantıÄŸı -->
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const splash = document.getElementById('custom-splash');
         const titleEl = document.getElementById('splash-title');
         const subtitleEl = document.getElementById('splash-subtitle');
         const titleText = "Archive";
-        const subtitleText = "KÃ¼tÃ¼phanen artÄ±k cebinde...";
+        const subtitleText = "Kütüphanen artık cebinde...";
 
         let skipped = false;
         const skipSplash = () => {
@@ -158,7 +158,7 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/service-worker.js')
-            .then(reg => console.log('Service Worker kayÄ±tlÄ±:', reg.scope))
+            .then(reg => console.log('Service Worker kayıtlı:', reg.scope))
             .catch(err => console.log('Service Worker hata:', err));
         });
       }

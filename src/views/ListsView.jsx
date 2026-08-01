@@ -83,7 +83,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
                 <input autoFocus type="text" placeholder="Kitap veya yazar ara..." className="w-full pl-9 pr-3 py-2 bg-zinc-100 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-zinc-900" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
               </div>
               <button onClick={() => { setIsSearching(false); setSearchTerm(''); }} className="text-zinc-500 hover:text-zinc-900 font-medium text-sm transition-colors shrink-0">
-                Ä°ptal
+                İptal
               </button>
             </div>
           ) : (
@@ -126,7 +126,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
           searchTerm.trim() === '' ? (
             <div className="h-full flex flex-col items-center justify-center text-zinc-400 space-y-3 pb-20">
               <Search size={48} className="opacity-20" />
-              <p className="text-center text-sm font-medium">Aramak istediÄŸiniz kitabÄ±n adÄ±nÄ± yazÄ±n.</p>
+              <p className="text-center text-sm font-medium">Aramak istediÄŸiniz kitabın adını yazın.</p>
             </div>
           ) : filteredBooks.length > 0 ? (
             <div className="space-y-[3.6px]">
@@ -135,7 +135,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-zinc-400 space-y-3 pb-20">
               <FileText size={48} className="opacity-20" />
-              <p className="text-center text-sm font-medium">Bu isimde bir kitap bulunamadÄ±.</p>
+              <p className="text-center text-sm font-medium">Bu isimde bir kitap bulunamadı.</p>
             </div>
           )
         ) : (

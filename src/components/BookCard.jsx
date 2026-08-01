@@ -55,16 +55,16 @@ const BookCard = React.memo(({ book, onOpen, showIndicator = false, folderPath =
                  e.stopPropagation();
                  if (onNavigate) onNavigate(book); 
                }}
-               title="KlasÃ¶rdeki yerine git"
+               title="Klasördeki yerine git"
              >
                <Folder size={10} /> {folderPath} <MoveRight size={10} className="ml-0.5 opacity-60" />
              </p>
           ) : (
-             <p className="text-[11px] text-zinc-500 truncate">{book.publisher || 'YayÄ±nevi Yok'}</p>
+             <p className="text-[11px] text-zinc-500 truncate">{book.publisher || 'Yayınevi Yok'}</p>
           )}
         </div>
         {showIndicator && book.inLibrary && (
-          <span className="ml-auto w-2 h-2 rounded-full bg-amber-500 shrink-0" title="KÃ¼tÃ¼phanemde"></span>
+          <span className="ml-auto w-2 h-2 rounded-full bg-amber-500 shrink-0" title="Kütüphanemde"></span>
         )}
       </div>
     </div>
