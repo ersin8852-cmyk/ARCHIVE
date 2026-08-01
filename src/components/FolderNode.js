@@ -39,7 +39,7 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
               <div className={`w-full h-full grid gap-[1px] ${childBooks.length >= 3 ? 'grid-cols-2 grid-rows-2' : childBooks.length === 2 ? 'grid-cols-2 grid-rows-1' : 'grid-cols-1 grid-rows-1'}`}>
                 {childBooks.slice(0, 4).map((b) => (
                   <div key={b.id} className="relative w-full h-full overflow-hidden bg-white flex items-center justify-center">
-                    <img src={b.cover || 'default-cover.png'} alt="" className="w-full h-full object-contain" onError={(e) => { e.target.parentNode.style.display = 'none'; }} />
+                    <img src={b.cover || 'default-cover.png'} alt="" className="w-full h-full object-fill" onError={(e) => { e.target.parentNode.style.display = 'none'; }} />
                   </div>
                 ))}
               </div>
