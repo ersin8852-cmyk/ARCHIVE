@@ -1,12 +1,3 @@
-import React, { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback, useLayoutEffect } from 'react';
-import * as LucideIcons from 'lucide-react';
-import ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
-import { auth, db } from '../services/firebase.jsx';
-import { api } from '../services/api.jsx';
-import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
-import { useData } from './context.jsx';
-import { List, BookOpen } from 'lucide-react';
 const DragApiContext = createContext(null);
 const DraggedItemContext = createContext(null);
 const OverTargetContext = createContext(null);
@@ -499,5 +490,3 @@ const DragDropProvider = ({ children, onDrop }) => {
     </DragApiContext.Provider>
   );
 };
-
-export { useDragApi, useDraggedItem, useOverTarget, useDraggableItem, DragDropProvider };

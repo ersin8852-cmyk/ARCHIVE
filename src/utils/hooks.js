@@ -1,20 +1,18 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+const useHistoryModal = (modalId) => {
+  const [isOpen, React_setIsOpen] = React.useState(false);
 
-export const useHistoryModal = (modalId) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
+  React.useEffect(() => {
     const handlePopState = (e) => {
       const stateModal = e.state?.modal;
-      if (isOpen && stateModal !== modalId) setIsOpen(false);
-      if (!isOpen && stateModal === modalId) setIsOpen(true);
+      if (isOpen && stateModal !== modalId) React_setIsOpen(false);
+      if (!isOpen && stateModal === modalId) React_setIsOpen(true);
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, [isOpen, modalId]);
 
-  const openModal = useCallback(() => {
-    setIsOpen(prev => {
+  const openModal = React.useCallback(() => {
+    React_setIsOpen(prev => {
       if (!prev) {
         const s = window.history.state || {};
         if (s.modal) {
@@ -27,22 +25,26 @@ export const useHistoryModal = (modalId) => {
     });
   }, [modalId]);
 
-  const closeModal = useCallback(() => {
-    setIsOpen(prev => {
+  const closeModal = React.useCallback(() => {
+    React_setIsOpen(prev => {
       if (prev) {
         if (window.history.state?.modal === modalId) {
           window.history.back();
+        } else {
+          // React_setIsOpen is handled by return false
         }
       }
       return false;
     });
   }, [modalId]);
 
-  return [isOpen, openModal, closeModal, setIsOpen];
+  return [isOpen, openModal, closeModal, React_setIsOpen];
 };
 
-export const useFolderUtils = (folders, activeFolderId, setActiveFolderId, setIsSearching, setSearchTerm) => {
-  const breadcrumbs = useMemo(() => {
+window.useHistoryModal = useHistoryModal;
+
+window.useFolderUtils = (folders, activeFolderId, setActiveFolderId, setIsSearching, setSearchTerm) => {
+  const breadcrumbs = React.useMemo(() => {
     const bcs = [];
     const visitedBc = new Set();
     let curr = folders.find(f => f.id === activeFolderId);
@@ -54,7 +56,7 @@ export const useFolderUtils = (folders, activeFolderId, setActiveFolderId, setIs
     return bcs;
   }, [folders, activeFolderId]);
 
-  const getFolderPath = useCallback((folderId) => {
+  const getFolderPath = React.useCallback((folderId) => {
     if (!folderId) return 'Ana Dizin';
     let current = folders.find(f => f.id === folderId);
     let path = [];
@@ -67,7 +69,7 @@ export const useFolderUtils = (folders, activeFolderId, setActiveFolderId, setIs
     return path.join(' / ') || 'Ana Dizin';
   }, [folders]);
 
-  const handleNavigate = useCallback((book) => {
+  const handleNavigate = React.useCallback((book) => {
       setIsSearching(false);
       setSearchTerm('');
       

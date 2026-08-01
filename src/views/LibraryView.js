@@ -1,19 +1,9 @@
-import React, { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback, useLayoutEffect } from 'react';
-import * as LucideIcons from 'lucide-react';
-import ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
-import { auth, db } from '../services/firebase.jsx';
-import { api } from '../services/api.jsx';
-import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
-import { useData, useToast, useAuth } from '../context/context.jsx';
-import { useDragApi, useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
-import { User, Library, Search, ArrowLeft, CornerDownRight, FileText } from 'lucide-react';
 const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
   const { folders, books } = useData();
   const { overTarget } = useOverTarget();
   const { draggedId } = useDraggedItem();
-  const [detailModalOpen, openDetailModal, closeDetailModal] = useHistoryModal('detail-library');
-  const [listEditModalOpen, openListEditModal, closeListEditModal] = useHistoryModal('list-edit-library');
+  const [detailModalOpen, openDetailModal, closeDetailModal] = window.useHistoryModal('detail-library');
+  const [listEditModalOpen, openListEditModal, closeListEditModal] = window.useHistoryModal('list-edit-library');
   const [activeFolderForEdit, setActiveFolderForEdit] = useState(null);
   const [activeBookId, setActiveBookId] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
@@ -42,7 +32,7 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
     ...currentBooks.map(b => ({ ...b, _type: 'book' }))
   ].sort((a, b) => a.order - b.order), [currentFolders, currentBooks]);
 
-  const { breadcrumbs, getFolderPath, handleNavigate } = useFolderUtils(folders, activeFolderId, setActiveFolderId, setIsSearching, setSearchTerm);
+  const { breadcrumbs, getFolderPath, handleNavigate } = window.useFolderUtils(folders, activeFolderId, setActiveFolderId, setIsSearching, setSearchTerm);
 
   const filteredBooks = React.useMemo(() => searchTerm 
     ? libraryBooks.filter(b => b.title.toLowerCase().includes(searchTerm.toLowerCase()) || (b.author && b.author.toLowerCase().includes(searchTerm.toLowerCase())))
@@ -165,5 +155,3 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
     </div>
   );
 };
-
-export default LibraryView;

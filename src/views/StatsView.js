@@ -1,13 +1,3 @@
-import React, { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback, useLayoutEffect } from 'react';
-import * as LucideIcons from 'lucide-react';
-import ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
-import { auth, db } from '../services/firebase.jsx';
-import { api } from '../services/api.jsx';
-import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
-import { useData, useToast, useAuth } from '../context/context.jsx';
-import { useDragApi, useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
-import { User, Library, List, BookOpen } from 'lucide-react';
 const StatRow = ({ label, value, isLast }) => (
   <div className={`flex justify-between items-center py-2.5 ${!isLast ? 'border-b border-zinc-100' : ''}`}>
     <span className="text-xs font-medium text-zinc-500 uppercase tracking-wide">{label}</span>
@@ -138,5 +128,3 @@ const StatsView = ({ onOpenProfile }) => {
     </div>
   );
 };
-
-export default StatsView;

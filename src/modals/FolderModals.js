@@ -1,13 +1,3 @@
-import React, { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback, useLayoutEffect } from 'react';
-import * as LucideIcons from 'lucide-react';
-import ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
-import { auth, db } from '../services/firebase.jsx';
-import { api } from '../services/api.jsx';
-import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
-import { useData, useToast, useAuth } from '../context/context.jsx';
-import { useDragApi, useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
-import { X, AlertCircle, Trash2 } from 'lucide-react';
 const ListCreateModal = ({ isOpen, onClose, onCreate, parentId }) => {
   const [name, setName] = useState('Liste A');
   const [color, setColor] = useState('#71717a');
@@ -181,5 +171,3 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
     document.body
   );
 };
-
-export { ListCreateModal, ListEditModal };

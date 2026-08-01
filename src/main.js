@@ -1,18 +1,3 @@
-import React, { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback, useLayoutEffect } from 'react';
-import * as LucideIcons from 'lucide-react';
-import ReactDOM from 'react-dom';
-import { createRoot } from 'react-dom/client';
-import { auth, db } from './services/firebase.jsx';
-import { api } from './services/api.jsx';
-import { useHistoryModal, useFolderUtils } from './utils/hooks.jsx';
-import { ArchiveProvider, useAuth, useData } from './context/context.jsx';
-import { DragDropProvider } from './context/dndContext.jsx';
-import AuthModal from './modals/AuthModal.jsx';
-import ProfileModal from './modals/ProfileModal.jsx';
-import ListsView from './views/ListsView.jsx';
-import LibraryView from './views/LibraryView.jsx';
-import StatsView from './views/StatsView.jsx';
-import { AlertCircle, List, Library, BarChart3 } from 'lucide-react';
 const AppLayout = () => {
   const { user, loadingAuth } = useAuth();
   const { loadingData } = useData();
@@ -20,7 +5,7 @@ const AppLayout = () => {
   const [listsFolderId, setListsFolderId] = useState(null);
   const [libraryFolderId, setLibraryFolderId] = useState(null);
 
-  const [profileModalOpen, openProfileModal, closeProfileModal] = useHistoryModal('profile');
+  const [profileModalOpen, openProfileModal, closeProfileModal] = window.useHistoryModal('profile');
 
   React.useEffect(() => {
     if (!window.history.state) {
