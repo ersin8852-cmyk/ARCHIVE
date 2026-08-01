@@ -7,6 +7,7 @@ import { api } from '../services/api.jsx';
 import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 import { useData, useToast, useAuth } from '../context/context.jsx';
 import { useDragApi, useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
+import { Plus, X, Search, Camera, BookOpen, WifiOff } from 'lucide-react';
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {

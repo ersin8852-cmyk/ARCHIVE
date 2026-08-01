@@ -6,6 +6,7 @@ import { auth, db } from '../services/firebase.jsx';
 import { api } from '../services/api.jsx';
 import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 import { useData } from './context.jsx';
+import { List, BookOpen } from 'lucide-react';
 const DragApiContext = createContext(null);
 const DraggedItemContext = createContext(null);
 const OverTargetContext = createContext(null);

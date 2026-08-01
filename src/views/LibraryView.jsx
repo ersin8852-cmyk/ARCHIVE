@@ -7,6 +7,7 @@ import { api } from '../services/api.jsx';
 import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 import { useData, useToast, useAuth } from '../context/context.jsx';
 import { useDragApi, useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
+import { User, Library, Search, ArrowLeft, CornerDownRight, FileText } from 'lucide-react';
 const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
   const { folders, books } = useData();
   const { overTarget } = useOverTarget();

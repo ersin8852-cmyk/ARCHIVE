@@ -7,6 +7,7 @@ import { api } from '../services/api.jsx';
 import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 import { useData, useToast, useAuth } from '../context/context.jsx';
 import { useDragApi, useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
+import { BookOpen, Folder, MoveRight } from 'lucide-react';
 const BookCard = React.memo(({ book, onOpen, showIndicator = false, folderPath = null, onNavigate = null, containerFolderId = null, index, isLibraryView = false }) => {
   const handleNavigateOrOpen = (item) => {
     if (onNavigate) {

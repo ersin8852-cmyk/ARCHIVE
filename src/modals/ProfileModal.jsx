@@ -7,6 +7,7 @@ import { api } from '../services/api.jsx';
 import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 import { useData, useToast, useAuth } from '../context/context.jsx';
 import { useDragApi, useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
+import { ArrowLeft, LogOut, User, Camera, Calendar, Check, Lock } from 'lucide-react';
 
 
 const ProfileModal = ({ isOpen, onClose }) => {

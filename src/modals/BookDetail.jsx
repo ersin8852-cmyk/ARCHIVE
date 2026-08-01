@@ -7,6 +7,7 @@ import { api } from '../services/api.jsx';
 import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 import { useData, useToast, useAuth } from '../context/context.jsx';
 import { useDragApi, useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
+import { BookOpen, Camera, X, Library, Check, MoveRight, AlertCircle, Trash2 } from 'lucide-react';
 const BookDetailModal = ({ bookId, isOpen, onClose }) => {
   const { books, updateBook, deleteBook, folders, moveItemToPosition, processImageFile } = useData();
   const { showToast } = useToast();

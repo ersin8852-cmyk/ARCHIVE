@@ -5,6 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { auth, db } from '../services/firebase.jsx';
 import { api } from '../services/api.jsx';
 import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
+import { AlertCircle } from 'lucide-react';
 
 
 
@@ -18,43 +19,43 @@ function pickIcon(name) {
   if (!icon) console.warn(`Lucide ikonu bulunamadı, yedek gösteriliyor: ${name}`);
   return icon || FallbackIcon;
 }
-const Library = pickIcon('Library');
-const List = pickIcon('List');
-const BarChart3 = pickIcon('BarChart3');
-const Plus = pickIcon('Plus');
-const Search = pickIcon('Search');
-const ChevronDown = pickIcon('ChevronDown');
-const ChevronRight = pickIcon('ChevronRight');
-const ArrowUp = pickIcon('ArrowUp');
-const ArrowDown = pickIcon('ArrowDown');
-const BookOpen = pickIcon('BookOpen');
-const Edit2 = pickIcon('Edit2');
-const Check = pickIcon('Check');
-const X = pickIcon('X');
-const FolderPlus = pickIcon('FolderPlus');
-const FileText = pickIcon('FileText');
-const MoveRight = pickIcon('MoveRight');
-const Camera = pickIcon('Camera');
-const GripVertical = pickIcon('GripVertical');
-const Trash2 = pickIcon('Trash2');
-const AlertCircle = pickIcon('AlertCircle');
-const WifiOff = pickIcon('WifiOff');
-const Folder = pickIcon('Folder');
-const Download = pickIcon('Download');
-const Upload = pickIcon('Upload');
-const CornerDownRight = pickIcon('CornerDownRight');
-const Settings = pickIcon('Settings');
-const MoreVertical = pickIcon('MoreVertical');
-const LogOut = pickIcon('LogOut');
-const User = pickIcon('User');
-const Mail = pickIcon('Mail');
-const Lock = pickIcon('Lock');
-const LogIn = pickIcon('LogIn');
-const UserPlus = pickIcon('UserPlus');
-const Calendar = pickIcon('Calendar');
-const CheckSquare = pickIcon('CheckSquare');
-const Square = pickIcon('Square');
-const ArrowLeft = pickIcon('ArrowLeft');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const STORAGE_KEY = 'archive_app_data_v3';
 

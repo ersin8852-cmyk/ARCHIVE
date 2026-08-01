@@ -7,6 +7,7 @@ import { api } from '../services/api.jsx';
 import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 import { useData, useToast, useAuth } from '../context/context.jsx';
 import { useDragApi, useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
+import { List, MoreVertical } from 'lucide-react';
 const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onEdit, isLibraryView = false, index }) => {
   const { overTarget } = useOverTarget();
   const { draggedId } = useDraggedItem();
