@@ -1,10 +1,3 @@
-import React, { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback, useLayoutEffect } from 'react';
-import { Folder } from 'lucide-react';
-import { useData, useToast, useAuth } from '../context/context.jsx';
-import { useDragApi, useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
-import { auth, db } from '../services/firebase.jsx';
-import { api } from '../services/api.jsx';
-import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const BookCard = React.memo(({ book, onOpen, showIndicator = false, folderPath = null, onNavigate = null, containerFolderId = null, index, isLibraryView = false }) => {
   const handleNavigateOrOpen = (item) => {
     if (onNavigate) {
@@ -64,5 +57,3 @@ const BookCard = React.memo(({ book, onOpen, showIndicator = false, folderPath =
     </div>
   );
 });
-
-export default BookCard;

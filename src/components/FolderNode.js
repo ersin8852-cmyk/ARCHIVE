@@ -1,10 +1,3 @@
-import React, { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback, useLayoutEffect } from 'react';
-import { MoreVertical } from 'lucide-react';
-import { useData, useToast, useAuth } from '../context/context.jsx';
-import { useDragApi, useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
-import { auth, db } from '../services/firebase.jsx';
-import { api } from '../services/api.jsx';
-import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onEdit, isLibraryView = false, index }) => {
   const { overTarget } = useOverTarget();
   const { draggedId } = useDraggedItem();
@@ -60,5 +53,3 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
     </div>
   );
 });
-
-export default FolderNode;

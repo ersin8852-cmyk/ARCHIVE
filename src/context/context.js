@@ -1,7 +1,5 @@
-import React, { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback, useLayoutEffect } from 'react';
-import { AlertCircle } from 'lucide-react';
-
-
+const { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback } = React;
+const { createRoot } = ReactDOM;
 
 const FallbackIcon = ({ size = 24, ...props }) => (
   <svg {...props} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -13,43 +11,43 @@ function pickIcon(name) {
   if (!icon) console.warn(`Lucide ikonu bulunamadı, yedek gösteriliyor: ${name}`);
   return icon || FallbackIcon;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+const Library = pickIcon('Library');
+const List = pickIcon('List');
+const BarChart3 = pickIcon('BarChart3');
+const Plus = pickIcon('Plus');
+const Search = pickIcon('Search');
+const ChevronDown = pickIcon('ChevronDown');
+const ChevronRight = pickIcon('ChevronRight');
+const ArrowUp = pickIcon('ArrowUp');
+const ArrowDown = pickIcon('ArrowDown');
+const BookOpen = pickIcon('BookOpen');
+const Edit2 = pickIcon('Edit2');
+const Check = pickIcon('Check');
+const X = pickIcon('X');
+const FolderPlus = pickIcon('FolderPlus');
+const FileText = pickIcon('FileText');
+const MoveRight = pickIcon('MoveRight');
+const Camera = pickIcon('Camera');
+const GripVertical = pickIcon('GripVertical');
+const Trash2 = pickIcon('Trash2');
+const AlertCircle = pickIcon('AlertCircle');
+const WifiOff = pickIcon('WifiOff');
+const Folder = pickIcon('Folder');
+const Download = pickIcon('Download');
+const Upload = pickIcon('Upload');
+const CornerDownRight = pickIcon('CornerDownRight');
+const Settings = pickIcon('Settings');
+const MoreVertical = pickIcon('MoreVertical');
+const LogOut = pickIcon('LogOut');
+const User = pickIcon('User');
+const Mail = pickIcon('Mail');
+const Lock = pickIcon('Lock');
+const LogIn = pickIcon('LogIn');
+const UserPlus = pickIcon('UserPlus');
+const Calendar = pickIcon('Calendar');
+const CheckSquare = pickIcon('CheckSquare');
+const Square = pickIcon('Square');
+const ArrowLeft = pickIcon('ArrowLeft');
 
 const STORAGE_KEY = 'archive_app_data_v3';
 
@@ -160,7 +158,7 @@ const AuthProvider = ({ children }) => {
   const [loadingAuth, setLoadingAuth] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(currentUser => {
+    const unsubscribe = window.firebaseAuth.onAuthStateChanged(currentUser => {
       setUser(currentUser);
       setLoadingAuth(false);
     });
@@ -188,7 +186,7 @@ const DataProvider = ({ children }) => {
   useEffect(() => {
     if (user) {
       setLoadingData(true);
-      const docRef = db.collection('users').doc(user.uid);
+      const docRef = window.firebaseDb.collection('users').doc(user.uid);
       const unsubscribeDb = docRef.onSnapshot(doc => {
         if (doc.exists) {
           setData({ ...initialState, ...doc.data() });
@@ -212,7 +210,7 @@ const DataProvider = ({ children }) => {
     setData(prev => {
       const newData = typeof updater === 'function' ? updater(prev) : updater;
       if (user) {
-        db.collection('users').doc(user.uid).set(newData).catch(err => {
+        window.firebaseDb.collection('users').doc(user.uid).set(newData).catch(err => {
           console.error(err);
           showToast('Veri buluta kaydedilemedi!', 'error');
         });
@@ -468,5 +466,3 @@ const ArchiveProvider = ({ children }) => {
     </ToastProvider>
   );
 };
-
-export { ToastContext, useToast, ToastProvider, AuthContext, useAuth, AuthProvider, DataContext, useData, DataProvider, ArchiveProvider };

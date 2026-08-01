@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
 .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
 ::-webkit-scrollbar { width: 4px; }
@@ -28,3 +24,4 @@ html { scroll-behavior: smooth; }
 [data-book-target] {
   touch-action: none;
 }
+

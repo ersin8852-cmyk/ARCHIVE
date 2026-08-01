@@ -1,10 +1,3 @@
-import React, { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback, useLayoutEffect } from 'react';
-import { Library, User } from 'lucide-react';
-import { useData, useToast, useAuth } from '../context/context.jsx';
-import { useDragApi, useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
-import { auth, db } from '../services/firebase.jsx';
-import { api } from '../services/api.jsx';
-import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 
 
 const AuthModal = ({ isVisible }) => {
@@ -51,15 +44,15 @@ const AuthModal = ({ isVisible }) => {
 
     try {
       if (isLogin) {
-        await auth.signInWithEmailAndPassword(email, password);
+        await window.firebaseAuth.signInWithEmailAndPassword(email, password);
       } else {
-        const cred = await auth.createUserWithEmailAndPassword(email, password);
+        const cred = await window.firebaseAuth.createUserWithEmailAndPassword(email, password);
         
         // Update display name in Firebase Auth
         await cred.user.updateProfile({ displayName: fullName });
         
         // Save extra profile data in Firestore
-        await db.collection('users').doc(cred.user.uid).set({
+        await window.firebaseDb.collection('users').doc(cred.user.uid).set({
           books: [],
           folders: [],
           profile: {
@@ -100,8 +93,8 @@ const AuthModal = ({ isVisible }) => {
     setLoading(true);
     setError('');
     try {
-      const provider = new auth.auth.GoogleAuthProvider();
-      await auth.signInWithPopup(provider);
+      const provider = new window.firebase.auth.GoogleAuthProvider();
+      await window.firebaseAuth.signInWithPopup(provider);
     } catch (err) {
       console.error(err);
       setError('Google ile giriş başarısız oldu.');
@@ -223,6 +216,4 @@ const AuthModal = ({ isVisible }) => {
     </div>
   );
 };
-
-
-export default AuthModal;
+window.AuthModal = AuthModal;

@@ -1,10 +1,3 @@
-import React, { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback, useLayoutEffect } from 'react';
-import { Plus, X, Search, Camera, WifiOff } from 'lucide-react';
-import { useData, useToast, useAuth } from '../context/context.jsx';
-import { useDragApi, useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
-import { auth, db } from '../services/firebase.jsx';
-import { api } from '../services/api.jsx';
-import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
@@ -205,7 +198,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
         
         await Promise.all(uniqueIsbns.map(async (isbn) => {
           try {
-            const items = await api.fetchByIsbn(isbn);
+            const items = await window.api.fetchByIsbn(isbn);
             if (items && items.length > 0) {
               allItems.push(...items);
             } else {
@@ -225,7 +218,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
         }
       } else {
         // Single text search
-        const items = await api.fetchByTitle(q);
+        const items = await window.api.fetchByTitle(q);
         setResults(items);
         if (items.length === 0) showToast('Sonuç bulunamadı.', 'error');
       }
@@ -314,5 +307,3 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
     document.body
   );
 };
-
-export default SearchModal;

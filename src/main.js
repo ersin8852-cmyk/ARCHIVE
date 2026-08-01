@@ -1,13 +1,3 @@
-import React, { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback, useLayoutEffect } from 'react';
-import { AlertCircle } from 'lucide-react';
-import { createRoot } from 'react-dom/client';
-import { ArchiveProvider, useAuth, useData } from './context/context.jsx';
-import { DragDropProvider } from './context/dndContext.jsx';
-import AuthModal from './modals/AuthModal.jsx';
-import ProfileModal from './modals/ProfileModal.jsx';
-import ListsView from './views/ListsView.jsx';
-import LibraryView from './views/LibraryView.jsx';
-import StatsView from './views/StatsView.jsx';
 const AppLayout = () => {
   const { user, loadingAuth } = useAuth();
   const { loadingData } = useData();
@@ -15,7 +5,7 @@ const AppLayout = () => {
   const [listsFolderId, setListsFolderId] = useState(null);
   const [libraryFolderId, setLibraryFolderId] = useState(null);
 
-  const [profileModalOpen, openProfileModal, closeProfileModal] = useHistoryModal('profile');
+  const [profileModalOpen, openProfileModal, closeProfileModal] = window.useHistoryModal('profile');
 
   React.useEffect(() => {
     if (!window.history.state) {

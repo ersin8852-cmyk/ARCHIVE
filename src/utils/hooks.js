@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback, useLayoutEffect } from 'react';
 const useHistoryModal = (modalId) => {
   const [isOpen, React_setIsOpen] = React.useState(false);
 
@@ -42,9 +41,9 @@ const useHistoryModal = (modalId) => {
   return [isOpen, openModal, closeModal, React_setIsOpen];
 };
 
-export { useHistoryModal };
+window.useHistoryModal = useHistoryModal;
 
-export const useFolderUtils = (folders, activeFolderId, setActiveFolderId, setIsSearching, setSearchTerm) => {
+window.useFolderUtils = (folders, activeFolderId, setActiveFolderId, setIsSearching, setSearchTerm) => {
   const breadcrumbs = React.useMemo(() => {
     const bcs = [];
     const visitedBc = new Set();
