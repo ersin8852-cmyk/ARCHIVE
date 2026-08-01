@@ -79,7 +79,7 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
               </div>
             ) : (
               <div className="flex items-center justify-between w-full animate-in fade-in slide-in-from-left-4 duration-300">
-                <div className="flex flex-col flex-1 overflow-hidden">
+                <div className="flex flex-col flex-1 min-w-0 py-1">
                   {!activeFolderId ? (
                      <h1 className="text-xl font-extrabold text-zinc-900 tracking-tight">Kütüphanem</h1>
                   ) : (
@@ -103,9 +103,11 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
                   )}
                 </div>
                 
-                <button onClick={() => setIsSearching(true)} className="p-2 -mr-2 ml-4 text-zinc-600 hover:bg-zinc-100 hover:text-orange-600 rounded-full transition-colors shrink-0">
-                  <Search size={22} />
-                </button>
+                {!activeFolderId && (
+                  <button onClick={() => setIsSearching(true)} className="p-2 -mr-2 ml-4 text-zinc-600 hover:bg-zinc-100 hover:text-orange-600 rounded-full transition-colors shrink-0">
+                    <Search size={22} />
+                  </button>
+                )}
               </div>
             )}
           </div>
