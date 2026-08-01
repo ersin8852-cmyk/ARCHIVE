@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
 import { createRoot } from 'react-dom/client';
 import * as LucideIcons from 'lucide-react';
+import { useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
 import { useAuth, useData, useToast } from '../context/context.jsx';
 import { api } from '../services/api.js';
 import BookCard from '../components/BookCard.jsx';
@@ -171,6 +172,8 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
 
 
 export default LibraryView;
+
+
 
 
 
