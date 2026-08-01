@@ -16,7 +16,7 @@ const AppLayout = () => {
   const [listsFolderId, setListsFolderId] = useState(null);
   const [libraryFolderId, setLibraryFolderId] = useState(null);
 
-  const [profileModalOpen, openProfileModal, closeProfileModal] = window.useHistoryModal('profile');
+  const [profileModalOpen, openProfileModal, closeProfileModal] = useHistoryModal('profile');
 
   React.useEffect(() => {
     if (!window.history.state) {
@@ -155,6 +155,7 @@ function App() {
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
 root.render(<App />);
+
 
 
 

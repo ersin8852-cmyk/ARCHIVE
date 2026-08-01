@@ -6,26 +6,26 @@ import { api } from '../services/api.js';
 import BookCard from '../components/BookCard.jsx';
 import FolderNode from '../components/FolderNode.jsx';
 import ItemList from '../components/ItemList.jsx';
-import SearchModal from '../modals/SearchModal.jsx';
+import SearchAddModal from '../modals/SearchModal.jsx';
 import ManualAddModal from '../modals/ManualAddModal.jsx';
 import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
-import BookDetail from '../modals/BookDetail.jsx';
+import BookDetailModal from '../modals/BookDetail.jsx';
 import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
   const { folders, books, addFolder } = useData();
   const { overTarget } = useOverTarget();
   const { draggedId } = useDraggedItem();
-  const [searchModalOpen, openSearchModal, closeSearchModal, setSearchModalOpen] = window.useHistoryModal('search');
+  const [searchModalOpen, openSearchModal, closeSearchModal, setSearchModalOpen] = useHistoryModal('search');
   const [activeFolderForAdd, setActiveFolderForAdd] = useState(null);
-  const [detailModalOpen, openDetailModal, closeDetailModal] = window.useHistoryModal('detail-lists');
+  const [detailModalOpen, openDetailModal, closeDetailModal] = useHistoryModal('detail-lists');
   const [activeBookId, setActiveBookId] = useState(null);
-  const [listEditModalOpen, openListEditModal, closeListEditModal] = window.useHistoryModal('list-edit');
+  const [listEditModalOpen, openListEditModal, closeListEditModal] = useHistoryModal('list-edit');
   const [activeFolderForEdit, setActiveFolderForEdit] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [fabMenuOpen, openFabMenu, closeFabMenu, setFabMenuOpen] = window.useHistoryModal('fab');
-  const [listCreateModalOpen, openListCreateModal, closeListCreateModal] = window.useHistoryModal('list-create');
-  const [manualAddModalOpen, openManualAddModal, closeManualAddModal] = window.useHistoryModal('manual-add');
+  const [fabMenuOpen, openFabMenu, closeFabMenu, setFabMenuOpen] = useHistoryModal('fab');
+  const [listCreateModalOpen, openListCreateModal, closeListCreateModal] = useHistoryModal('list-create');
+  const [manualAddModalOpen, openManualAddModal, closeManualAddModal] = useHistoryModal('manual-add');
 
   const currentFolders = React.useMemo(() => folders.filter(f => f.parentId === activeFolderId), [folders, activeFolderId]);
   const currentBooks = React.useMemo(() => books.filter(b => b.folderId === activeFolderId), [books, activeFolderId]);
@@ -35,7 +35,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
     ...currentBooks.map(b => ({ ...b, _type: 'book' }))
   ].sort((a, b) => a.order - b.order), [currentFolders, currentBooks]);
 
-  const { breadcrumbs, getFolderPath, handleNavigate } = window.useFolderUtils(folders, activeFolderId, setActiveFolderId, setIsSearching, setSearchTerm);
+  const { breadcrumbs, getFolderPath, handleNavigate } = useFolderUtils(folders, activeFolderId, setActiveFolderId, setIsSearching, setSearchTerm);
 
   const filteredBooks = React.useMemo(() => searchTerm 
     ? books.filter(b => b.title.toLowerCase().includes(searchTerm.toLowerCase()) || (b.author && b.author.toLowerCase().includes(searchTerm.toLowerCase())))
@@ -203,5 +203,6 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
 
 
 export default ListsView;
+
 
 

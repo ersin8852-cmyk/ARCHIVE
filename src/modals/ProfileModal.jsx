@@ -1,15 +1,16 @@
 ﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
 import { createRoot } from 'react-dom/client';
+import { auth } from '../services/firebase.js';
 import * as LucideIcons from 'lucide-react';
 import { useAuth, useData, useToast } from '../context/context.jsx';
 import { api } from '../services/api.js';
 import BookCard from '../components/BookCard.jsx';
 import FolderNode from '../components/FolderNode.jsx';
 import ItemList from '../components/ItemList.jsx';
-import SearchModal from '../modals/SearchModal.jsx';
+import SearchAddModal from '../modals/SearchModal.jsx';
 import ManualAddModal from '../modals/ManualAddModal.jsx';
 import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
-import BookDetail from '../modals/BookDetail.jsx';
+import BookDetailModal from '../modals/BookDetail.jsx';
 import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 
 
@@ -88,7 +89,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
     try {
       setLoggingOut(true);
       await new Promise(r => setTimeout(r, 800));
-      await window.firebaseAuth.signOut();
+      await auth.signOut();
       onClose();
     } catch (err) {
       showToast('Ã‡Ä±kÄ±ÅŸ yapÄ±lamadÄ±.', 'error');
@@ -260,10 +261,12 @@ const ProfileModal = ({ isOpen, onClose }) => {
   );
 };
 
-window.ProfileModal = ProfileModal;
+
 
 
 
 export default ProfileModal;
+
+
 
 

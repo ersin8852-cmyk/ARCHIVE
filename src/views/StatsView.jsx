@@ -6,10 +6,10 @@ import { api } from '../services/api.js';
 import BookCard from '../components/BookCard.jsx';
 import FolderNode from '../components/FolderNode.jsx';
 import ItemList from '../components/ItemList.jsx';
-import SearchModal from '../modals/SearchModal.jsx';
+import SearchAddModal from '../modals/SearchModal.jsx';
 import ManualAddModal from '../modals/ManualAddModal.jsx';
 import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
-import BookDetail from '../modals/BookDetail.jsx';
+import BookDetailModal from '../modals/BookDetail.jsx';
 import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const StatRow = ({ label, value, isLast }) => (
   <div className={`flex justify-between items-center py-2.5 ${!isLast ? 'border-b border-zinc-100' : ''}`}>
@@ -144,5 +144,6 @@ const StatsView = ({ onOpenProfile }) => {
 
 
 export default StatsView;
+
 
 

@@ -6,9 +6,9 @@ import { api } from '../services/api.js';
 import BookCard from '../components/BookCard.jsx';
 import FolderNode from '../components/FolderNode.jsx';
 import ItemList from '../components/ItemList.jsx';
-import SearchModal from '../modals/SearchModal.jsx';
+import SearchAddModal from '../modals/SearchModal.jsx';
 import ManualAddModal from '../modals/ManualAddModal.jsx';
-import BookDetail from '../modals/BookDetail.jsx';
+import BookDetailModal from '../modals/BookDetail.jsx';
 import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const ListCreateModal = ({ isOpen, onClose, onCreate, parentId }) => {
   const [name, setName] = useState('Liste A');
@@ -186,6 +186,7 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
 
 
 export { ListCreateModal, ListEditModal };
+
 
 
 

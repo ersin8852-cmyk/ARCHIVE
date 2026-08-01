@@ -5,10 +5,10 @@ import { useAuth, useData, useToast } from '../context/context.jsx';
 import { api } from '../services/api.js';
 import BookCard from '../components/BookCard.jsx';
 import FolderNode from '../components/FolderNode.jsx';
-import SearchModal from '../modals/SearchModal.jsx';
+import SearchAddModal from '../modals/SearchModal.jsx';
 import ManualAddModal from '../modals/ManualAddModal.jsx';
 import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
-import BookDetail from '../modals/BookDetail.jsx';
+import BookDetailModal from '../modals/BookDetail.jsx';
 import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const ItemList = React.memo(({ ids, items, folders, books, folderKey, onOpenBook, onOpenFolder, onEditFolder, showIndicator = false, isLibraryView = false }) => {
   const { draggedId, cardSize } = useDraggedItem();
@@ -120,6 +120,7 @@ const ItemList = React.memo(({ ids, items, folders, books, folderKey, onOpenBook
 
 
 export default ItemList;
+
 
 
 

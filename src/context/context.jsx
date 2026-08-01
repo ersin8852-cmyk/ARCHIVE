@@ -1,5 +1,7 @@
 ﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
 import { createRoot } from 'react-dom/client';
+import { createPortal } from 'react-dom';
+import { auth, db } from '../services/firebase.js';
 import * as LucideIcons from 'lucide-react';
 
 
@@ -11,7 +13,7 @@ const FallbackIcon = ({ size = 24, ...props }) => (
   </svg>
 );
 function pickIcon(name) {
-  const icon = window.LucideReact && window.LucideReact[name];
+  const icon = LucideIcons && LucideIcons[name];
   if (!icon) console.warn(`Lucide ikonu bulunamadÃ„Â±, yedek gÃƒÂ¶steriliyor: ${name}`);
   return icon || FallbackIcon;
 }
@@ -141,7 +143,7 @@ const ToastProvider = ({ children }) => {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      {toast && window.ReactDOM.createPortal(
+      {toast && createPortal(
         <div className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 px-5 py-3 rounded-2xl shadow-xl z-[9999] text-sm font-medium flex items-center justify-center text-center gap-2 max-w-[90vw] w-max break-words ${toast.type === 'error' ? 'bg-red-600 text-white' : toast.type === 'warning' ? 'bg-amber-400 text-amber-950' : 'bg-orange-600 text-white'}`}>
           {toast.type === 'error' && <AlertCircle size={16} className="shrink-0" />}
           {toast.type === 'warning' && <AlertCircle size={16} className="shrink-0" />}
@@ -162,7 +164,7 @@ const AuthProvider = ({ children }) => {
   const [loadingAuth, setLoadingAuth] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = window.firebaseAuth.onAuthStateChanged(currentUser => {
+    const unsubscribe = auth.onAuthStateChanged(currentUser => {
       setUser(currentUser);
       setLoadingAuth(false);
     });
@@ -190,7 +192,7 @@ const DataProvider = ({ children }) => {
   useEffect(() => {
     if (user) {
       setLoadingData(true);
-      const docRef = window.firebaseDb.collection('users').doc(user.uid);
+      const docRef = db.collection('users').doc(user.uid);
       const unsubscribeDb = docRef.onSnapshot(doc => {
         if (doc.exists) {
           setData({ ...initialState, ...doc.data() });
@@ -214,7 +216,7 @@ const DataProvider = ({ children }) => {
     setData(prev => {
       const newData = typeof updater === 'function' ? updater(prev) : updater;
       if (user) {
-        window.firebaseDb.collection('users').doc(user.uid).set(newData).catch(err => {
+        db.collection('users').doc(user.uid).set(newData).catch(err => {
           console.error(err);
           showToast('Veri buluta kaydedilemedi!', 'error');
         });
@@ -473,6 +475,8 @@ const ArchiveProvider = ({ children }) => {
 
 
 export { ToastProvider, useToast, AuthProvider, useAuth, DataProvider, useData, ArchiveProvider };
+
+
 
 
 

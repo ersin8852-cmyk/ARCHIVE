@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Archive Kütüphanesi</title>
+    <title>Archive KÃ¼tÃ¼phanesi</title>
 
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#ffffff" media="(max-width: 639px)">
@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="/styles.css">
 
     <style>
-        /* Animasyonlu Açılış Ekranı Tasarımı */
+        /* Animasyonlu AÃ§Ä±lÄ±ÅŸ EkranÄ± TasarÄ±mÄ± */
         #custom-splash {
             position: fixed;
             inset: 0;
@@ -40,7 +40,7 @@
             min-height: 3.5rem;
         }
 
-        /* Fade-in (Yumuşak Belirme) Efekti */
+        /* Fade-in (YumuÅŸak Belirme) Efekti */
         .fade-letter {
             opacity: 0;
             display: inline-block;
@@ -59,7 +59,7 @@
             min-height: 1.5rem;
         }
 
-        /* Yanıp sönen siyah daktilo imleci */
+        /* YanÄ±p sÃ¶nen siyah daktilo imleci */
         .cursor::after {
             content: '|';
             color: #18181b; 
@@ -78,10 +78,12 @@
             visibility: hidden;
         }
     </style>
+<script src="https://unpkg.com/@zxing/library@latest"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 <body class="bg-white sm:bg-zinc-100 flex justify-center text-zinc-900 overflow-x-hidden">
     
-    <!-- Özel Açılış Ekranı -->
+    <!-- Ã–zel AÃ§Ä±lÄ±ÅŸ EkranÄ± -->
     <div id="custom-splash">
         <div class="splash-content">
             <div id="splash-title"></div>
@@ -91,14 +93,14 @@
 
     <div id="root" class="w-full h-full sm:max-w-md bg-white sm:shadow-2xl relative overflow-hidden flex flex-col h-[100dvh]"></div>
 
-    <!-- Animasyon Mantığı -->
+    <!-- Animasyon MantÄ±ÄŸÄ± -->
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const splash = document.getElementById('custom-splash');
         const titleEl = document.getElementById('splash-title');
         const subtitleEl = document.getElementById('splash-subtitle');
         const titleText = "Archive";
-        const subtitleText = "Kütüphanen artık cebinde...";
+        const subtitleText = "KÃ¼tÃ¼phanen artÄ±k cebinde...";
 
         let skipped = false;
         const skipSplash = () => {
@@ -156,10 +158,11 @@
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/service-worker.js')
-            .then(reg => console.log('Service Worker kayıtlı:', reg.scope))
+            .then(reg => console.log('Service Worker kayÄ±tlÄ±:', reg.scope))
             .catch(err => console.log('Service Worker hata:', err));
         });
       }
     </script>
 </body>
 </html>
+

@@ -6,9 +6,9 @@ import { api } from '../services/api.js';
 import BookCard from '../components/BookCard.jsx';
 import FolderNode from '../components/FolderNode.jsx';
 import ItemList from '../components/ItemList.jsx';
-import SearchModal from '../modals/SearchModal.jsx';
+import SearchAddModal from '../modals/SearchModal.jsx';
 import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
-import BookDetail from '../modals/BookDetail.jsx';
+import BookDetailModal from '../modals/BookDetail.jsx';
 import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const ManualAddModal = ({ isOpen, onClose, folderId }) => {
   const { addBook, processImageFile } = useData();
@@ -96,6 +96,7 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
 
 
 export default ManualAddModal;
+
 
 
 

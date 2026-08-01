@@ -8,7 +8,7 @@ import FolderNode from '../components/FolderNode.jsx';
 import ItemList from '../components/ItemList.jsx';
 import ManualAddModal from '../modals/ManualAddModal.jsx';
 import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
-import BookDetail from '../modals/BookDetail.jsx';
+import BookDetailModal from '../modals/BookDetail.jsx';
 import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
@@ -210,7 +210,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
         
         await Promise.all(uniqueIsbns.map(async (isbn) => {
           try {
-            const items = await window.api.fetchByIsbn(isbn);
+            const items = await api.fetchByIsbn(isbn);
             if (items && items.length > 0) {
               allItems.push(...items);
             } else {
@@ -230,7 +230,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
         }
       } else {
         // Single text search
-        const items = await window.api.fetchByTitle(q);
+        const items = await api.fetchByTitle(q);
         setResults(items);
         if (items.length === 0) showToast('SonuÃ§ bulunamadÄ±.', 'error');
       }
@@ -321,7 +321,10 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
 };
 
 
-export default SearchModal;
+export default SearchAddModal;
+
+
+
 
 
 
