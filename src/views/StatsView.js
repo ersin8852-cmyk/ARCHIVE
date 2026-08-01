@@ -40,8 +40,8 @@ const StatsView = ({ onOpenProfile }) => {
     
     const listS = calc(books) || { total: 0, pages: 0, avg: 0, long: '-', short: '-', fav: '-', price: 0 };
     const libS = calc(libBooks) || { total: 0, pages: 0, avg: 0, long: '-', short: '-', fav: '-', price: 0 };
-    const read = books.filter(b => b.isRead);
-    const unread = books.filter(b => !b.isRead);
+    const read = libBooks.filter(b => b.isRead);
+    const unread = libBooks.filter(b => !b.isRead);
     const rPages = read.reduce((s, b) => s + (parseInt(b.pageCount)||0), 0);
     const uPages = unread.reduce((s, b) => s + (parseInt(b.pageCount)||0), 0);
     return { list: listS, lib: libS, read: { rCount: read.length, rPages, uCount: unread.length, uPages } };
@@ -80,9 +80,8 @@ const StatsView = ({ onOpenProfile }) => {
           <div className="px-4 py-1">
             <StatRow label="Toplam Kitap" value={stats.list.total} />
             <StatRow label="Toplam Sayfa" value={stats.list.pages.toLocaleString()} />
-            <StatRow label="Ort. Sayfa" value={stats.list.avg} />
-            <StatRow label="Favori Yazar" value={stats.list.fav} />
-            <StatRow label="En Uzun Kitap" value={stats.list.long} isLast={true} />
+            <StatRow label="Toplam Değer" value={'₺' + stats.list.price.toLocaleString()} />
+            <StatRow label="Favori Yazar" value={stats.list.fav} isLast={true} />
           </div>
         </section>
 
@@ -95,7 +94,8 @@ const StatsView = ({ onOpenProfile }) => {
             <StatRow label="Toplam Kitap" value={stats.lib.total} />
             <StatRow label="Toplam Sayfa" value={stats.lib.pages.toLocaleString()} />
             <StatRow label="Toplam Değer" value={'₺' + stats.lib.price.toLocaleString()} />
-            <StatRow label="Favori Yazar" value={stats.lib.fav} isLast={true} />
+            <StatRow label="Favori Yazar" value={stats.lib.fav} />
+            <StatRow label="En Uzun Kitap" value={stats.lib.long} isLast={true} />
           </div>
         </section>
 
