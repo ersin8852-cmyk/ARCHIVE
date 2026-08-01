@@ -23,4 +23,4 @@ db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
   }
 });
 
-export { app as firebaseApp, auth as firebaseAuth, db as firebaseDb };
+export { app, auth, db };
