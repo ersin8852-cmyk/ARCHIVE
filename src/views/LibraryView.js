@@ -58,9 +58,11 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
               <User size={22} />
             </button>
             
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <img src="./logo.png" alt="Logo" className="w-[84px] h-[84px] object-contain drop-shadow-sm pointer-events-auto" />
-            </div>
+            <img 
+              src="./logo.png" 
+              alt="Logo" 
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[260px] h-[260px] max-w-none object-contain drop-shadow-sm pointer-events-auto" 
+            />
             
             <div className="w-[38px]"></div>
           </div>
