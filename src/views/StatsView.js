@@ -44,7 +44,8 @@ const StatsView = ({ onOpenProfile }) => {
     const unread = libBooks.filter(b => !b.isRead);
     const rPages = read.reduce((s, b) => s + (parseInt(b.pageCount)||0), 0);
     const uPages = unread.reduce((s, b) => s + (parseInt(b.pageCount)||0), 0);
-    return { list: listS, lib: libS, read: { rCount: read.length, rPages, uCount: unread.length, uPages } };
+    const pct = libBooks.length > 0 ? Math.round((read.length / libBooks.length) * 100) : 0;
+    return { list: listS, lib: libS, read: { rCount: read.length, rPages, uCount: unread.length, uPages, pct } };
   }, [books]);
 
   return (
@@ -117,9 +118,13 @@ const StatsView = ({ onOpenProfile }) => {
               <span className="text-xs font-medium text-stone-400 uppercase tracking-wide">Okunmayan Kitap</span>
               <span className="text-sm font-bold text-stone-100">{stats.read.uCount}</span>
             </div>
-            <div className={`flex justify-between items-center py-2.5`}>
+            <div className={`flex justify-between items-center py-2.5 border-b border-[#3d3430]`}>
               <span className="text-xs font-medium text-stone-400 uppercase tracking-wide">Okunmayan Sayfa</span>
               <span className="text-sm font-bold text-stone-100">{stats.read.uPages.toLocaleString()}</span>
+            </div>
+            <div className={`flex justify-between items-center py-2.5`}>
+              <span className="text-xs font-medium text-stone-400 uppercase tracking-wide">Okunma Oranı</span>
+              <span className="text-sm font-bold text-stone-100">%{stats.read.pct}</span>
             </div>
           </div>
         </section>
