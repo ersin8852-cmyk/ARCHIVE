@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
 import { createRoot } from 'react-dom/client';
-import * as LucideIcons from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { AlertCircle, Trash2 , X } from 'lucide-react';
 import { useAuth, useData, useToast } from '../context/context.jsx';
 import { api } from '../services/api.js';
 import BookCard from '../components/BookCard.jsx';
@@ -37,7 +38,7 @@ const ListCreateModal = ({ isOpen, onClose, onCreate, parentId }) => {
 
   const colors = ['#71717a', '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
 
-  return ReactDOM.createPortal(
+  return createPortal(
     <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-[15vh]">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       <div className="bg-white w-full max-w-sm rounded-2xl shadow-xl z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
@@ -118,7 +119,7 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
 
   const colors = ['#71717a', '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
 
-  return ReactDOM.createPortal(
+  return createPortal(
     <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-[15vh]">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       <div className="bg-white w-full max-w-sm rounded-2xl shadow-xl z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
@@ -186,6 +187,8 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
 
 
 export { ListCreateModal, ListEditModal };
+
+
 
 
 

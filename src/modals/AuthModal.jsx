@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import { auth, db } from '../services/firebase.js';
-import * as LucideIcons from 'lucide-react';
+import { Library, User, Calendar, Mail, Lock, CheckSquare, Square, LogIn, UserPlus, Save } from 'lucide-react';
 import { useAuth, useData, useToast } from '../context/context.jsx';
 import { api } from '../services/api.js';
 import BookCard from '../components/BookCard.jsx';

@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
 import { createRoot } from 'react-dom/client';
-import * as LucideIcons from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { BookOpen, Camera, Check , X } from 'lucide-react';
 import { useAuth, useData, useToast } from '../context/context.jsx';
 import { api } from '../services/api.js';
 import BookCard from '../components/BookCard.jsx';
@@ -46,7 +47,7 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  return ReactDOM.createPortal(
+  return createPortal(
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 z-[100]">
       <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col max-h-[90vh] sm:h-auto animate-in slide-in-from-bottom-10">
         <div className="p-4 border-b flex justify-between items-start bg-zinc-50 relative gap-3">
@@ -96,6 +97,8 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
 
 
 export default ManualAddModal;
+
+
 
 
 

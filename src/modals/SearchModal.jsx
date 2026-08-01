@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
 import { createRoot } from 'react-dom/client';
-import * as LucideIcons from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { Plus, Search, Camera, BookOpen, WifiOff , X } from 'lucide-react';
 import { useAuth, useData, useToast } from '../context/context.jsx';
 import { api } from '../services/api.js';
 import BookCard from '../components/BookCard.jsx';
@@ -244,7 +245,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
 
   if (!isOpen) return null;
 
-  return ReactDOM.createPortal(
+  return createPortal(
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 z-[100]">
       <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-lg overflow-hidden flex flex-col h-[85vh] sm:h-[80vh] shadow-2xl animate-in slide-in-from-bottom-10">
         <div className="p-4 border-b flex justify-between items-center bg-zinc-50">
@@ -322,6 +323,8 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
 
 
 export default SearchAddModal;
+
+
 
 
 

@@ -1,7 +1,8 @@
 ﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
 import { createRoot } from 'react-dom/client';
+import { createPortal } from 'react-dom';
 import { auth } from '../services/firebase.js';
-import * as LucideIcons from 'lucide-react';
+import { ArrowLeft, LogOut, User, Camera, Calendar, Check, Lock } from 'lucide-react';
 import { useAuth, useData, useToast } from '../context/context.jsx';
 import { api } from '../services/api.js';
 import BookCard from '../components/BookCard.jsx';
@@ -97,7 +98,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
     }
   };
 
-  return ReactDOM.createPortal(
+  return createPortal(
     <div className="fixed inset-0 bg-white z-[100] flex flex-col sm:max-w-md sm:mx-auto sm:shadow-2xl">
       <div className="h-14 px-4 flex items-center justify-between border-b border-zinc-200 bg-white sticky top-0 z-10 shrink-0">
         <div className="flex items-center gap-3">
@@ -266,6 +267,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
 
 
 export default ProfileModal;
+
 
 
 

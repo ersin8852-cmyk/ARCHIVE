@@ -1,9 +1,9 @@
-import firebase from 'firebase/app';
+﻿import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: process.env.VITE_FIREBASE_API_KEY || "AIzaSyAmlUeEg0Ln1eYtWZOeyKBGY5BHyiah8hQ",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyAmlUeEg0Ln1eYtWZOeyKBGY5BHyiah8hQ",
   authDomain: "archive-984e6.firebaseapp.com",
   projectId: "archive-984e6",
   storageBucket: "archive-984e6.firebasestorage.app",
@@ -17,10 +17,11 @@ const db = app.firestore();
 
 db.enablePersistence({ synchronizeTabs: true }).catch((err) => {
   if (err.code === 'failed-precondition') {
-    console.warn('Firestore persistence: Birden fazla sekme açık, yalnızca biri offline çalışabilir.');
+    console.warn('Firestore persistence: Birden fazla sekme aÃ§Ä±k, yalnÄ±zca biri offline Ã§alÄ±ÅŸabilir.');
   } else if (err.code === 'unimplemented') {
-    console.warn('Firestore persistence: Bu tarayıcı desteklemiyor.');
+    console.warn('Firestore persistence: Bu tarayÄ±cÄ± desteklemiyor.');
   }
 });
 
 export { app, auth, db };
+

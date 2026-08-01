@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
 import { createRoot } from 'react-dom/client';
-import * as LucideIcons from 'lucide-react';
+import { List, BookOpen } from 'lucide-react';
 import { useData } from './context.jsx';
 
 const DragApiContext = createContext(null);

@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
 import { createRoot } from 'react-dom/client';
-import * as LucideIcons from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { BookOpen, Camera, Library, Check, MoveRight, AlertCircle, Trash2 , X } from 'lucide-react';
 import { useAuth, useData, useToast } from '../context/context.jsx';
 import { api } from '../services/api.js';
 import BookCard from '../components/BookCard.jsx';
@@ -43,7 +44,7 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
   const toggleRead = () => updateBook(book.id, { isRead: !book.isRead });
   const handleDelete = () => { deleteBook(book.id); onClose(); };
 
-  return ReactDOM.createPortal(
+  return createPortal(
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 z-[100]">
       <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col max-h-[90vh] sm:h-auto animate-in slide-in-from-bottom-10">
         <div className="p-4 border-b flex justify-between items-start bg-zinc-50 relative gap-3">
@@ -133,6 +134,8 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
 
 
 export default BookDetailModal;
+
+
 
 
 
