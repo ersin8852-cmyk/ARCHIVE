@@ -89,7 +89,20 @@ const AiAssistantModal = ({ isOpen, onClose }) => {
       if (!window.geminiAPI) {
         throw new Error("Gemini API servisi yüklenemedi.");
       }
-      const response = await window.geminiAPI.generateContent(userMsg, messages);
+
+      let augmentedPrompt = userMsg;
+      if (window.googleBooksAPI) {
+        const bookData = await window.googleBooksAPI.searchTurkishBooks(userMsg);
+        if (bookData && bookData.length > 0) {
+          augmentedPrompt += "\n\n[SİSTEM BİLGİSİ (KULLANICI BUNU GÖRMEZ): Google Books veritabanından çekilen %100 kesin resmi veriler şunlardır:\n";
+          bookData.forEach((b, idx) => {
+            augmentedPrompt += `${idx + 1}. Kitap: ${b.title}, Yazar: ${b.authors}, Yayınevi: ${b.publisher}, Sayfa: ${b.pageCount}, ISBN: ${b.isbn}\n`;
+          });
+          augmentedPrompt += "Lütfen cevabını verirken kesinlikle SADECE bu resmi verileri kullan. Eğer yukarıdaki listede kullanıcının sorduğu kitap yoksa 'Üzgünüm, bu kitabı resmi veritabanında bulamadım' de. ISBN uydurma.]";
+        }
+      }
+
+      const response = await window.geminiAPI.generateContent(augmentedPrompt, messages);
       setMessages(prev => [...prev, { role: 'model', text: response }]);
     } catch (err) {
       showToast(err.message, 'error');
