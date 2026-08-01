@@ -49,7 +49,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
   return (
     <div className="h-full flex flex-col bg-white relative">
       <div className="sticky top-0 bg-[#3d3430] backdrop-blur-md z-20 shadow-sm flex flex-col">
-        <div className="h-24 px-4 flex items-center justify-between border-b border-white/5">
+        <div className="h-14 px-4 flex items-center justify-between border-b border-white/5">
           <button onClick={onOpenProfile} className="p-1.5 -ml-1 text-stone-300 hover:bg-stone-800 rounded-full transition-colors flex items-center justify-center">
             {profile?.photo ? (
               <img src={profile.photo} alt="Profil" className="w-9 h-9 rounded-full object-cover border border-stone-500 shadow-sm" />
@@ -67,7 +67,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
         </div>
       </div>
       
-      <div className="sticky top-24 bg-white/95 backdrop-blur-sm z-10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-all">
+      <div className="sticky top-14 bg-white/95 backdrop-blur-sm z-10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-all">
         <div className="px-5 py-1 min-h-[25px] flex flex-col justify-center">
           {isSearching ? (
             <div className="flex items-center w-full gap-3 animate-in fade-in slide-in-from-right-4 duration-300">

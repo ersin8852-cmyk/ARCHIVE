@@ -51,7 +51,7 @@ const StatsView = ({ onOpenProfile }) => {
   return (
     <div className="h-full flex flex-col bg-zinc-50 relative">
       <div className="sticky top-0 bg-[#3d3430] backdrop-blur-md z-20 shadow-sm flex flex-col">
-        <div className="h-24 px-4 flex items-center justify-between border-b border-white/5">
+        <div className="h-14 px-4 flex items-center justify-between border-b border-white/5">
           <button onClick={onOpenProfile} className="p-2 -ml-2 text-stone-300 hover:bg-stone-800 rounded-full transition-colors">
             <User size={22} />
           </button>
@@ -63,7 +63,7 @@ const StatsView = ({ onOpenProfile }) => {
         </div>
       </div>
       
-      <div className="sticky top-24 bg-white/95 backdrop-blur-sm z-10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-all">
+      <div className="sticky top-14 bg-white/95 backdrop-blur-sm z-10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-all">
         <div className="px-5 py-1 min-h-[25px] flex flex-col justify-center">
           <div className="flex items-center justify-between w-full min-h-[38px] animate-in fade-in slide-in-from-left-4 duration-300">
              <h1 className="text-xl font-extrabold text-zinc-900 tracking-tight">Verilerim</h1>
