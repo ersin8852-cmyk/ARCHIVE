@@ -59,7 +59,7 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
             </button>
             <div className="flex items-end justify-center text-stone-50">
               <img src="./logo.png" alt="Logo" className="w-[84px] h-[84px] object-contain drop-shadow-sm" />
-              <span className="font-mono text-xl font-bold tracking-[0.25em] ml-2 mb-3">ARCHIVE</span>
+              <span className="font-mono text-xl font-bold tracking-[0.25em] ml-2 mb-7">ARCHIVE</span>
             </div>
             <div className="w-[38px]"></div>
           </div>
