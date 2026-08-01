@@ -68,7 +68,7 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
             <img 
               src="./logo.png" 
               alt="Logo" 
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[180px] h-[180px] max-w-none object-contain drop-shadow-sm pointer-events-none" 
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 mt-3 w-[180px] h-[180px] max-w-none object-contain drop-shadow-sm pointer-events-none" 
             />
           </div>
         </div>
