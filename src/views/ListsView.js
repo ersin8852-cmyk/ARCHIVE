@@ -49,8 +49,8 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
   return (
     <div className="h-full flex flex-col bg-white relative">
       <div className="sticky top-0 bg-[#3d3430] backdrop-blur-md z-20 shadow-sm flex flex-col">
-        <div className="h-14 px-4 flex items-center justify-between border-b border-white/5">
-          <button onClick={onOpenProfile} className="p-1.5 -ml-1 text-stone-300 hover:bg-stone-800 rounded-full transition-colors flex items-center justify-center">
+        <div className="h-14 px-4 flex items-center justify-between border-b border-white/5 relative">
+          <button onClick={onOpenProfile} className="p-1.5 -ml-1 text-stone-300 hover:bg-stone-800 rounded-full transition-colors flex items-center justify-center relative z-10">
             {profile?.photo ? (
               <img src={profile.photo} alt="Profil" className="w-9 h-9 rounded-full object-cover border border-stone-500 shadow-sm" />
             ) : (
@@ -59,10 +59,11 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
               </div>
             )}
           </button>
-          <div className="flex items-end justify-center text-stone-50">
-            <img src="./logo.png" alt="Logo" className="w-[84px] h-[84px] object-contain drop-shadow-sm" />
-            <span className="font-mono text-xl font-bold tracking-[0.25em] ml-2 mb-4">ARCHIVE</span>
+          
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <img src="./logo.png" alt="Logo" className="w-[84px] h-[84px] object-contain drop-shadow-sm pointer-events-auto" />
           </div>
+          
           <div className="w-[38px]"></div>
         </div>
       </div>
