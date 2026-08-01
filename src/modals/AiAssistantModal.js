@@ -13,25 +13,49 @@ const CopyButton = ({ text }) => {
 };
 
 const formatMessage = (text) => {
-  // Extract ISBNs and basic markdown (bold, italic)
-  const parts = text.split(/(\*\*[\s\S]*?\*\*|\*[\s\S]*?\*|\b\d{10,13}\b)/g);
   return (
-    <div className="whitespace-pre-wrap leading-relaxed text-[15px]">
-      {parts.map((part, i) => {
-        if (!part) return null;
-        if (/^\d{10,13}$/.test(part)) {
-          return (
-            <span key={i} className="inline-flex items-center bg-zinc-100 border border-zinc-200 px-1.5 py-0.5 rounded text-zinc-900 font-mono text-sm mx-0.5">
-              {part}
-              <CopyButton text={part} />
-            </span>
-          );
-        } else if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
-          return <strong key={i} className="font-bold text-zinc-900">{part.slice(2, -2)}</strong>;
-        } else if (part.startsWith('*') && part.endsWith('*') && part.length >= 2) {
-          return <em key={i} className="italic text-zinc-800">{part.slice(1, -1)}</em>;
+    <div className="text-[15px] leading-relaxed flex flex-col gap-0.5">
+      {text.split('\n').map((line, lineIdx) => {
+        if (!line.trim()) return <div key={lineIdx} className="h-1.5"></div>;
+        
+        let isHeading = false;
+        let headingLevel = 0;
+        let content = line;
+        
+        const headingMatch = line.match(/^(#+)\s+(.*)/);
+        if (headingMatch) {
+          isHeading = true;
+          headingLevel = headingMatch[1].length;
+          content = headingMatch[2];
         }
-        return <span key={i}>{part}</span>;
+        
+        const parts = content.split(/(\*\*[\s\S]*?\*\*|\*[\s\S]*?\*|\b\d{10,13}\b)/g);
+        
+        const lineContent = parts.map((part, i) => {
+          if (!part) return null;
+          if (/^\d{10,13}$/.test(part)) {
+            return (
+              <span key={i} className="inline-flex items-center bg-zinc-100 border border-zinc-200 px-1.5 py-0.5 rounded text-zinc-900 font-mono text-sm mx-0.5">
+                {part}
+                <CopyButton text={part} />
+              </span>
+            );
+          } else if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
+            return <strong key={i} className="font-bold text-zinc-900">{part.slice(2, -2)}</strong>;
+          } else if (part.startsWith('*') && part.endsWith('*') && part.length >= 2) {
+            return <em key={i} className="italic text-zinc-800">{part.slice(1, -1)}</em>;
+          }
+          return <span key={i}>{part}</span>;
+        });
+
+        if (isHeading) {
+          const headingClass = headingLevel === 1 ? 'text-lg font-extrabold mt-3 mb-1 text-zinc-900' : 
+                               headingLevel === 2 ? 'text-base font-bold mt-2 mb-1 text-zinc-800' : 
+                               'text-[15px] font-bold mt-1 text-zinc-800';
+          return <div key={lineIdx} className={headingClass}>{lineContent}</div>;
+        }
+
+        return <div key={lineIdx}>{lineContent}</div>;
       })}
     </div>
   );
