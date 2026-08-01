@@ -62,13 +62,11 @@ const StatsView = ({ onOpenProfile }) => {
             )}
           </button>
           
-          <div className="flex-1 h-full relative">
-            <img 
-              src="./logo.png" 
-              alt="Logo" 
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[70px] h-[70px] max-w-none object-contain drop-shadow-sm pointer-events-none" 
-            />
-          </div>
+          <img 
+            src="./logo.png" 
+            alt="Logo" 
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[70px] h-[70px] max-w-none object-contain drop-shadow-sm pointer-events-none" 
+          />
         </div>
       </div>
       
