@@ -1,3 +1,11 @@
+import React, { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback, useLayoutEffect } from 'react';
+import { useData, useToast, useAuth } from '../context/context.jsx';
+import { useDragApi, useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
+import { auth, db } from '../services/firebase.jsx';
+import { api } from '../services/api.jsx';
+import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
+import BookCard from '../components/BookCard.jsx';
+import FolderNode from '../components/FolderNode.jsx';
 const ItemList = React.memo(({ ids, items, folders, books, folderKey, onOpenBook, onOpenFolder, onEditFolder, showIndicator = false, isLibraryView = false }) => {
   const { draggedId, cardSize } = useDraggedItem();
   const { overTarget } = useOverTarget();
@@ -105,3 +113,5 @@ const ItemList = React.memo(({ ids, items, folders, books, folderKey, onOpenBook
     );
   });
 });
+
+export default ItemList;

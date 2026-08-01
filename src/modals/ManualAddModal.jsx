@@ -1,3 +1,10 @@
+import React, { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback, useLayoutEffect } from 'react';
+import { Camera, X, Check } from 'lucide-react';
+import { useData, useToast, useAuth } from '../context/context.jsx';
+import { useDragApi, useDraggedItem, useOverTarget, useDraggableItem } from '../context/dndContext.jsx';
+import { auth, db } from '../services/firebase.jsx';
+import { api } from '../services/api.jsx';
+import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const ManualAddModal = ({ isOpen, onClose, folderId }) => {
   const { addBook, processImageFile } = useData();
   const { showToast } = useToast();
@@ -81,3 +88,5 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
     document.body
   );
 };
+
+export default ManualAddModal;
