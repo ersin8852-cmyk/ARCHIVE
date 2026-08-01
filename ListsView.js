@@ -22,55 +22,13 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
     ...currentBooks.map(b => ({ ...b, _type: 'book' }))
   ].sort((a, b) => a.order - b.order), [currentFolders, currentBooks]);
 
-  const breadcrumbs = React.useMemo(() => {
-    const bcs = [];
-    const visitedBc = new Set();
-    let curr = folders.find(f => f.id === activeFolderId);
-    while (curr && !visitedBc.has(curr.id)) {
-      visitedBc.add(curr.id);
-      bcs.unshift(curr);
-      curr = folders.find(f => f.id === curr.parentId);
-    }
-    return bcs;
-  }, [folders, activeFolderId]);
+  const { breadcrumbs, getFolderPath, handleNavigate } = window.useFolderUtils(folders, activeFolderId, setActiveFolderId, setIsSearching, setSearchTerm);
 
   const filteredBooks = React.useMemo(() => searchTerm 
     ? books.filter(b => b.title.toLowerCase().includes(searchTerm.toLowerCase()) || (b.author && b.author.toLowerCase().includes(searchTerm.toLowerCase())))
     : [], [books, searchTerm]);
 
-  const getFolderPath = (folderId) => {
-      if (!folderId) return 'Ana Dizin';
-      let current = folders.find(f => f.id === folderId);
-      let path = [];
-      const visitedPath = new Set();
-      while(current && !visitedPath.has(current.id)) {
-          visitedPath.add(current.id);
-          path.unshift(current.name);
-          current = folders.find(f => f.id === current.parentId);
-      }
-      return path.join(' / ') || 'Ana Dizin';
-  };
 
-  const handleNavigate = React.useCallback((book) => {
-      setIsSearching(false);
-      setSearchTerm('');
-      
-      let currentFolder = folders.find(f => f.id === book.folderId);
-      if (currentFolder) {
-          setActiveFolderId(currentFolder.id);
-      } else {
-          setActiveFolderId(null);
-      }
-
-      setTimeout(() => {
-          const el = document.getElementById(`book-node-${book.id}`);
-          if (el) {
-              el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              el.classList.add('ring-2', 'ring-zinc-900', 'bg-zinc-50');
-              setTimeout(() => el.classList.remove('ring-2', 'ring-zinc-900', 'bg-zinc-50'), 2000);
-          }
-      }, 150);
-  }, [folders]);
 
   const handleOpenBook = React.useCallback((id) => {
     setActiveBookId(id);
