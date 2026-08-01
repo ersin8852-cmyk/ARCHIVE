@@ -52,10 +52,10 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
         <div className="h-14 px-4 flex items-center justify-between border-b border-white/5">
           <button onClick={onOpenProfile} className="p-1.5 -ml-1 text-stone-300 hover:bg-stone-800 rounded-full transition-colors flex items-center justify-center">
             {profile?.photo ? (
-              <img src={profile.photo} alt="Profil" className="w-7 h-7 rounded-full object-cover border border-stone-500" />
+              <img src={profile.photo} alt="Profil" className="w-9 h-9 rounded-full object-cover border border-stone-500 shadow-sm" />
             ) : (
-              <div className="w-7 h-7 flex items-center justify-center rounded-full bg-stone-700/50">
-                <User size={18} />
+              <div className="w-9 h-9 flex items-center justify-center rounded-full bg-stone-700/50 shadow-sm">
+                <User size={20} />
               </div>
             )}
           </button>
