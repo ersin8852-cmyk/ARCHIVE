@@ -19,7 +19,7 @@ document.addEventListener('touchmove', (e) => {
   }
 }, { passive: false, capture: true });
 
-document.addEventListener('touchstart', (e) => {}, { passive: true, capture: true });
+// Boş touchstart listener kaldırıldı (gereksiz olay döngüsü yükü oluşturuyordu)
 
 const useDraggableItem = (item, containerFolderId, onClick, itemType) => {
   const { startDrag, updateDrag, endDrag, cancelDrag } = useDragApi();
@@ -241,7 +241,7 @@ const useDraggableItem = (item, containerFolderId, onClick, itemType) => {
 };
 
 const DragDropProvider = ({ children, onDrop }) => {
-  const { books, folders } = useArchive();
+  const { books, folders } = useData();
   const [draggedId, setDraggedId] = useState(null);
   const [overTarget, setOverTarget] = useState(null);
   const [cardSize, setCardSize] = useState({ width: 0, height: 0 });

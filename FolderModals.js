@@ -70,7 +70,7 @@ const ListCreateModal = ({ isOpen, onClose, onCreate, parentId }) => {
 };
 
 const ListEditModal = ({ isOpen, onClose, folderId }) => {
-  const { folders, updateFolder, deleteFolder } = useArchive();
+  const { folders, updateFolder, deleteFolder } = useData();
   const [name, setName] = useState('');
   const [color, setColor] = useState('#71717a');
   const [showDelConfirm, setShowDelConfirm] = useState(false);

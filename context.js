@@ -1,4 +1,4 @@
-const { useState, useEffect, useMemo, useRef, createContext, useContext } = React;
+const { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback } = React;
 const { createRoot } = ReactDOM;
 
 const FallbackIcon = ({ size = 24, ...props }) => (
@@ -8,7 +8,7 @@ const FallbackIcon = ({ size = 24, ...props }) => (
 );
 function pickIcon(name) {
   const icon = window.LucideReact && window.LucideReact[name];
-  if (!icon) console.warn(`Lucide ikonu bulunamadÄ±, yedek gÃ¶steriliyor: ${name}`);
+  if (!icon) console.warn(`Lucide ikonu bulunamadı, yedek gösteriliyor: ${name}`);
   return icon || FallbackIcon;
 }
 const Library = pickIcon('Library');
@@ -75,7 +75,7 @@ const initialState = {
 const processImageFile = (file) => {
   return new Promise((resolve, reject) => {
     if (!file || !file.type.startsWith('image/')) {
-      reject(new Error('LÃ¼tfen geÃ§erli bir resim dosyasÄ± seÃ§in.'));
+      reject(new Error('Lütfen geçerli bir resim dosyası seçin.'));
       return;
     }
 
@@ -111,55 +111,102 @@ const processImageFile = (file) => {
         const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
         resolve(dataUrl);
       };
-      img.onerror = () => reject(new Error('Resim yÃ¼klenemedi.'));
+      img.onerror = () => reject(new Error('Resim yüklenemedi.'));
       img.src = event.target.result;
     };
-    reader.onerror = () => reject(new Error('Dosya okunamadÄ±.'));
+    reader.onerror = () => reject(new Error('Dosya okunamadı.'));
     reader.readAsDataURL(file);
   });
 };
 
-const ArchiveContext = createContext();
-const useArchive = () => useContext(ArchiveContext);
 
-const ArchiveProvider = ({ children }) => {
-  const [data, setData] = useState(initialState);
-  const [user, setUser] = useState(null);
-  const [loadingAuth, setLoadingAuth] = useState(true);
+// 1. Toast Context
+const ToastContext = createContext();
+const useToast = () => useContext(ToastContext);
 
+const ToastProvider = ({ children }) => {
   const [toast, setToast] = useState(null);
   const toastTimeoutRef = useRef(null);
   
-  const showToast = (msg, type = 'info') => {
+  const showToast = useCallback((msg, type = 'info') => {
     if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
     setToast({ msg, type });
     toastTimeoutRef.current = setTimeout(() => setToast(null), 3000);
-  };
+  }, []);
+
+  return (
+    <ToastContext.Provider value={{ showToast }}>
+      {children}
+      {toast && window.ReactDOM.createPortal(
+        <div className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 px-5 py-3 rounded-2xl shadow-xl z-[9999] text-sm font-medium flex items-center justify-center text-center gap-2 max-w-[90vw] w-max break-words ${toast.type === 'error' ? 'bg-red-600 text-white' : toast.type === 'warning' ? 'bg-amber-400 text-amber-950' : 'bg-orange-600 text-white'}`}>
+          {toast.type === 'error' && <AlertCircle size={16} className="shrink-0" />}
+          {toast.type === 'warning' && <AlertCircle size={16} className="shrink-0" />}
+          <span className="leading-tight">{toast.msg}</span>
+        </div>,
+        document.body
+      )}
+    </ToastContext.Provider>
+  );
+};
+
+// 2. Auth Context
+const AuthContext = createContext();
+const useAuth = () => useContext(AuthContext);
+
+const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [loadingAuth, setLoadingAuth] = useState(true);
 
   useEffect(() => {
     const unsubscribe = window.firebaseAuth.onAuthStateChanged(currentUser => {
       setUser(currentUser);
-      if (currentUser) {
-        const docRef = window.firebaseDb.collection('users').doc(currentUser.uid);
-        const unsubscribeDb = docRef.onSnapshot(doc => {
-          if (doc.exists) {
-            setData({ ...initialState, ...doc.data() });
-          } else {
-            setData(initialState);
-            docRef.set(initialState);
-          }
-          setLoadingAuth(false);
-        });
-        return () => unsubscribeDb();
-      } else {
-        setData(initialState);
-        setLoadingAuth(false);
-      }
+      setLoadingAuth(false);
     });
     return () => unsubscribe();
   }, []);
 
-  const updateData = (updater) => {
+  return (
+    <AuthContext.Provider value={{ user, loadingAuth }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+// 3. Data Context
+const DataContext = createContext();
+const useData = () => useContext(DataContext);
+
+const DataProvider = ({ children }) => {
+  const { user } = useAuth();
+  const { showToast } = useToast();
+  
+  const [data, setData] = useState(initialState);
+  const [loadingData, setLoadingData] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      setLoadingData(true);
+      const docRef = window.firebaseDb.collection('users').doc(user.uid);
+      const unsubscribeDb = docRef.onSnapshot(doc => {
+        if (doc.exists) {
+          setData({ ...initialState, ...doc.data() });
+        } else {
+          // KRİTİK HATA DÜZELTİLDİ: Artık boş veriyi zorla Firestore'a yazmıyoruz. Sadece lokal state'i temizliyoruz.
+          setData(initialState);
+        }
+        setLoadingData(false);
+      }, (err) => {
+        console.error("Firestore onSnapshot error:", err);
+        setLoadingData(false);
+      });
+      return () => unsubscribeDb();
+    } else {
+      setData(initialState);
+      setLoadingData(false);
+    }
+  }, [user]);
+
+  const updateData = useCallback((updater) => {
     setData(prev => {
       const newData = typeof updater === 'function' ? updater(prev) : updater;
       if (user) {
@@ -170,25 +217,27 @@ const ArchiveProvider = ({ children }) => {
       }
       return newData;
     });
-  };
+  }, [user, showToast]);
 
-  const addFolder = (name, parentId = null, color = '#71717a') => {
+  const addFolder = useCallback((name, parentId = null, color = '#71717a') => {
     const trimmed = name.trim();
     if (!trimmed) return;
-    const siblings = data.folders.filter(f => f.parentId === parentId);
-    const order = siblings.length > 0 ? Math.max(...siblings.map(s => s.order)) + 1 : 0;
-    const newFolder = { id: generateId(), name: trimmed, parentId, order, color };
-    updateData(prev => ({ ...prev, folders: [...prev.folders, newFolder] }));
-  };
+    updateData(prev => {
+      const siblings = prev.folders.filter(f => f.parentId === parentId);
+      const order = siblings.length > 0 ? Math.max(...siblings.map(s => s.order)) + 1 : 0;
+      const newFolder = { id: generateId(), name: trimmed, parentId, order, color };
+      return { ...prev, folders: [...prev.folders, newFolder] };
+    });
+  }, [updateData]);
 
-  const updateFolder = (id, name, color) => {
+  const updateFolder = useCallback((id, name, color) => {
     const trimmed = name.trim();
     if (!trimmed) return;
     updateData(prev => ({
       ...prev,
       folders: prev.folders.map(f => f.id === id ? { ...f, name: trimmed, color } : f)
     }));
-  };
+  }, [updateData]);
 
   const getDescendantFolderIds = (folders, parentId) => {
     let ids = [];
@@ -200,21 +249,21 @@ const ArchiveProvider = ({ children }) => {
     return ids;
   };
 
-  const deleteFolder = (id) => {
+  const deleteFolder = useCallback((id) => {
     updateData(prev => {
       const folderIdsToDelete = [id, ...getDescendantFolderIds(prev.folders, id)];
       const updatedBooks = prev.books.filter(b => !folderIdsToDelete.includes(b.folderId));
       const updatedFolders = prev.folders.filter(f => !folderIdsToDelete.includes(f.id));
       return { ...prev, books: updatedBooks, folders: updatedFolders };
     });
-  };
+  }, [updateData]);
 
-  const deleteAllData = () => {
+  const deleteAllData = useCallback(() => {
     updateData(prev => ({ ...prev, books: [], folders: [] }));
-    showToast('Tum verileriniz basariyla silindi.');
-  };
+    showToast('Tüm verileriniz başarıyla silindi.');
+  }, [updateData, showToast]);
 
-  const reorderFolder = (id, direction) => {
+  const reorderFolder = useCallback((id, direction) => {
     updateData(prev => {
       const folder = prev.folders.find(f => f.id === id);
       if (!folder) return prev;
@@ -240,74 +289,79 @@ const ArchiveProvider = ({ children }) => {
       }
       return prev;
     });
-  };
+  }, [updateData]);
 
-  const addBook = (bookData, folderId = null) => {
+  const addBook = useCallback((bookData, folderId = null) => {
     if (!bookData.title || !bookData.title.trim()) {
       showToast('Kitap başlığı boş olamaz.', 'error');
       return false;
     }
-    const isDuplicate = data.books.some(b => {
-      if (bookData.isbn && b.isbn && b.isbn === bookData.isbn) return true;
-      return normalize(b.title) === normalize(bookData.title) &&
-             normalize(b.author) === normalize(bookData.author);
+    let isDuplicate = false;
+    let newBookId = generateId();
+    let newBook = null;
+    
+    updateData(prev => {
+      isDuplicate = prev.books.some(b => {
+        if (bookData.isbn && b.isbn && b.isbn === bookData.isbn) return true;
+        return normalize(b.title) === normalize(bookData.title) &&
+               normalize(b.author) === normalize(bookData.author);
+      });
+      if (isDuplicate) return prev;
+      
+      const siblings = prev.books.filter(b => b.folderId === folderId);
+      const order = siblings.length > 0 ? Math.max(...siblings.map(s => s.order)) + 1 : 0;
+      newBook = {
+        ...bookData,
+        id: newBookId,
+        folderId,
+        order,
+        inLibrary: false,
+        isRead: false,
+      };
+      return { ...prev, books: [...prev.books, newBook] };
     });
+
     if (isDuplicate) {
       showToast('Bu kitap zaten arşivinizde mevcut!', 'error');
       return false;
     }
-    const siblings = data.books.filter(b => b.folderId === folderId);
-    const order = siblings.length > 0 ? Math.max(...siblings.map(s => s.order)) + 1 : 0;
-    const newBook = {
-      ...bookData,
-      id: generateId(),
-      folderId,
-      order,
-      inLibrary: false,
-      isRead: false,
-    };
 
-    // 1. Kitabı anında kütüphaneye ekle
-    updateData(prev => ({ ...prev, books: [...prev.books, newBook] }));
     showToast('Kitap başarıyla eklendi.');
 
-    // 2. Arka planda (Fire and Forget) fiyatı tarayıp bulursa güncelle
-    if (newBook.isbn) {
+    if (newBook && newBook.isbn) {
       fetch(`/api/scrape-price?isbn=${newBook.isbn}`)
         .then(async (res) => {
           if (!res.ok) throw new Error('API Hatası');
           return res.json();
         })
-        .then(data => {
-          if (data && data.cheapest) {
+        .then(result => {
+          if (result && result.cheapest) {
             updateData(prev => ({
               ...prev,
-              books: prev.books.map(b => b.id === newBook.id ? { ...b, price: data.cheapest.price } : b)
+              books: prev.books.map(b => b.id === newBook.id ? { ...b, price: result.cheapest.price } : b)
             }));
-            // Fiyat bulununca bildirim gosterme iptal edildi
           }
         })
         .catch(err => {
-          // Arka planda sessizce yut, kullanıcıyı rahatsız etme
           console.log('Arka plan fiyat taraması başarısız:', err.message);
         });
     }
 
     return true;
-  };
+  }, [updateData, showToast]);
 
-  const updateBook = (id, updates) => {
+  const updateBook = useCallback((id, updates) => {
     updateData(prev => ({
       ...prev,
       books: prev.books.map(b => b.id === id ? { ...b, ...updates } : b)
     }));
-  };
+  }, [updateData]);
 
-  const deleteBook = (id) => {
+  const deleteBook = useCallback((id) => {
     updateData(prev => ({ ...prev, books: prev.books.filter(b => b.id !== id) }));
-  };
+  }, [updateData]);
 
-  const moveItemToPosition = (itemId, itemType, targetFolderId, anchorId = null, placement = 'end') => {
+  const moveItemToPosition = useCallback((itemId, itemType, targetFolderId, anchorId = null, placement = 'end') => {
     updateData(prev => {
       const item = itemType === 'folder' 
         ? prev.folders.find(f => f.id === itemId)
@@ -364,9 +418,9 @@ const ArchiveProvider = ({ children }) => {
         })
       };
     });
-  };
+  }, [updateData]);
 
-  const importData = (importedData) => {
+  const importData = useCallback((importedData) => {
     if (!importedData || !Array.isArray(importedData.books) || !Array.isArray(importedData.folders)) {
       showToast('Geçersiz yedekleme dosyası formatı!', 'error');
       return false;
@@ -374,34 +428,41 @@ const ArchiveProvider = ({ children }) => {
     updateData(importedData);
     showToast('Veriler başarıyla cihaza yüklendi!');
     return true;
-  };
+  }, [updateData, showToast]);
 
-  const updateProfileData = (profileUpdates) => {
+  const updateProfileData = useCallback((profileUpdates) => {
     updateData(prev => ({
       ...prev,
       profile: { ...(prev.profile || initialState.profile), ...profileUpdates }
     }));
-  };
+  }, [updateData]);
+
+  const contextValue = useMemo(() => ({
+    loadingData,
+    books: data.books,
+    folders: data.folders,
+    profile: data.profile || initialState.profile,
+    addFolder, updateFolder, deleteFolder, reorderFolder, deleteAllData,
+    addBook, updateBook, deleteBook, moveItemToPosition,
+    importData, updateProfileData, processImageFile
+  }), [data, loadingData, addFolder, updateFolder, deleteFolder, reorderFolder, deleteAllData, addBook, updateBook, deleteBook, moveItemToPosition, importData, updateProfileData]);
 
   return (
-    <ArchiveContext.Provider value={{
-      user, loadingAuth,
-      books: data.books, folders: data.folders, profile: data.profile || initialState.profile,
-      addFolder, updateFolder, deleteFolder, reorderFolder, deleteAllData,
-      addBook, updateBook, deleteBook, moveItemToPosition,
-      importData, updateProfileData,
-      showToast, processImageFile
-    }}>
+    <DataContext.Provider value={contextValue}>
       {children}
-      {toast && window.ReactDOM.createPortal(
-        <div className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 px-5 py-3 rounded-2xl shadow-xl z-[9999] text-sm font-medium flex items-center justify-center text-center gap-2 max-w-[90vw] w-max break-words ${toast.type === 'error' ? 'bg-red-600 text-white' : toast.type === 'warning' ? 'bg-amber-400 text-amber-950' : 'bg-orange-600 text-white'}`}>
-          {toast.type === 'error' && <AlertCircle size={16} className="shrink-0" />}
-          {toast.type === 'warning' && <AlertCircle size={16} className="shrink-0" />}
-          <span className="leading-tight">{toast.msg}</span>
-        </div>,
-        document.body
-      )}
-    </ArchiveContext.Provider>
+    </DataContext.Provider>
   );
+};
 
+// Kombine Provider (Geriye Dönük Uyumluluk ve Root Sarımı İçin)
+const ArchiveProvider = ({ children }) => {
+  return (
+    <ToastProvider>
+      <AuthProvider>
+        <DataProvider>
+          {children}
+        </DataProvider>
+      </AuthProvider>
+    </ToastProvider>
+  );
 };

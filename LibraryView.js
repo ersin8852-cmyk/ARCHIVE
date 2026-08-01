@@ -1,5 +1,5 @@
 const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
-  const { folders, books } = useArchive();
+  const { folders, books } = useData();
   const { overTarget } = useOverTarget();
   const { draggedId } = useDraggedItem();
   const [detailModalOpen, openDetailModal, closeDetailModal] = window.useHistoryModal('detail-library');
@@ -24,30 +24,37 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
 
   const visibleFolders = useMemo(() => folders.filter(f => visibleFolderIds.has(f.id)), [folders, visibleFolderIds]);
 
-  const currentFolders = visibleFolders.filter(f => f.parentId === activeFolderId);
-  const currentBooks = libraryBooks.filter(b => b.folderId === activeFolderId);
+  const currentFolders = React.useMemo(() => visibleFolders.filter(f => f.parentId === activeFolderId), [visibleFolders, activeFolderId]);
+  const currentBooks = React.useMemo(() => libraryBooks.filter(b => b.folderId === activeFolderId), [libraryBooks, activeFolderId]);
 
-  const currentItems = [
+  const currentItems = React.useMemo(() => [
     ...currentFolders.map(f => ({ ...f, _type: 'folder' })),
     ...currentBooks.map(b => ({ ...b, _type: 'book' }))
-  ].sort((a, b) => a.order - b.order);
+  ].sort((a, b) => a.order - b.order), [currentFolders, currentBooks]);
 
-  const breadcrumbs = [];
-  let curr = folders.find(f => f.id === activeFolderId);
-  while (curr) {
-    breadcrumbs.unshift(curr);
-    curr = folders.find(f => f.id === curr.parentId);
-  }
+  const breadcrumbs = React.useMemo(() => {
+    const bcs = [];
+    const visitedBc = new Set();
+    let curr = folders.find(f => f.id === activeFolderId);
+    while (curr && !visitedBc.has(curr.id)) {
+      visitedBc.add(curr.id);
+      bcs.unshift(curr);
+      curr = folders.find(f => f.id === curr.parentId);
+    }
+    return bcs;
+  }, [folders, activeFolderId]);
 
-  const filteredBooks = searchTerm 
+  const filteredBooks = React.useMemo(() => searchTerm 
     ? libraryBooks.filter(b => b.title.toLowerCase().includes(searchTerm.toLowerCase()) || (b.author && b.author.toLowerCase().includes(searchTerm.toLowerCase())))
-    : [];
+    : [], [libraryBooks, searchTerm]);
 
   const getFolderPath = (folderId) => {
       if (!folderId) return 'Ana Dizin';
       let current = folders.find(f => f.id === folderId);
       let path = [];
-      while(current) {
+      const visitedPath = new Set();
+      while(current && !visitedPath.has(current.id)) {
+          visitedPath.add(current.id);
           path.unshift(current.name);
           current = folders.find(f => f.id === current.parentId);
       }

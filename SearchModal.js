@@ -1,7 +1,8 @@
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
-  const { addBook, showToast } = useArchive();
+  const { addBook } = useData();
+  const { showToast } = useToast();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);

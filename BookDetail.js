@@ -1,5 +1,6 @@
 const BookDetailModal = ({ bookId, isOpen, onClose }) => {
-  const { books, updateBook, deleteBook, folders, showToast, moveItemToPosition, processImageFile } = useArchive();
+  const { books, updateBook, deleteBook, folders, moveItemToPosition, processImageFile } = useData();
+  const { showToast } = useToast();
   const book = books.find(b => b.id === bookId);
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({});

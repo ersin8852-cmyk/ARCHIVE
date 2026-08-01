@@ -1,5 +1,6 @@
 const ManualAddModal = ({ isOpen, onClose, folderId }) => {
-  const { addBook, showToast, processImageFile } = useArchive();
+  const { addBook, processImageFile } = useData();
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({ title: '', author: '', publisher: '', pageCount: '', year: '', price: '', cover: '' });
 
   useEffect(() => {

@@ -6,7 +6,7 @@ const StatRow = ({ label, value, isLast }) => (
 );
 
 const StatsView = ({ onOpenProfile }) => {
-  const { books, folders } = useArchive();
+  const { books, folders } = useData();
 
   const stats = useMemo(() => {
     const libBooks = books.filter(b => b.inLibrary);

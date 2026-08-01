@@ -1,5 +1,6 @@
 const AppLayout = () => {
-  const { user, loadingAuth } = useArchive();
+  const { user, loadingAuth } = useAuth();
+  const { loadingData } = useData();
   const [activeTab, setActiveTab] = useState('lists');
   const [listsFolderId, setListsFolderId] = useState(null);
   const [libraryFolderId, setLibraryFolderId] = useState(null);
@@ -54,7 +55,7 @@ const AppLayout = () => {
     window.history.pushState({ tab: activeTab, listsId: listsFolderId, libraryId: newId }, '');
   };
 
-  if (loadingAuth) {
+  if (loadingAuth || loadingData) {
     return (
       <div className="h-[100dvh] w-full flex items-center justify-center bg-white">
          <div className="flex flex-col items-center gap-3">
@@ -124,7 +125,7 @@ class ErrorBoundary extends React.Component {
 }
 
 const AppLayoutWithDnd = () => {
-  const { moveItemToPosition } = useArchive();
+  const { moveItemToPosition } = useData();
   return (
     <DragDropProvider onDrop={moveItemToPosition}>
       <AppLayout />

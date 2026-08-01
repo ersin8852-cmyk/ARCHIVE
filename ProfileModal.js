@@ -1,7 +1,9 @@
 
 
 const ProfileModal = ({ isOpen, onClose }) => {
-  const { user, profile, updateProfileData, showToast, processImageFile, deleteAllData } = useArchive();
+  const { profile, updateProfileData, processImageFile, deleteAllData } = useData();
+  const { user } = useAuth();
+  const { showToast } = useToast();
   
   const [isEditing, setIsEditing] = useState(false);
   const [fullName, setFullName] = useState(profile?.fullName || '');
