@@ -1,5 +1,9 @@
-const { useState, useEffect, useMemo, useRef, createContext, useContext, useCallback } = React;
-const { createRoot } = ReactDOM;
+﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
+import { createRoot } from 'react-dom/client';
+import * as LucideIcons from 'lucide-react';
+
+
+
 
 const FallbackIcon = ({ size = 24, ...props }) => (
   <svg {...props} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -8,7 +12,7 @@ const FallbackIcon = ({ size = 24, ...props }) => (
 );
 function pickIcon(name) {
   const icon = window.LucideReact && window.LucideReact[name];
-  if (!icon) console.warn(`Lucide ikonu bulunamadı, yedek gösteriliyor: ${name}`);
+  if (!icon) console.warn(`Lucide ikonu bulunamadÃ„Â±, yedek gÃƒÂ¶steriliyor: ${name}`);
   return icon || FallbackIcon;
 }
 const Library = pickIcon('Library');
@@ -75,7 +79,7 @@ const initialState = {
 const processImageFile = (file) => {
   return new Promise((resolve, reject) => {
     if (!file || !file.type.startsWith('image/')) {
-      reject(new Error('Lütfen geçerli bir resim dosyası seçin.'));
+      reject(new Error('LÃƒÂ¼tfen geÃƒÂ§erli bir resim dosyasÃ„Â± seÃƒÂ§in.'));
       return;
     }
 
@@ -111,10 +115,10 @@ const processImageFile = (file) => {
         const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
         resolve(dataUrl);
       };
-      img.onerror = () => reject(new Error('Resim yüklenemedi.'));
+      img.onerror = () => reject(new Error('Resim yÃƒÂ¼klenemedi.'));
       img.src = event.target.result;
     };
-    reader.onerror = () => reject(new Error('Dosya okunamadı.'));
+    reader.onerror = () => reject(new Error('Dosya okunamadÃ„Â±.'));
     reader.readAsDataURL(file);
   });
 };
@@ -191,7 +195,7 @@ const DataProvider = ({ children }) => {
         if (doc.exists) {
           setData({ ...initialState, ...doc.data() });
         } else {
-          // KRİTİK HATA DÜZELTİLDİ: Artık boş veriyi zorla Firestore'a yazmıyoruz. Sadece lokal state'i temizliyoruz.
+          // KRÃ„Â°TÃ„Â°K HATA DÃƒÅ“ZELTÃ„Â°LDÃ„Â°: ArtÃ„Â±k boÃ…Å¸ veriyi zorla Firestore'a yazmÃ„Â±yoruz. Sadece lokal state'i temizliyoruz.
           setData(initialState);
         }
         setLoadingData(false);
@@ -260,7 +264,7 @@ const DataProvider = ({ children }) => {
 
   const deleteAllData = useCallback(() => {
     updateData(prev => ({ ...prev, books: [], folders: [] }));
-    showToast('Tüm verileriniz başarıyla silindi.');
+    showToast('TÃƒÂ¼m verileriniz baÃ…Å¸arÃ„Â±yla silindi.');
   }, [updateData, showToast]);
 
   const reorderFolder = useCallback((id, direction) => {
@@ -293,7 +297,7 @@ const DataProvider = ({ children }) => {
 
   const addBook = useCallback((bookData, folderId = null) => {
     if (!bookData.title || !bookData.title.trim()) {
-      showToast('Kitap başlığı boş olamaz.', 'error');
+      showToast('Kitap baÃ…Å¸lÃ„Â±Ã„Å¸Ã„Â± boÃ…Å¸ olamaz.', 'error');
       return false;
     }
     let isDuplicate = false;
@@ -322,16 +326,16 @@ const DataProvider = ({ children }) => {
     });
 
     if (isDuplicate) {
-      showToast('Bu kitap zaten arşivinizde mevcut!', 'error');
+      showToast('Bu kitap zaten arÃ…Å¸ivinizde mevcut!', 'error');
       return false;
     }
 
-    showToast('Kitap başarıyla eklendi.');
+    showToast('Kitap baÃ…Å¸arÃ„Â±yla eklendi.');
 
     if (newBook && newBook.isbn) {
       fetch(`/api/scrape-price?isbn=${newBook.isbn}`)
         .then(async (res) => {
-          if (!res.ok) throw new Error('API Hatası');
+          if (!res.ok) throw new Error('API HatasÃ„Â±');
           return res.json();
         })
         .then(result => {
@@ -343,7 +347,7 @@ const DataProvider = ({ children }) => {
           }
         })
         .catch(err => {
-          console.log('Arka plan fiyat taraması başarısız:', err.message);
+          console.log('Arka plan fiyat taramasÃ„Â± baÃ…Å¸arÃ„Â±sÃ„Â±z:', err.message);
         });
     }
 
@@ -422,11 +426,11 @@ const DataProvider = ({ children }) => {
 
   const importData = useCallback((importedData) => {
     if (!importedData || !Array.isArray(importedData.books) || !Array.isArray(importedData.folders)) {
-      showToast('Geçersiz yedekleme dosyası formatı!', 'error');
+      showToast('GeÃƒÂ§ersiz yedekleme dosyasÃ„Â± formatÃ„Â±!', 'error');
       return false;
     }
     updateData(importedData);
-    showToast('Veriler başarıyla cihaza yüklendi!');
+    showToast('Veriler baÃ…Å¸arÃ„Â±yla cihaza yÃƒÂ¼klendi!');
     return true;
   }, [updateData, showToast]);
 
@@ -454,7 +458,7 @@ const DataProvider = ({ children }) => {
   );
 };
 
-// Kombine Provider (Geriye Dönük Uyumluluk ve Root Sarımı İçin)
+// Kombine Provider (Geriye DÃƒÂ¶nÃƒÂ¼k Uyumluluk ve Root SarÃ„Â±mÃ„Â± Ã„Â°ÃƒÂ§in)
 const ArchiveProvider = ({ children }) => {
   return (
     <ToastProvider>
@@ -466,3 +470,9 @@ const ArchiveProvider = ({ children }) => {
     </ToastProvider>
   );
 };
+
+
+export { ToastProvider, useToast, AuthProvider, useAuth, DataProvider, useData, ArchiveProvider };
+
+
+

@@ -1,3 +1,15 @@
+﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
+import { createRoot } from 'react-dom/client';
+import * as LucideIcons from 'lucide-react';
+import { useAuth, useData, useToast } from '../context/context.jsx';
+import { api } from '../services/api.js';
+import BookCard from '../components/BookCard.jsx';
+import FolderNode from '../components/FolderNode.jsx';
+import SearchModal from '../modals/SearchModal.jsx';
+import ManualAddModal from '../modals/ManualAddModal.jsx';
+import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
+import BookDetail from '../modals/BookDetail.jsx';
+import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const ItemList = React.memo(({ ids, items, folders, books, folderKey, onOpenBook, onOpenFolder, onEditFolder, showIndicator = false, isLibraryView = false }) => {
   const { draggedId, cardSize } = useDraggedItem();
   const { overTarget } = useOverTarget();
@@ -5,7 +17,7 @@ const ItemList = React.memo(({ ids, items, folders, books, folderKey, onOpenBook
   const prevRects = React.useRef(new Map());
   const prevDraggedId = React.useRef(null);
 
-  // Sürüklenen kart listeden çıkarılmaz — opacity:0 ile görünmez ama yeri korunur, diğer kartlar kaymaz
+  // SÃ¼rÃ¼klenen kart listeden Ã§Ä±karÄ±lmaz â€” opacity:0 ile gÃ¶rÃ¼nmez ama yeri korunur, diÄŸer kartlar kaymaz
   const visibleIds = ids;
 
   let previewIndex = null;
@@ -20,7 +32,7 @@ const ItemList = React.memo(({ ids, items, folders, books, folderKey, onOpenBook
         }
       }
     } else if (overTarget.type === 'folder' && overTarget.id === folderKey && overTarget.placement === 'inside') {
-      // Klasörün geneline (veya sayfanın altındaki boşluğa) sürükleniyorsa boşluğu en sona ekle
+      // KlasÃ¶rÃ¼n geneline (veya sayfanÄ±n altÄ±ndaki boÅŸluÄŸa) sÃ¼rÃ¼kleniyorsa boÅŸluÄŸu en sona ekle
       previewIndex = visibleIds.length;
     }
   }
@@ -105,3 +117,9 @@ const ItemList = React.memo(({ ids, items, folders, books, folderKey, onOpenBook
     );
   });
 });
+
+
+export default ItemList;
+
+
+

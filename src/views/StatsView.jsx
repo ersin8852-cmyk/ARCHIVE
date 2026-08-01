@@ -1,3 +1,16 @@
+﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
+import { createRoot } from 'react-dom/client';
+import * as LucideIcons from 'lucide-react';
+import { useAuth, useData, useToast } from '../context/context.jsx';
+import { api } from '../services/api.js';
+import BookCard from '../components/BookCard.jsx';
+import FolderNode from '../components/FolderNode.jsx';
+import ItemList from '../components/ItemList.jsx';
+import SearchModal from '../modals/SearchModal.jsx';
+import ManualAddModal from '../modals/ManualAddModal.jsx';
+import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
+import BookDetail from '../modals/BookDetail.jsx';
+import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const StatRow = ({ label, value, isLast }) => (
   <div className={`flex justify-between items-center py-2.5 ${!isLast ? 'border-b border-zinc-100' : ''}`}>
     <span className="text-xs font-medium text-zinc-500 uppercase tracking-wide">{label}</span>
@@ -75,7 +88,7 @@ const StatsView = ({ onOpenProfile }) => {
         <section className="bg-white border border-zinc-200 rounded-2xl shadow-sm overflow-hidden">
           <div className="bg-zinc-50 border-b border-zinc-200 px-4 py-2.5 flex items-center gap-2">
             <List size={16} className="text-orange-600" />
-            <h2 className="text-sm font-bold text-zinc-800">Tüm Listelerim</h2>
+            <h2 className="text-sm font-bold text-zinc-800">TÃ¼m Listelerim</h2>
           </div>
           <div className="px-4 py-1">
             <StatRow label="Toplam Kitap" value={stats.list.total} />
@@ -89,12 +102,12 @@ const StatsView = ({ onOpenProfile }) => {
         <section className="bg-white border border-zinc-200 rounded-2xl shadow-sm overflow-hidden">
           <div className="bg-zinc-50 border-b border-zinc-200 px-4 py-2.5 flex items-center gap-2">
             <Library size={16} className="text-orange-600" />
-            <h2 className="text-sm font-bold text-zinc-800">Kütüphanem</h2>
+            <h2 className="text-sm font-bold text-zinc-800">KÃ¼tÃ¼phanem</h2>
           </div>
           <div className="px-4 py-1">
             <StatRow label="Toplam Kitap" value={stats.lib.total} />
             <StatRow label="Toplam Sayfa" value={stats.lib.pages.toLocaleString()} />
-            <StatRow label="Toplam Değer" value={'₺' + stats.lib.price.toLocaleString()} />
+            <StatRow label="Toplam DeÄŸer" value={'â‚º' + stats.lib.price.toLocaleString()} />
             <StatRow label="Favori Yazar" value={stats.lib.fav} isLast={true} />
           </div>
         </section>
@@ -128,3 +141,8 @@ const StatsView = ({ onOpenProfile }) => {
     </div>
   );
 };
+
+
+export default StatsView;
+
+

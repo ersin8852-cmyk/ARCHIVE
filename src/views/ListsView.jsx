@@ -1,3 +1,16 @@
+﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
+import { createRoot } from 'react-dom/client';
+import * as LucideIcons from 'lucide-react';
+import { useAuth, useData, useToast } from '../context/context.jsx';
+import { api } from '../services/api.js';
+import BookCard from '../components/BookCard.jsx';
+import FolderNode from '../components/FolderNode.jsx';
+import ItemList from '../components/ItemList.jsx';
+import SearchModal from '../modals/SearchModal.jsx';
+import ManualAddModal from '../modals/ManualAddModal.jsx';
+import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
+import BookDetail from '../modals/BookDetail.jsx';
+import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
   const { folders, books, addFolder } = useData();
   const { overTarget } = useOverTarget();
@@ -69,7 +82,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
                 <input autoFocus type="text" placeholder="Kitap veya yazar ara..." className="w-full pl-9 pr-3 py-2 bg-zinc-100 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-zinc-900" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
               </div>
               <button onClick={() => { setIsSearching(false); setSearchTerm(''); }} className="text-zinc-500 hover:text-zinc-900 font-medium text-sm transition-colors shrink-0">
-                İptal
+                Ä°ptal
               </button>
             </div>
           ) : (
@@ -112,7 +125,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
           searchTerm.trim() === '' ? (
             <div className="h-full flex flex-col items-center justify-center text-zinc-400 space-y-3 pb-20">
               <Search size={48} className="opacity-20" />
-              <p className="text-center text-sm font-medium">Aramak istediğiniz kitabın adını yazın.</p>
+              <p className="text-center text-sm font-medium">Aramak istediÄŸiniz kitabÄ±n adÄ±nÄ± yazÄ±n.</p>
             </div>
           ) : filteredBooks.length > 0 ? (
             <div className="space-y-[3.6px]">
@@ -121,7 +134,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-zinc-400 space-y-3 pb-20">
               <FileText size={48} className="opacity-20" />
-              <p className="text-center text-sm font-medium">Bu isimde bir kitap bulunamadı.</p>
+              <p className="text-center text-sm font-medium">Bu isimde bir kitap bulunamadÄ±.</p>
             </div>
           )
         ) : (
@@ -129,7 +142,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
             {currentBooks.length === 0 && currentFolders.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-zinc-400 space-y-3 pb-20">
                 <List size={48} className="opacity-20" />
-                <p className="text-center text-sm font-medium">Bu liste boş. Kitap veya yeni liste ekleyin.</p>
+                <p className="text-center text-sm font-medium">Bu liste boÅŸ. Kitap veya yeni liste ekleyin.</p>
               </div>
             ) : (
               <div className="space-y-[3.6px] min-h-[60px] rounded-xl transition-colors" data-folder-target={activeFolderId || "root"}>
@@ -156,7 +169,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
           {fabMenuOpen && (
             <div className="flex flex-col items-end gap-3 mb-2 animate-in slide-in-from-bottom-4 fade-in duration-200">
               <button onClick={() => { setFabMenuOpen(false); openListCreateModal(); }} className="flex items-center gap-3 group">
-                <span className="bg-white px-3 py-2 rounded-xl shadow-md text-[15px] font-semibold text-zinc-700 group-hover:text-zinc-900 transition-colors">Liste Oluştur</span>
+                <span className="bg-white px-3 py-2 rounded-xl shadow-md text-[15px] font-semibold text-zinc-700 group-hover:text-zinc-900 transition-colors">Liste OluÅŸtur</span>
                 <div className="w-12 h-12 bg-white text-zinc-600 rounded-full shadow-md flex items-center justify-center group-hover:bg-zinc-50 group-hover:text-zinc-900 transition-colors">
                   <List size={20} />
                 </div>
@@ -187,3 +200,8 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
     </div>
   );
 };
+
+
+export default ListsView;
+
+

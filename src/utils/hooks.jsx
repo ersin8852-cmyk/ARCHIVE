@@ -1,3 +1,7 @@
+﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
+import { createRoot } from 'react-dom/client';
+import * as LucideIcons from 'lucide-react';
+
 const useHistoryModal = (modalId) => {
   const [isOpen, React_setIsOpen] = React.useState(false);
 
@@ -41,9 +45,9 @@ const useHistoryModal = (modalId) => {
   return [isOpen, openModal, closeModal, React_setIsOpen];
 };
 
-window.useHistoryModal = useHistoryModal;
 
-window.useFolderUtils = (folders, activeFolderId, setActiveFolderId, setIsSearching, setSearchTerm) => {
+
+const useFolderUtils = (folders, activeFolderId, setActiveFolderId, setIsSearching, setSearchTerm) => {
   const breadcrumbs = React.useMemo(() => {
     const bcs = [];
     const visitedBc = new Set();
@@ -92,3 +96,9 @@ window.useFolderUtils = (folders, activeFolderId, setActiveFolderId, setIsSearch
 
   return { breadcrumbs, getFolderPath, handleNavigate };
 };
+
+
+export { useHistoryModal, useFolderUtils };
+
+
+

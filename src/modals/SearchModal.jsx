@@ -1,3 +1,15 @@
+﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
+import { createRoot } from 'react-dom/client';
+import * as LucideIcons from 'lucide-react';
+import { useAuth, useData, useToast } from '../context/context.jsx';
+import { api } from '../services/api.js';
+import BookCard from '../components/BookCard.jsx';
+import FolderNode from '../components/FolderNode.jsx';
+import ItemList from '../components/ItemList.jsx';
+import ManualAddModal from '../modals/ManualAddModal.jsx';
+import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
+import BookDetail from '../modals/BookDetail.jsx';
+import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
@@ -84,7 +96,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
     };
 
     if (isIOS && window.ZXing) {
-      console.log("iOS tespit edildi, ZXing başlatılıyor...");
+      console.log("iOS tespit edildi, ZXing baÅŸlatÄ±lÄ±yor...");
       zxingScanner = new window.ZXing.BrowserMultiFormatReader();
       scannerRef.current = {
         stop: async () => zxingScanner.reset(),
@@ -97,10 +109,10 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
           onScanSuccess(result.getText());
         }
       }).catch(err => {
-        console.warn("ZXing başlatılamadı:", err);
+        console.warn("ZXing baÅŸlatÄ±lamadÄ±:", err);
         if (isComponentMounted) {
           setShowCamera(false);
-          showToast('Kamera başlatılamadı.', 'error');
+          showToast('Kamera baÅŸlatÄ±lamadÄ±.', 'error');
         }
       });
 
@@ -119,7 +131,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
       applyZXingZoom();
 
     } else {
-      console.log("Android/Diğer tespit edildi, Html5Qrcode başlatılıyor...");
+      console.log("Android/DiÄŸer tespit edildi, Html5Qrcode baÅŸlatÄ±lÄ±yor...");
       html5Scanner = new window.Html5Qrcode("reader");
       scannerRef.current = html5Scanner;
 
@@ -134,7 +146,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
           );
         } catch (err) {
           setShowCamera(false);
-          showToast('Kamera hiçbir şekilde başlatılamadı.', 'error');
+          showToast('Kamera hiÃ§bir ÅŸekilde baÅŸlatÄ±lamadÄ±.', 'error');
         }
       };
 
@@ -212,18 +224,18 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
         setResults(allItems);
         
         if (allItems.length === 0 && notFoundIsbns.length > 0) {
-          showToast('Hiçbir sonuç bulunamadı.', 'error');
+          showToast('HiÃ§bir sonuÃ§ bulunamadÄ±.', 'error');
         } else if (notFoundIsbns.length > 0) {
-          showToast(`Şu numaralı kitaplar bulunamadı: ${notFoundIsbns.join(', ')}`, 'warning');
+          showToast(`Åu numaralÄ± kitaplar bulunamadÄ±: ${notFoundIsbns.join(', ')}`, 'warning');
         }
       } else {
         // Single text search
         const items = await window.api.fetchByTitle(q);
         setResults(items);
-        if (items.length === 0) showToast('Sonuç bulunamadı.', 'error');
+        if (items.length === 0) showToast('SonuÃ§ bulunamadÄ±.', 'error');
       }
     } catch (err) {
-      showToast('Arama başarısız oldu.', 'error');
+      showToast('Arama baÅŸarÄ±sÄ±z oldu.', 'error');
     }
     setLoading(false);
   };
@@ -249,7 +261,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-3 text-zinc-400" size={18} />
               <textarea 
-                placeholder="Kitap Adı veya ISBN (Birden fazla girebilirsiniz)..." 
+                placeholder="Kitap AdÄ± veya ISBN (Birden fazla girebilirsiniz)..." 
                 className="w-full pl-9 pr-4 py-2.5 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 bg-zinc-50 text-sm min-h-[44px] max-h-[120px] resize-y overflow-y-auto" 
                 value={query} 
                 onChange={e => setQuery(e.target.value)} 
@@ -262,7 +274,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
             </button>
           </div>
           <button onClick={() => performSearch()} disabled={loading || !query.trim()} className="w-full py-2.5 bg-orange-600 text-white rounded-xl hover:bg-orange-700 font-medium transition-colors disabled:opacity-50">
-            {loading ? 'Aranıyor...' : 'Ara'}
+            {loading ? 'AranÄ±yor...' : 'Ara'}
           </button>
         </div>
         {showCamera && (
@@ -273,13 +285,13 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
               ) : (
                 <video id="zxing-reader" className="w-full" autoPlay playsInline muted></video>
               )}
-              <p className="absolute bottom-2 w-full text-center text-white text-xs z-10 bg-black/50 py-1">Kitabın barkodunu okutun</p>
+              <p className="absolute bottom-2 w-full text-center text-white text-xs z-10 bg-black/50 py-1">KitabÄ±n barkodunu okutun</p>
             </div>
           </div>
         )}
         <div className="flex-1 overflow-y-auto p-4 bg-zinc-50/50">
           {loading ? (
-            <div className="text-center py-8 text-zinc-500 text-sm animate-pulse">Veritabanlarında aranıyor...</div>
+            <div className="text-center py-8 text-zinc-500 text-sm animate-pulse">VeritabanlarÄ±nda aranÄ±yor...</div>
           ) : results.length > 0 ? (
             <div className="flex flex-col gap-3">
               {results.map((book, idx) => (
@@ -288,7 +300,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
                     {book.cover ? <img src={book.cover} alt="" className="w-10 h-14 object-cover rounded-md border border-zinc-200 shrink-0 bg-zinc-100" /> : <div className="w-10 h-14 bg-zinc-100 rounded-md border border-zinc-200 shrink-0 flex items-center justify-center"><BookOpen size={14} className="text-zinc-300" /></div>}
                     <div className="flex-1 min-w-0">
                       <h3 className="font-semibold text-zinc-800 leading-tight mb-1 truncate">{book.title}</h3>
-                      <p className="text-xs text-zinc-500 mb-0.5 truncate">{book.author} • {book.publisher}</p>
+                      <p className="text-xs text-zinc-500 mb-0.5 truncate">{book.author} â€¢ {book.publisher}</p>
                       <p className="text-[10px] text-zinc-400">ISBN: {book.isbn || 'Yok'} | {book.pageCount || 0} Sayfa</p>
                     </div>
                   </div>
@@ -297,9 +309,9 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
               ))}
             </div>
           ) : hasSearched ? (
-            <div className="h-full flex flex-col items-center justify-center py-8 text-zinc-400 text-sm gap-2"><WifiOff size={32} className="opacity-20" /><p>Sonuç bulunamadı. Farklı bir arama deneyin.</p></div>
+            <div className="h-full flex flex-col items-center justify-center py-8 text-zinc-400 text-sm gap-2"><WifiOff size={32} className="opacity-20" /><p>SonuÃ§ bulunamadÄ±. FarklÄ± bir arama deneyin.</p></div>
           ) : (
-            <div className="h-full flex flex-col items-center justify-center py-8 text-zinc-400 text-sm gap-2"><Search size={32} className="opacity-20" /><p>Sonuçları görmek için arama yapın.</p></div>
+            <div className="h-full flex flex-col items-center justify-center py-8 text-zinc-400 text-sm gap-2"><Search size={32} className="opacity-20" /><p>SonuÃ§larÄ± gÃ¶rmek iÃ§in arama yapÄ±n.</p></div>
           )}
         </div>
       </div>
@@ -307,3 +319,9 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
     document.body
   );
 };
+
+
+export default SearchModal;
+
+
+

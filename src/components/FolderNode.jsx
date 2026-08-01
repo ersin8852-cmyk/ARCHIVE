@@ -1,3 +1,15 @@
+﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
+import { createRoot } from 'react-dom/client';
+import * as LucideIcons from 'lucide-react';
+import { useAuth, useData, useToast } from '../context/context.jsx';
+import { api } from '../services/api.js';
+import BookCard from '../components/BookCard.jsx';
+import ItemList from '../components/ItemList.jsx';
+import SearchModal from '../modals/SearchModal.jsx';
+import ManualAddModal from '../modals/ManualAddModal.jsx';
+import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
+import BookDetail from '../modals/BookDetail.jsx';
+import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onEdit, isLibraryView = false, index }) => {
   const { overTarget } = useOverTarget();
   const { draggedId } = useDraggedItem();
@@ -53,3 +65,9 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
     </div>
   );
 });
+
+
+export default FolderNode;
+
+
+

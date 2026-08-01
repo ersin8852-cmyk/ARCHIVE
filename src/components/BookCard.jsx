@@ -1,3 +1,15 @@
+﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
+import { createRoot } from 'react-dom/client';
+import * as LucideIcons from 'lucide-react';
+import { useAuth, useData, useToast } from '../context/context.jsx';
+import { api } from '../services/api.js';
+import FolderNode from '../components/FolderNode.jsx';
+import ItemList from '../components/ItemList.jsx';
+import SearchModal from '../modals/SearchModal.jsx';
+import ManualAddModal from '../modals/ManualAddModal.jsx';
+import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
+import BookDetail from '../modals/BookDetail.jsx';
+import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const BookCard = React.memo(({ book, onOpen, showIndicator = false, folderPath = null, onNavigate = null, containerFolderId = null, index, isLibraryView = false }) => {
   const handleNavigateOrOpen = (item) => {
     if (onNavigate) {
@@ -42,18 +54,24 @@ const BookCard = React.memo(({ book, onOpen, showIndicator = false, folderPath =
                  e.stopPropagation();
                  if (onNavigate) onNavigate(book); 
                }}
-               title="Klasördeki yerine git"
+               title="KlasÃ¶rdeki yerine git"
              >
                <Folder size={10} /> {folderPath} <MoveRight size={10} className="ml-0.5 opacity-60" />
              </p>
           ) : (
-             <p className="text-[11px] text-zinc-500 truncate">{book.publisher || 'Yayınevi Yok'}</p>
+             <p className="text-[11px] text-zinc-500 truncate">{book.publisher || 'YayÄ±nevi Yok'}</p>
           )}
         </div>
         {showIndicator && book.inLibrary && (
-          <span className="ml-auto w-2 h-2 rounded-full bg-amber-500 shrink-0" title="Kütüphanemde"></span>
+          <span className="ml-auto w-2 h-2 rounded-full bg-amber-500 shrink-0" title="KÃ¼tÃ¼phanemde"></span>
         )}
       </div>
     </div>
   );
 });
+
+
+export default BookCard;
+
+
+

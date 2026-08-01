@@ -1,3 +1,16 @@
+﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
+import { createRoot } from 'react-dom/client';
+import * as LucideIcons from 'lucide-react';
+import { useAuth, useData, useToast } from '../context/context.jsx';
+import { api } from '../services/api.js';
+import BookCard from '../components/BookCard.jsx';
+import FolderNode from '../components/FolderNode.jsx';
+import ItemList from '../components/ItemList.jsx';
+import SearchModal from '../modals/SearchModal.jsx';
+import ManualAddModal from '../modals/ManualAddModal.jsx';
+import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
+import BookDetail from '../modals/BookDetail.jsx';
+import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 
 
 const AuthModal = ({ isVisible }) => {
@@ -22,21 +35,21 @@ const AuthModal = ({ isVisible }) => {
 
     if (!isLogin) {
       if (password !== confirmPassword) {
-        setError('Şifreler eşleşmiyor!');
+        setError('Åifreler eÅŸleÅŸmiyor!');
         return;
       }
       if (!acceptedTerms) {
-        setError('Kullanıcı sözleşmesini onaylamanız gerekmektedir.');
+        setError('KullanÄ±cÄ± sÃ¶zleÅŸmesini onaylamanÄ±z gerekmektedir.');
         return;
       }
       if (!fullName || !username || !gender || !dob) {
-        setError('Lütfen tüm profil alanlarını doldurun.');
+        setError('LÃ¼tfen tÃ¼m profil alanlarÄ±nÄ± doldurun.');
         return;
       }
     }
 
     if (!email || !password) {
-      setError('Lütfen e-posta ve şifrenizi girin.');
+      setError('LÃ¼tfen e-posta ve ÅŸifrenizi girin.');
       return;
     }
     
@@ -66,22 +79,22 @@ const AuthModal = ({ isVisible }) => {
     } catch (err) {
       console.error(err);
       if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential' || (err.message && err.message.includes('INVALID_LOGIN_CREDENTIALS'))) {
-        setError('Şifre hatalı veya kullanıcı bulunamadı.');
+        setError('Åifre hatalÄ± veya kullanÄ±cÄ± bulunamadÄ±.');
       } else if (err.code === 'auth/email-already-in-use') {
-        setError('Bu e-posta adresi zaten kullanımda.');
+        setError('Bu e-posta adresi zaten kullanÄ±mda.');
       } else if (err.code === 'auth/weak-password') {
-        setError('Şifre çok zayıf (en az 6 karakter olmalı).');
+        setError('Åifre Ã§ok zayÄ±f (en az 6 karakter olmalÄ±).');
       } else {
         // Try to parse JSON message if it is a JSON string
         try {
           const parsed = JSON.parse(err.message);
           if (parsed.error && parsed.error.message) {
-            setError('Bir hata oluştu: ' + parsed.error.message);
+            setError('Bir hata oluÅŸtu: ' + parsed.error.message);
           } else {
-            setError('Bir hata oluştu: ' + err.message);
+            setError('Bir hata oluÅŸtu: ' + err.message);
           }
         } catch {
-          setError('Bir hata oluştu: ' + err.message);
+          setError('Bir hata oluÅŸtu: ' + err.message);
         }
       }
     } finally {
@@ -97,7 +110,7 @@ const AuthModal = ({ isVisible }) => {
       await window.firebaseAuth.signInWithPopup(provider);
     } catch (err) {
       console.error(err);
-      setError('Google ile giriş başarısız oldu.');
+      setError('Google ile giriÅŸ baÅŸarÄ±sÄ±z oldu.');
       setLoading(false);
     }
   };
@@ -111,9 +124,9 @@ const AuthModal = ({ isVisible }) => {
           <div className="w-20 h-20 bg-gradient-to-tr from-blue-500 to-indigo-600 rounded-[1.5rem] mx-auto mb-6 flex items-center justify-center shadow-lg shadow-blue-500/30">
             <Library size={40} className="text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-zinc-900">{isLogin ? 'Hoş Geldiniz' : 'Hesap Oluşturun'}</h2>
+          <h2 className="text-2xl font-bold text-zinc-900">{isLogin ? 'HoÅŸ Geldiniz' : 'Hesap OluÅŸturun'}</h2>
           <p className="text-zinc-500 text-sm mt-2">
-            {isLogin ? 'Kitaplığınıza erişmek için giriş yapın' : 'Bulut kütüphanenizi hemen oluşturun'}
+            {isLogin ? 'KitaplÄ±ÄŸÄ±nÄ±za eriÅŸmek iÃ§in giriÅŸ yapÄ±n' : 'Bulut kÃ¼tÃ¼phanenizi hemen oluÅŸturun'}
           </p>
         </div>
 
@@ -132,15 +145,15 @@ const AuthModal = ({ isVisible }) => {
               </div>
               <div className="relative">
                 <span className="absolute left-3 top-3.5 text-zinc-400 font-bold text-sm">@</span>
-                <input type="text" placeholder="Kullanıcı Adı" value={username} onChange={e => setUsername(e.target.value.toLowerCase().replace(/\s/g, ''))} className="w-full pl-10 pr-4 py-3 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-zinc-50 text-sm" />
+                <input type="text" placeholder="KullanÄ±cÄ± AdÄ±" value={username} onChange={e => setUsername(e.target.value.toLowerCase().replace(/\s/g, ''))} className="w-full pl-10 pr-4 py-3 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-zinc-50 text-sm" />
               </div>
               <div className="flex gap-3">
                 <div className="relative flex-1">
                   <select value={gender} onChange={e => setGender(e.target.value)} className="w-full px-3 py-3 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-zinc-50 text-sm text-zinc-700 appearance-none">
                     <option value="" disabled>Cinsiyet</option>
-                    <option value="Kadin">Kadın</option>
+                    <option value="Kadin">KadÄ±n</option>
                     <option value="Erkek">Erkek</option>
-                    <option value="Belirtmek Istemiyorum">Belirtmek İstemiyorum</option>
+                    <option value="Belirtmek Istemiyorum">Belirtmek Ä°stemiyorum</option>
                   </select>
                 </div>
                 <div className="relative flex-1">
@@ -158,14 +171,14 @@ const AuthModal = ({ isVisible }) => {
           
           <div className="relative">
             <Lock className="absolute left-3 top-3.5 text-zinc-400" size={18} />
-            <input type="password" placeholder="Şifre (en az 6 karakter)" value={password} onChange={e => setPassword(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-zinc-50 text-sm" required />
+            <input type="password" placeholder="Åifre (en az 6 karakter)" value={password} onChange={e => setPassword(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-zinc-50 text-sm" required />
           </div>
 
           {!isLogin && (
             <>
               <div className="relative">
                 <Lock className="absolute left-3 top-3.5 text-zinc-400" size={18} />
-                <input type="password" placeholder="Şifreyi Tekrar Girin" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-zinc-50 text-sm" required />
+                <input type="password" placeholder="Åifreyi Tekrar Girin" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} className="w-full pl-10 pr-4 py-3 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-zinc-50 text-sm" required />
               </div>
               
               <label className="flex items-start gap-2 mt-2 cursor-pointer group">
@@ -173,7 +186,7 @@ const AuthModal = ({ isVisible }) => {
                   {acceptedTerms ? <CheckSquare size={18} className="text-blue-500" /> : <Square size={18} />}
                 </button>
                 <span className="text-xs text-zinc-500 leading-tight flex-1">
-                  Kullanıcı Sözleşmesi: "Bunu okuyan tosun, okuyana kosun." Okudum ve onaylıyorum.
+                  KullanÄ±cÄ± SÃ¶zleÅŸmesi: "Bunu okuyan tosun, okuyana kosun." Okudum ve onaylÄ±yorum.
                 </span>
               </label>
             </>
@@ -183,9 +196,9 @@ const AuthModal = ({ isVisible }) => {
             {loading ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
             ) : isLogin ? (
-              <><LogIn size={18} /> Giriş Yap</>
+              <><LogIn size={18} /> GiriÅŸ Yap</>
             ) : (
-              <><UserPlus size={18} /> Kayıt Ol</>
+              <><UserPlus size={18} /> KayÄ±t Ol</>
             )}
           </button>
         </form>
@@ -207,9 +220,9 @@ const AuthModal = ({ isVisible }) => {
         </button>
 
         <p className="text-center text-sm text-zinc-500 mt-6">
-          {isLogin ? 'Hesabınız yok mu?' : 'Zaten hesabınız var mı?'}
+          {isLogin ? 'HesabÄ±nÄ±z yok mu?' : 'Zaten hesabÄ±nÄ±z var mÄ±?'}
           <button onClick={() => { setIsLogin(!isLogin); setError(''); }} className="ml-1 text-blue-600 font-medium hover:underline focus:outline-none">
-            {isLogin ? 'Kayıt Olun' : 'Giriş Yapın'}
+            {isLogin ? 'KayÄ±t Olun' : 'GiriÅŸ YapÄ±n'}
           </button>
         </p>
       </div>
@@ -217,3 +230,8 @@ const AuthModal = ({ isVisible }) => {
   );
 };
 window.AuthModal = AuthModal;
+
+
+export default AuthModal;
+
+

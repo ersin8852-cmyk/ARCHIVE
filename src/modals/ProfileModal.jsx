@@ -1,3 +1,16 @@
+﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
+import { createRoot } from 'react-dom/client';
+import * as LucideIcons from 'lucide-react';
+import { useAuth, useData, useToast } from '../context/context.jsx';
+import { api } from '../services/api.js';
+import BookCard from '../components/BookCard.jsx';
+import FolderNode from '../components/FolderNode.jsx';
+import ItemList from '../components/ItemList.jsx';
+import SearchModal from '../modals/SearchModal.jsx';
+import ManualAddModal from '../modals/ManualAddModal.jsx';
+import { ListCreateModal, ListEditModal } from '../modals/FolderModals.jsx';
+import BookDetail from '../modals/BookDetail.jsx';
+import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 
 
 const ProfileModal = ({ isOpen, onClose }) => {
@@ -39,11 +52,11 @@ const ProfileModal = ({ isOpen, onClose }) => {
       }
       
       updateProfileData({ fullName, username, gender, dob, photo });
-      showToast('Profil bilgileriniz güncellendi.');
+      showToast('Profil bilgileriniz gÃ¼ncellendi.');
       setIsEditing(false);
     } catch (err) {
       console.error(err);
-      showToast('Profil güncellenemedi.', 'error');
+      showToast('Profil gÃ¼ncellenemedi.', 'error');
     } finally {
       setLoading(false);
     }
@@ -51,20 +64,20 @@ const ProfileModal = ({ isOpen, onClose }) => {
 
   const handlePasswordChange = async () => {
     if (!password || password.length < 6) {
-      showToast('Şifre en az 6 karakter olmalıdır.', 'error');
+      showToast('Åifre en az 6 karakter olmalÄ±dÄ±r.', 'error');
       return;
     }
     setLoading(true);
     try {
       await user.updatePassword(password);
       setPassword('');
-      showToast('Şifreniz başarıyla değiştirildi.');
+      showToast('Åifreniz baÅŸarÄ±yla deÄŸiÅŸtirildi.');
     } catch (err) {
       console.error(err);
       if (err.code === 'auth/requires-recent-login') {
-        showToast('Güvenlik nedeniyle şifre değiştirmeden önce tekrar giriş yapmalısınız.', 'error');
+        showToast('GÃ¼venlik nedeniyle ÅŸifre deÄŸiÅŸtirmeden Ã¶nce tekrar giriÅŸ yapmalÄ±sÄ±nÄ±z.', 'error');
       } else {
-        showToast('Şifre değiştirilemedi: ' + err.message, 'error');
+        showToast('Åifre deÄŸiÅŸtirilemedi: ' + err.message, 'error');
       }
     } finally {
       setLoading(false);
@@ -78,7 +91,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
       await window.firebaseAuth.signOut();
       onClose();
     } catch (err) {
-      showToast('Çıkış yapılamadı.', 'error');
+      showToast('Ã‡Ä±kÄ±ÅŸ yapÄ±lamadÄ±.', 'error');
       setLoggingOut(false);
     }
   };
@@ -92,7 +105,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
           </button>
           <span className="font-bold text-lg text-zinc-800">Profilim</span>
         </div>
-        <button onClick={handleLogout} disabled={loggingOut} className="p-2 -mr-2 text-red-500 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50 flex items-center justify-center" title="Çıkış Yap">
+        <button onClick={handleLogout} disabled={loggingOut} className="p-2 -mr-2 text-red-500 hover:bg-red-50 rounded-full transition-colors disabled:opacity-50 flex items-center justify-center" title="Ã‡Ä±kÄ±ÅŸ Yap">
           {loggingOut ? <div className="w-5 h-5 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin"></div> : <LogOut size={20} />}
         </button>
       </div>
@@ -126,16 +139,16 @@ const ProfileModal = ({ isOpen, onClose }) => {
               </>
             )}
           </div>
-          <h2 className="text-xl font-bold text-zinc-900">{fullName || 'İsimsiz Kullanıcı'}</h2>
+          <h2 className="text-xl font-bold text-zinc-900">{fullName || 'Ä°simsiz KullanÄ±cÄ±'}</h2>
         </div>
 
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-zinc-100 space-y-4">
           <div className="flex justify-between items-center mb-2">
             <h3 className="font-bold text-zinc-800 text-sm flex items-center gap-2">
-              <User size={16} className="text-orange-500" /> Kişisel Bilgiler
+              <User size={16} className="text-orange-500" /> KiÅŸisel Bilgiler
             </h3>
             <button onClick={() => { if(isEditing) { setFullName(profile?.fullName || ''); setUsername(profile?.username || ''); setGender(profile?.gender || ''); setDob(profile?.dob || ''); setPhoto(profile?.photo || ''); setIsEditing(false); } else { setIsEditing(true); } }} className="text-xs font-semibold text-orange-600 hover:text-orange-700 px-3 py-1.5 bg-orange-50 hover:bg-orange-100 rounded-lg transition-colors">
-              {isEditing ? 'İptal' : 'Düzenle'}
+              {isEditing ? 'Ä°ptal' : 'DÃ¼zenle'}
             </button>
           </div>
           
@@ -149,7 +162,7 @@ const ProfileModal = ({ isOpen, onClose }) => {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-zinc-500 mb-1.5 ml-1">Kullanıcı Adı</label>
+            <label className="block text-xs font-semibold text-zinc-500 mb-1.5 ml-1">KullanÄ±cÄ± AdÄ±</label>
             {isEditing ? (
               <div className="relative">
                 <span className="absolute left-3 top-2.5 font-bold text-sm text-zinc-400">@</span>
@@ -167,19 +180,19 @@ const ProfileModal = ({ isOpen, onClose }) => {
               <label className="block text-xs font-semibold text-zinc-500 mb-1.5 ml-1">Cinsiyet</label>
               {isEditing ? (
                 <select value={gender} onChange={e => setGender(e.target.value)} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 text-zinc-700 appearance-none">
-                  <option value="">Belirtilmemiş</option>
-                  <option value="female">Kadın</option>
+                  <option value="">BelirtilmemiÅŸ</option>
+                  <option value="female">KadÄ±n</option>
                   <option value="male">Erkek</option>
-                  <option value="other">Diğer</option>
+                  <option value="other">DiÄŸer</option>
                 </select>
               ) : (
                 <div className="w-full px-1 py-2.5 text-sm font-medium text-zinc-900">
-                  {gender === 'female' ? 'Kadın' : gender === 'male' ? 'Erkek' : gender === 'other' ? 'Diğer' : '-'}
+                  {gender === 'female' ? 'KadÄ±n' : gender === 'male' ? 'Erkek' : gender === 'other' ? 'DiÄŸer' : '-'}
                 </div>
               )}
             </div>
             <div className="flex-1">
-              <label className="block text-xs font-semibold text-zinc-500 mb-1.5 ml-1">Doğum Tarihi</label>
+              <label className="block text-xs font-semibold text-zinc-500 mb-1.5 ml-1">DoÄŸum Tarihi</label>
               {isEditing ? (
                 <div className="relative">
                   <Calendar className="absolute left-3 top-2.5 text-zinc-400" size={16} />
@@ -201,20 +214,20 @@ const ProfileModal = ({ isOpen, onClose }) => {
         {user.providerData.some(p => p.providerId === 'password') && (
           <div className="bg-white rounded-2xl p-4 shadow-sm border border-zinc-100 space-y-4 mb-4">
             <h3 className="font-bold text-zinc-800 text-sm flex items-center gap-2 mb-2">
-              <Lock size={16} className="text-orange-500" /> Şifre Değiştir
+              <Lock size={16} className="text-orange-500" /> Åifre DeÄŸiÅŸtir
             </h3>
             <div>
-              <input type="password" placeholder="Yeni şifrenizi girin" value={password} onChange={e => setPassword(e.target.value)} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50" />
+              <input type="password" placeholder="Yeni ÅŸifrenizi girin" value={password} onChange={e => setPassword(e.target.value)} className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50" />
             </div>
             <button onClick={handlePasswordChange} disabled={loading || !password} className="w-full py-3 bg-white text-orange-600 border border-orange-200 rounded-xl font-medium hover:bg-orange-50 transition-colors disabled:opacity-50 flex justify-center items-center gap-2 text-sm">
-              <Lock size={16} /> Şifreyi Güncelle
+              <Lock size={16} /> Åifreyi GÃ¼ncelle
             </button>
           </div>
         )}
 
         <div className="mb-8 mt-4">
           <button onClick={() => setShowDeleteConfirm(true)} className="w-full py-3 bg-white text-red-600 border border-orange-600 rounded-xl font-medium hover:bg-orange-50 transition-colors flex justify-center items-center gap-2 text-sm">
-             Tüm Verileri Sil
+             TÃ¼m Verileri Sil
           </button>
         </div>
 
@@ -225,11 +238,11 @@ const ProfileModal = ({ isOpen, onClose }) => {
           <div className="bg-white rounded-2xl w-full max-w-xs p-6 shadow-2xl transform transition-all">
             <h3 className="font-bold text-lg text-zinc-900 mb-2">Emin misiniz?</h3>
             <p className="text-zinc-600 text-sm mb-6 leading-relaxed">
-              Tüm kütüphane ve listeleriniz kalıcı olarak silinecektir, emin misiniz?
+              TÃ¼m kÃ¼tÃ¼phane ve listeleriniz kalÄ±cÄ± olarak silinecektir, emin misiniz?
             </p>
             <div className="flex gap-3">
               <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 py-3 font-medium text-zinc-600 bg-zinc-100 hover:bg-zinc-200 rounded-xl transition-colors">
-                İptal
+                Ä°ptal
               </button>
               <button onClick={() => {
                 deleteAllData();
@@ -248,4 +261,9 @@ const ProfileModal = ({ isOpen, onClose }) => {
 };
 
 window.ProfileModal = ProfileModal;
+
+
+
+export default ProfileModal;
+
 

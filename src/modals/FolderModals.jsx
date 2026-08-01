@@ -1,3 +1,15 @@
+﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
+import { createRoot } from 'react-dom/client';
+import * as LucideIcons from 'lucide-react';
+import { useAuth, useData, useToast } from '../context/context.jsx';
+import { api } from '../services/api.js';
+import BookCard from '../components/BookCard.jsx';
+import FolderNode from '../components/FolderNode.jsx';
+import ItemList from '../components/ItemList.jsx';
+import SearchModal from '../modals/SearchModal.jsx';
+import ManualAddModal from '../modals/ManualAddModal.jsx';
+import BookDetail from '../modals/BookDetail.jsx';
+import { useHistoryModal, useFolderUtils } from '../utils/hooks.jsx';
 const ListCreateModal = ({ isOpen, onClose, onCreate, parentId }) => {
   const [name, setName] = useState('Liste A');
   const [color, setColor] = useState('#71717a');
@@ -30,12 +42,12 @@ const ListCreateModal = ({ isOpen, onClose, onCreate, parentId }) => {
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       <div className="bg-white w-full max-w-sm rounded-2xl shadow-xl z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <div className="flex justify-between items-center p-4 border-b border-zinc-100">
-          <h2 className="text-lg font-bold text-zinc-900">Yeni Liste Oluştur</h2>
+          <h2 className="text-lg font-bold text-zinc-900">Yeni Liste OluÃ…Å¸tur</h2>
           <button onClick={onClose} className="p-2 text-zinc-500 hover:bg-zinc-100 rounded-full transition-colors"><X size={20} /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-4">
           <div className="mb-4">
-            <label className="block text-sm font-medium text-zinc-700 mb-1">Liste Adı</label>
+            <label className="block text-sm font-medium text-zinc-700 mb-1">Liste AdÃ„Â±</label>
             <input 
               ref={inputRef}
               type="text" 
@@ -46,7 +58,7 @@ const ListCreateModal = ({ isOpen, onClose, onCreate, parentId }) => {
             />
           </div>
           <div className="mb-6">
-            <label className="block text-sm font-medium text-zinc-700 mb-2">Renk Seçimi</label>
+            <label className="block text-sm font-medium text-zinc-700 mb-2">Renk SeÃƒÂ§imi</label>
             <div className="flex gap-2 flex-wrap">
               {colors.map(c => (
                 <button
@@ -60,7 +72,7 @@ const ListCreateModal = ({ isOpen, onClose, onCreate, parentId }) => {
             </div>
           </div>
           <button type="submit" className="w-full py-3 bg-orange-600 text-white rounded-xl font-semibold hover:bg-orange-700 transition-colors">
-            Oluştur
+            OluÃ…Å¸tur
           </button>
         </form>
       </div>
@@ -111,7 +123,7 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       <div className="bg-white w-full max-w-sm rounded-2xl shadow-xl z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <div className="flex justify-between items-center p-4 border-b border-zinc-100">
-          <h2 className="text-lg font-bold text-zinc-900">Liste Ayarları</h2>
+          <h2 className="text-lg font-bold text-zinc-900">Liste AyarlarÃ„Â±</h2>
           <button onClick={onClose} className="p-2 text-zinc-500 hover:bg-zinc-100 rounded-full transition-colors"><X size={20} /></button>
         </div>
         
@@ -122,17 +134,17 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
             </div>
             <h3 className="text-lg font-bold text-zinc-900 mb-2">Listeyi Sil</h3>
             <p className="text-sm text-zinc-500 mb-6">
-              Bu listeyi silmek istediğinize emin misiniz? <br/>İçindeki kitaplar silinmeyecek, ana dizine taşınacaktır.
+              Bu listeyi silmek istediÃ„Å¸inize emin misiniz? <br/>Ã„Â°ÃƒÂ§indeki kitaplar silinmeyecek, ana dizine taÃ…Å¸Ã„Â±nacaktÃ„Â±r.
             </p>
             <div className="flex gap-3 w-full">
-              <button onClick={() => setShowDelConfirm(false)} className="flex-1 py-3 bg-zinc-100 text-zinc-700 rounded-xl font-semibold hover:bg-zinc-200 transition-colors">İptal</button>
+              <button onClick={() => setShowDelConfirm(false)} className="flex-1 py-3 bg-zinc-100 text-zinc-700 rounded-xl font-semibold hover:bg-zinc-200 transition-colors">Ã„Â°ptal</button>
               <button onClick={handleDelete} className="flex-1 py-3 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 transition-colors">Evet, Sil</button>
             </div>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="p-4">
             <div className="mb-4">
-              <label className="block text-sm font-medium text-zinc-700 mb-1">Liste Adı</label>
+              <label className="block text-sm font-medium text-zinc-700 mb-1">Liste AdÃ„Â±</label>
               <input 
                 ref={inputRef}
                 type="text" 
@@ -143,7 +155,7 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
               />
             </div>
             <div className="mb-6">
-              <label className="block text-sm font-medium text-zinc-700 mb-2">Renk Seçimi</label>
+              <label className="block text-sm font-medium text-zinc-700 mb-2">Renk SeÃƒÂ§imi</label>
               <div className="flex gap-2 flex-wrap">
                 {colors.map(c => (
                   <button
@@ -171,3 +183,9 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
     document.body
   );
 };
+
+
+export { ListCreateModal, ListEditModal };
+
+
+

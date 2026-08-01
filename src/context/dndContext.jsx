@@ -1,3 +1,7 @@
+﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
+import { createRoot } from 'react-dom/client';
+import * as LucideIcons from 'lucide-react';
+
 const DragApiContext = createContext(null);
 const DraggedItemContext = createContext(null);
 const OverTargetContext = createContext(null);
@@ -19,7 +23,7 @@ document.addEventListener('touchmove', (e) => {
   }
 }, { passive: false, capture: true });
 
-// Boş touchstart listener kaldırıldı (gereksiz olay döngüsü yükü oluşturuyordu)
+// BoÅŸ touchstart listener kaldÄ±rÄ±ldÄ± (gereksiz olay dÃ¶ngÃ¼sÃ¼ yÃ¼kÃ¼ oluÅŸturuyordu)
 
 const useDraggableItem = (item, containerFolderId, onClick, itemType) => {
   const { startDrag, updateDrag, endDrag, cancelDrag } = useDragApi();
@@ -448,7 +452,7 @@ const DragDropProvider = ({ children, onDrop }) => {
   const draggedBook = draggedId ? books.find(b => b.id === draggedId) : null;
   const draggedFolder = !draggedBook && draggedId ? folders.find(f => f.id === draggedId) : null;
   const draggedTitle = draggedBook ? draggedBook.title : (draggedFolder ? draggedFolder.name : '');
-  const draggedSubtitle = draggedBook ? (draggedBook.publisher || 'Yayınevi Yok') : (draggedFolder ? 'Liste' : '');
+  const draggedSubtitle = draggedBook ? (draggedBook.publisher || 'YayÄ±nevi Yok') : (draggedFolder ? 'Liste' : '');
 
   const apiValue = useMemo(() => ({ startDrag, updateDrag, endDrag, cancelDrag }), []);
   const itemValue = useMemo(() => ({ draggedId, cardSize }), [draggedId, cardSize]);
@@ -490,3 +494,9 @@ const DragDropProvider = ({ children, onDrop }) => {
     </DragApiContext.Provider>
   );
 };
+
+
+export { DragDropProvider };
+
+
+

@@ -1,3 +1,14 @@
+﻿import React, { useState, useEffect, useRef, useMemo, useCallback, useContext, createContext } from 'react';
+import { createRoot } from 'react-dom/client';
+import { useAuth, useData, ArchiveProvider } from './context/context.jsx';
+import { DragDropProvider } from './context/dndContext.jsx';
+import AuthModal from './modals/AuthModal.jsx';
+import ProfileModal from './modals/ProfileModal.jsx';
+import ListsView from './views/ListsView.jsx';
+import LibraryView from './views/LibraryView.jsx';
+import StatsView from './views/StatsView.jsx';
+import { useHistoryModal } from './utils/hooks.jsx';
+import { List, Library, BarChart3, AlertCircle } from 'lucide-react';
 const AppLayout = () => {
   const { user, loadingAuth } = useAuth();
   const { loadingData } = useData();
@@ -107,16 +118,16 @@ class ErrorBoundary extends React.Component {
     return { hasError: true };
   }
   componentDidCatch(error, info) {
-    console.error('Uygulama hatası:', error, info);
+    console.error('Uygulama hatasÄ±:', error, info);
   }
   render() {
     if (this.state.hasError) {
       return (
         <div className="h-[100dvh] flex flex-col items-center justify-center bg-white text-center p-6 gap-3">
           <AlertCircle size={40} className="text-red-500" />
-          <h2 className="font-bold text-zinc-800">Bir şeyler ters gitti</h2>
-          <p className="text-sm text-zinc-500">Sayfayı yenilemeyi deneyin. Verileriniz tarayıcınızda saklı kalmaya devam eder.</p>
-          <button onClick={() => window.location.reload()} className="mt-2 px-4 py-2 bg-orange-600 text-white rounded-xl text-sm font-medium">Sayfayı Yenile</button>
+          <h2 className="font-bold text-zinc-800">Bir ÅŸeyler ters gitti</h2>
+          <p className="text-sm text-zinc-500">SayfayÄ± yenilemeyi deneyin. Verileriniz tarayÄ±cÄ±nÄ±zda saklÄ± kalmaya devam eder.</p>
+          <button onClick={() => window.location.reload()} className="mt-2 px-4 py-2 bg-orange-600 text-white rounded-xl text-sm font-medium">SayfayÄ± Yenile</button>
         </div>
       );
     }
@@ -144,3 +155,6 @@ function App() {
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
 root.render(<App />);
+
+
+
