@@ -193,21 +193,29 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
       if (isbnMatches && isbnMatches.length > 0) {
         // Bulk ISBN Search
         const uniqueIsbns = [...new Set(isbnMatches)];
-        const allItems = [];
-        const notFoundIsbns = [];
         
-        await Promise.all(uniqueIsbns.map(async (isbn) => {
+        const resultsArray = await Promise.all(uniqueIsbns.map(async (isbn) => {
           try {
             const items = await window.api.fetchByIsbn(isbn);
             if (items && items.length > 0) {
-              allItems.push(...items);
+              return { success: true, items, isbn };
             } else {
-              notFoundIsbns.push(isbn);
+              return { success: false, isbn };
             }
           } catch (err) {
-            notFoundIsbns.push(isbn);
+            return { success: false, isbn };
           }
         }));
+        
+        const allItems = [];
+        const notFoundIsbns = [];
+        resultsArray.forEach(res => {
+          if (res.success) {
+            allItems.push(...res.items);
+          } else {
+            notFoundIsbns.push(res.isbn);
+          }
+        });
         
         setResults(allItems);
         
