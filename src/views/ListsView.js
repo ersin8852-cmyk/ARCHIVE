@@ -60,7 +60,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
             )}
           </button>
           <div className="flex items-center justify-center text-stone-50">
-            <img src="./logo.png" alt="Logo" className="w-8 h-8 object-contain drop-shadow-sm" />
+            <img src="./logo.png" alt="Logo" className="w-14 h-14 object-contain drop-shadow-sm" />
             <span className="font-mono text-xl font-bold tracking-[0.25em] ml-2 mt-0.5">ARCHIVE</span>
           </div>
           <div className="w-[38px]"></div>
