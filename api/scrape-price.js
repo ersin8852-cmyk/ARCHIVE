@@ -54,26 +54,51 @@ module.exports = async (req, res) => {
         fetchUrl = `http://api.scraperapi.com/?api_key=${SCRAPER_API_KEY}&url=${encodeURIComponent(url)}`;
       }
 
-      // Vercel zaman aşımı 10sn'dir. İşlemin Vercel'i çökertmemesi için 8.5 saniyede iptal ediyoruz.
       const response = await axios.get(fetchUrl, { headers, timeout: 8500 });
       const $ = cheerio.load(response.data);
       let parsed = parseCallback($);
       let price = null;
       let cover = '';
+      let metadata = {};
       
       if (typeof parsed === 'number') {
         price = parsed;
       } else if (parsed && typeof parsed === 'object') {
         price = parsed.price;
         cover = parsed.cover || '';
+        metadata = parsed.metadata || {};
       }
       
       if (price && !isNaN(price) && price > 0) {
-        results.push({ site: siteName, price: price, cover: cover });
+        results.push({ site: siteName, price: price, cover: cover, metadata: metadata });
       }
     } catch (error) {
       console.log(`[Scraper] ${siteName} hatası: ${error.message}`);
     }
+  };
+
+  const extractMetadata = ($) => {
+    const meta = {};
+    
+    const titleSelectors = ['.name', '.product-title', '.product-name', '.pr_header__heading', '#product-name', '.a-size-medium', '.prd-name'];
+    for (let s of titleSelectors) {
+      const txt = $(s).first().text().replace(/\n/g, ' ').trim();
+      if (txt && txt.length > 2 && !txt.includes('TL')) { meta.title = txt; break; }
+    }
+    
+    const authorSelectors = ['.author', '.product-author', '.writer', '.pr_producers__publisher', '.a-row .a-size-base', '.yazar'];
+    for (let s of authorSelectors) {
+      const txt = $(s).first().text().replace('Yazar:', '').replace(/\n/g, ' ').trim();
+      if (txt && txt.length > 2 && !txt.includes('TL')) { meta.author = txt; break; }
+    }
+    
+    const pubSelectors = ['.publisher', '.product-publisher', '.yayinevi', '.pr_producers__manufacturer', '.brand', '.yayinevi-link'];
+    for (let s of pubSelectors) {
+      const txt = $(s).first().text().replace('Yayınevi:', '').replace(/\n/g, ' ').trim();
+      if (txt && txt.length > 2 && !txt.includes('TL')) { meta.publisher = txt; break; }
+    }
+    
+    return meta;
   };
 
   const extractCover = ($) => {
@@ -124,21 +149,21 @@ module.exports = async (req, res) => {
     fetchPrice('Kitapyurdu', `https://www.kitapyurdu.com/index.php?route=product/search&filter_name=${cleanIsbn}`, ($) => {
       const priceText = $('.price .value').first().text().trim();
       const price = priceText ? parseFloat(priceText.replace(',', '.').replace(/[^0-9.]/g, '')) : null;
-      return { price, cover: extractCover($) };
+      return { price, cover: extractCover($), metadata: extractMetadata($) };
     }),
 
     // 2. BKM Kitap (Normal Tarama)
     fetchPrice('BKM Kitap', `https://www.bkmkitap.com/arama?q=${cleanIsbn}`, ($) => {
       const priceText = $('.current-price').first().text().trim();
       const price = priceText ? parseFloat(priceText.replace(',', '.').replace(/[^0-9.]/g, '')) : null;
-      return { price, cover: extractCover($) };
+      return { price, cover: extractCover($), metadata: extractMetadata($) };
     }),
 
     // 3. Kitapsepeti (Normal Tarama)
     fetchPrice('Kitapsepeti', `https://www.kitapsepeti.com/arama?q=${cleanIsbn}`, ($) => {
       const priceText = $('.current-price').first().text().trim();
       const price = priceText ? parseFloat(priceText.replace(',', '.').replace(/[^0-9.]/g, '')) : null;
-      return { price, cover: extractCover($) };
+      return { price, cover: extractCover($), metadata: extractMetadata($) };
     }),
 
     // 4. Amazon TR (ScraperAPI ile Anti-Bot bypass)
@@ -147,7 +172,7 @@ module.exports = async (req, res) => {
       const priceFraction = $('.a-price-fraction').first().text().replace(/[^0-9]/g, '');
       if (!priceWhole) return null;
       const price = parseFloat(`${priceWhole}.${priceFraction || '00'}`);
-      return { price, cover: extractCover($) };
+      return { price, cover: extractCover($), metadata: extractMetadata($) };
     }, true),
 
     // 5. D&R (ScraperAPI ile Anti-Bot bypass)
@@ -156,7 +181,7 @@ module.exports = async (req, res) => {
       if (!priceText) return null;
       const clean = priceText.replace(' TL', '').replace(',', '.');
       const price = parseFloat(clean);
-      return { price, cover: extractCover($) };
+      return { price, cover: extractCover($), metadata: extractMetadata($) };
     }, true)
   ]);
 

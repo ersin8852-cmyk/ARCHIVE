@@ -503,6 +503,22 @@ const DataProvider = ({ children }) => {
                       const foundCover = result.cheapest.cover || (result.all_results && result.all_results.find(r => r.cover)?.cover);
                       if (foundCover) updates.cover = foundCover;
                     }
+                    
+                    if (result.all_results) {
+                      const bestMeta = result.all_results.map(r => r.metadata).reduce((acc, curr) => {
+                        if (curr) {
+                          if (curr.author) acc.author = curr.author;
+                          if (curr.publisher) acc.publisher = curr.publisher;
+                          if (curr.title && (!acc.title || acc.title.length < curr.title.length)) acc.title = curr.title;
+                        }
+                        return acc;
+                      }, {});
+                      
+                      if (bestMeta.author) updates.author = bestMeta.author;
+                      if (bestMeta.publisher) updates.publisher = bestMeta.publisher;
+                      if (bestMeta.title) updates.title = bestMeta.title;
+                    }
+                    
                     return { ...b, ...updates };
                   }
                   return b;

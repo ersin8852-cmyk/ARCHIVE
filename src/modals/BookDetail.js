@@ -44,24 +44,34 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
       if (!res.ok) throw new Error('API Hatası');
       const result = await res.json();
       if (result && result.cheapest) {
-        console.log('[Kapak Debug] API Yanıtı Geldi:', result);
         const updates = { price: result.cheapest.price };
         
+        if (result.all_results) {
+          const bestMeta = result.all_results.map(r => r.metadata).reduce((acc, curr) => {
+            if (curr) {
+              if (curr.author) acc.author = curr.author;
+              if (curr.publisher) acc.publisher = curr.publisher;
+              if (curr.title && (!acc.title || acc.title.length < curr.title.length)) acc.title = curr.title;
+            }
+            return acc;
+          }, {});
+          
+          if (bestMeta.author) updates.author = bestMeta.author;
+          if (bestMeta.publisher) updates.publisher = bestMeta.publisher;
+          if (bestMeta.title) updates.title = bestMeta.title;
+        }
+
         if (!book.cover || book.cover === 'default-cover.png' || !book.cover.startsWith('data:image')) {
           const foundCover = result.cheapest.cover || (result.all_results && result.all_results.find(r => r.cover)?.cover);
-          console.log('[Kapak Debug] Mevcut kapak boş/default, API\'den bulunan kapak:', foundCover);
-          if (foundCover) {
-            updates.cover = foundCover;
-            console.log('[Kapak Debug] Kapağı güncelliyorum:', foundCover);
-          } else {
-            console.log('[Kapak Debug] DİKKAT: API hiçbir kapak bulamadı!');
+          if (foundCover && foundCover !== book.cover) {
+            const img = new Image();
+            img.onload = () => updateBook(book.id, { cover: foundCover });
+            img.src = foundCover;
           }
-        } else {
-          console.log('[Kapak Debug] Kitabın halihazırda geçerli bir kapağı var, değiştirmiyorum:', book.cover);
         }
         
         updateBook(book.id, updates);
-        showToast('Fiyat başarıyla güncellendi.');
+        showToast('Veriler webden başarıyla çekildi.');
       } else {
         showToast('Fiyat bulunamadı.', 'error');
       }
@@ -121,16 +131,6 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
                 ) : (
                   <div className="flex items-center justify-between">
                     <div className="text-zinc-800 text-sm font-medium">{book[field.name] || '-'}</div>
-                    {field.name === 'price' && (
-                      <button 
-                        onClick={handleRefreshPrice}
-                        disabled={isRefreshingPrice}
-                        className="p-1 -m-1 rounded-md text-zinc-400 hover:text-zinc-700 hover:bg-zinc-200 transition-colors disabled:opacity-50 flex items-center justify-center shrink-0"
-                        title="Fiyatı Güncelle"
-                      >
-                        <RefreshCw size={14} className={isRefreshingPrice ? "animate-spin" : ""} />
-                      </button>
-                    )}
                   </div>
                 )}
               </div>
@@ -168,6 +168,9 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
             <div className="flex gap-2">
               <button onClick={() => setShowDeleteConfirm(true)} className="p-2.5 rounded-xl border border-zinc-200 text-red-500 hover:bg-red-50 transition-colors shrink-0" title="Kitabı Sil"><Trash2 size={20} /></button>
               <button onClick={() => setIsEditing(true)} className="flex-1 py-2.5 rounded-xl flex items-center justify-center gap-2 bg-zinc-900 text-white font-medium hover:bg-zinc-800 transition-colors">Bilgileri Düzenle</button>
+              <button onClick={handleRefreshPrice} disabled={isRefreshingPrice} className="p-2.5 rounded-xl bg-orange-500 text-white font-medium hover:bg-orange-600 transition-colors shrink-0 disabled:opacity-70 border border-orange-500" title="Tüm Verileri Web'den Çek / Güncelle">
+                <RefreshCw size={20} className={isRefreshingPrice ? "animate-spin" : ""} />
+              </button>
             </div>
           )}
         </div>
