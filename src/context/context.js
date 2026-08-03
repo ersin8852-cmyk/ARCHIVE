@@ -496,11 +496,16 @@ const DataProvider = ({ children }) => {
             if (result && result.cheapest) {
               updateData(prev => ({
                 ...prev,
-                books: prev.books.map(b => 
-                  b.id === pendingBook.id 
-                    ? { ...b, price: result.cheapest.price, priceFetchPending: false } 
-                    : b
-                )
+                books: prev.books.map(b => {
+                  if (b.id === pendingBook.id) {
+                    const updates = { price: result.cheapest.price, priceFetchPending: false };
+                    if (!b.cover || b.cover === 'default-cover.png' || b.cover.includes('openlibrary')) {
+                      if (result.cheapest.cover) updates.cover = result.cheapest.cover;
+                    }
+                    return { ...b, ...updates };
+                  }
+                  return b;
+                })
               }));
             } else {
               throw new Error('Fiyat verisi boş');

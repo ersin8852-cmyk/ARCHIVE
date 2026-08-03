@@ -57,10 +57,19 @@ module.exports = async (req, res) => {
       // Vercel zaman aşımı 10sn'dir. İşlemin Vercel'i çökertmemesi için 8.5 saniyede iptal ediyoruz.
       const response = await axios.get(fetchUrl, { headers, timeout: 8500 });
       const $ = cheerio.load(response.data);
-      let price = parseCallback($);
+      let parsed = parseCallback($);
+      let price = null;
+      let cover = '';
+      
+      if (typeof parsed === 'number') {
+        price = parsed;
+      } else if (parsed && typeof parsed === 'object') {
+        price = parsed.price;
+        cover = parsed.cover || '';
+      }
       
       if (price && !isNaN(price) && price > 0) {
-        results.push({ site: siteName, price: price });
+        results.push({ site: siteName, price: price, cover: cover });
       }
     } catch (error) {
       console.log(`[Scraper] ${siteName} hatası: ${error.message}`);
@@ -72,22 +81,34 @@ module.exports = async (req, res) => {
     // 1. Kitapyurdu (Normal Tarama)
     fetchPrice('Kitapyurdu', `https://www.kitapyurdu.com/index.php?route=product/search&filter_name=${cleanIsbn}`, ($) => {
       const priceText = $('.price .value').first().text().trim();
-      if (!priceText) return null;
-      return parseFloat(priceText.replace(',', '.').replace(/[^0-9.]/g, ''));
+      const price = priceText ? parseFloat(priceText.replace(',', '.').replace(/[^0-9.]/g, '')) : null;
+      
+      let cover = $('.product-cr img').first().attr('src') || $('.image img').first().attr('src') || '';
+      if (!cover || cover.includes('empty') || cover.includes('lazy') || cover.includes('blank')) {
+          cover = $('.product-cr img').first().attr('data-src') || cover;
+      }
+      return { price, cover };
     }),
 
     // 2. BKM Kitap (Normal Tarama)
     fetchPrice('BKM Kitap', `https://www.bkmkitap.com/arama?q=${cleanIsbn}`, ($) => {
       const priceText = $('.current-price').first().text().trim();
-      if (!priceText) return null;
-      return parseFloat(priceText.replace(',', '.').replace(/[^0-9.]/g, ''));
+      const price = priceText ? parseFloat(priceText.replace(',', '.').replace(/[^0-9.]/g, '')) : null;
+      
+      let cover = $('.product-image img').first().attr('src') || $('.img-inner img').first().attr('data-src') || '';
+      if (!cover || cover.includes('empty') || cover.includes('lazy') || cover.includes('blank')) {
+          cover = $('.product-image img').first().attr('data-src') || cover;
+      }
+      return { price, cover };
     }),
 
     // 3. Kitapsepeti (Normal Tarama)
     fetchPrice('Kitapsepeti', `https://www.kitapsepeti.com/arama?q=${cleanIsbn}`, ($) => {
       const priceText = $('.current-price').first().text().trim();
-      if (!priceText) return null;
-      return parseFloat(priceText.replace(',', '.').replace(/[^0-9.]/g, ''));
+      const price = priceText ? parseFloat(priceText.replace(',', '.').replace(/[^0-9.]/g, '')) : null;
+      
+      const cover = $('.product-image img').first().attr('src') || $('.image img').first().attr('data-src') || '';
+      return { price, cover };
     }),
 
     // 4. Amazon TR (ScraperAPI ile Anti-Bot bypass)
