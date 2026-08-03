@@ -13,7 +13,7 @@ window.ai = {
     const apiKey = window.ai.getApiKey();
     if (!apiKey) return null;
     
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
     const prompt = `Sen sadece kitap ve yazar isimlerindeki bozuk veya eksik Türkçe karakterleri düzelten bir araçsın (Deasciifier). 
 Sana bir JSON vereceğim. İçindeki "title" ve "author" değerlerindeki Türkçe karakter hatalarını düzeltip (Örn: "Alayci Kus" -> "Alaycı Kuş", "Dostoyevski" -> "Dostoyevski") SADECE düzeltilmiş JSON'u döndür. Sadece düzelt, anlamını veya dilini değiştirme. İngilizce bir kitapsa dokunma. Markdown (backtick) kullanma, saf JSON metni döndür.
 
