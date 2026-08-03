@@ -364,6 +364,7 @@ const DataProvider = ({ children }) => {
         order,
         inLibrary: false,
         isRead: false,
+        needsAiCorrection: true
       };
       return { ...prev, books: [...prev.books, newBook] };
     });
@@ -387,21 +388,6 @@ const DataProvider = ({ children }) => {
         .catch(err => {
           console.log('Arka plan fiyat taraması başarısız:', err.message);
         });
-    }
-
-    if (window.ai && window.ai.getApiKey()) {
-      window.ai.correctBookData(bookData.title, bookData.author, showToast).then(corrected => {
-        if (corrected && (corrected.title !== bookData.title || corrected.author !== bookData.author)) {
-          showToast(`AI Başarıyla Düzeltti: ${corrected.title}`, 'success');
-          updateData(prev => ({
-            ...prev,
-            books: prev.books.map(b => b.id === newBookId ? { ...b, title: corrected.title || b.title, author: corrected.author || b.author } : b)
-          }));
-        }
-      }).catch(err => {
-        showToast('AI arka plan düzeltmesi başarısız oldu.', 'error');
-        console.error('AI arka plan düzeltmesi başarısız:', err);
-      });
     }
 
     return true;
@@ -493,6 +479,62 @@ const DataProvider = ({ children }) => {
       profile: { ...(prev.profile || initialState.profile), ...profileUpdates }
     }));
   }, [updateData]);
+
+  // --- AI QUEUE WORKER ---
+  const dataRef = useRef(data);
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
+  
+  const isProcessingAiRef = useRef(false);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (isProcessingAiRef.current || !window.ai || !window.ai.getApiKey()) return;
+      
+      const books = dataRef.current?.books;
+      if (!books) return;
+      
+      const pendingBook = books.find(b => b.needsAiCorrection);
+      if (!pendingBook) return;
+      
+      isProcessingAiRef.current = true;
+      
+      window.ai.correctBookData(pendingBook.title, pendingBook.author)
+        .then(corrected => {
+          if (corrected?.rateLimited) {
+            console.log("AI Queue: Google Rate Limit aşıldı, daha sonra tekrar denenecek.");
+            return;
+          }
+          
+          updateData(prev => {
+            const bIndex = prev.books.findIndex(b => b.id === pendingBook.id);
+            if (bIndex === -1) return prev;
+            
+            const updatedBooks = [...prev.books];
+            const updatedBook = { ...updatedBooks[bIndex], needsAiCorrection: false };
+            
+            if (corrected && (corrected.title !== pendingBook.title || corrected.author !== pendingBook.author)) {
+              updatedBook.title = corrected.title || updatedBook.title;
+              updatedBook.author = corrected.author || updatedBook.author;
+            }
+            
+            updatedBooks[bIndex] = updatedBook;
+            return { ...prev, books: updatedBooks };
+          });
+        })
+        .finally(() => {
+          setTimeout(() => {
+            isProcessingAiRef.current = false;
+          }, 5000);
+        });
+        
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [updateData]);
+  // -----------------------
+
 
   const contextValue = useMemo(() => ({
     loadingData,
