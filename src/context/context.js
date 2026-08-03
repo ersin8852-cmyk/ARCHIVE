@@ -28,6 +28,7 @@ const FolderPlus = pickIcon('FolderPlus');
 const FileText = pickIcon('FileText');
 const MoveRight = pickIcon('MoveRight');
 const Camera = pickIcon('Camera');
+const Info = pickIcon('Info');
 const GripVertical = pickIcon('GripVertical');
 const Trash2 = pickIcon('Trash2');
 const AlertCircle = pickIcon('AlertCircle');

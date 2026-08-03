@@ -1,6 +1,3 @@
-const { useState, useEffect, useRef } = React;
-const { Info, X, Check, Search, Plus, BookOpen } = window.LucideReact;
-
 const BulkAddModal = ({ isOpen, onClose, folderId }) => {
   const { addBook } = useData();
   const { showToast } = useToast();
