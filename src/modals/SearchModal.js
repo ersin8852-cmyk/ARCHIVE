@@ -10,6 +10,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
   const [isbnSearchActive, setIsbnSearchActive] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const scannerRef = useRef(null);
+  const currentSearchIdRef = useRef(0);
 
   useEffect(() => {
     if (!isOpen) {
@@ -186,6 +187,10 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
   const performSearch = async (searchQuery) => {
     const q = (searchQuery ?? query).trim();
     if (!q) return;
+    
+    const searchId = Date.now();
+    currentSearchIdRef.current = searchId;
+    
     setLoading(true); setResults([]); setHasSearched(true); setIsbnSearchActive(false);
     
     const cleanQuery = q.replace(/-/g, '');
@@ -199,29 +204,46 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
         setIsbnSearchActive(true); // Enable bottom spinner
         
         for (const isbn of uniqueIsbns) {
+          if (currentSearchIdRef.current !== searchId) break;
           try {
             const items = await window.api.fetchByIsbn(isbn);
+            if (currentSearchIdRef.current !== searchId) break;
+            
             if (items && items.length > 0) {
-              setResults(prev => [...prev, ...items]);
+              setResults(prev => {
+                const uniqueNewItems = items.filter(newItem => !prev.some(p => p.isbn === newItem.isbn));
+                return [...prev, ...uniqueNewItems];
+              });
             } else {
               showToast(`${isbn} numaralı kitap bulunamadı`, 'warning');
             }
           } catch (err) {
+            if (currentSearchIdRef.current !== searchId) break;
             showToast(`${isbn} numaralı kitap bulunamadı`, 'warning');
           }
         }
-        setIsbnSearchActive(false);
+        if (currentSearchIdRef.current === searchId) setIsbnSearchActive(false);
       } else {
         // Single text search
         const items = await window.api.fetchByTitle(q);
-        setResults(items);
-        if (items.length === 0) showToast('Sonuç bulunamadı.', 'error');
+        if (currentSearchIdRef.current !== searchId) return;
+        
+        const uniqueItems = items.reduce((acc, current) => {
+          const x = acc.find(item => item.isbn && current.isbn && item.isbn === current.isbn);
+          if (!x) return acc.concat([current]);
+          return acc;
+        }, []);
+        
+        setResults(uniqueItems);
+        if (uniqueItems.length === 0) showToast('Sonuç bulunamadı.', 'error');
         setLoading(false);
       }
     } catch (err) {
-      showToast('Arama başarısız oldu.', 'error');
-      setLoading(false);
-      setIsbnSearchActive(false);
+      if (currentSearchIdRef.current === searchId) {
+        showToast('Arama başarısız oldu.', 'error');
+        setLoading(false);
+        setIsbnSearchActive(false);
+      }
     }
   };
 
