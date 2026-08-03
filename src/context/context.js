@@ -251,27 +251,19 @@ const DataProvider = ({ children }) => {
     }
   }, [user]);
 
-  const pendingSaveRef = useRef(null);
-
   const updateData = useCallback((updater) => {
     setData(prev => {
       const newData = typeof updater === 'function' ? updater(prev) : updater;
-      if (newData !== prev) {
-        pendingSaveRef.current = newData;
+      if (user && newData !== prev) {
+        window.firebaseDb.collection('users').doc(user.uid)
+          .set(newData, { merge: true })
+          .catch(err => {
+            console.error(err);
+            showToast('Veri buluta kaydedilemedi!', 'error');
+          });
       }
       return newData;
     });
-    // Firestore'a kaydetme işlemi setState dışında yapılıyor (React best practice)
-    if (user && pendingSaveRef.current !== null) {
-      const dataToSave = pendingSaveRef.current;
-      pendingSaveRef.current = null;
-      window.firebaseDb.collection('users').doc(user.uid)
-        .set(dataToSave, { merge: true })
-        .catch(err => {
-          console.error(err);
-          showToast('Veri buluta kaydedilemedi!', 'error');
-        });
-    }
   }, [user, showToast]);
 
   const addFolder = useCallback((name, parentId = null, color = '#71717a', customCover = null) => {
