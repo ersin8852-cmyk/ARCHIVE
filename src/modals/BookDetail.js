@@ -44,11 +44,22 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
       if (!res.ok) throw new Error('API Hatası');
       const result = await res.json();
       if (result && result.cheapest) {
+        console.log('[Kapak Debug] API Yanıtı Geldi:', result);
         const updates = { price: result.cheapest.price };
+        
         if (!book.cover || book.cover === 'default-cover.png' || book.cover.includes('openlibrary')) {
           const foundCover = result.cheapest.cover || (result.all_results && result.all_results.find(r => r.cover)?.cover);
-          if (foundCover) updates.cover = foundCover;
+          console.log('[Kapak Debug] Mevcut kapak boş/default, API\'den bulunan kapak:', foundCover);
+          if (foundCover) {
+            updates.cover = foundCover;
+            console.log('[Kapak Debug] Kapağı güncelliyorum:', foundCover);
+          } else {
+            console.log('[Kapak Debug] DİKKAT: API hiçbir kapak bulamadı!');
+          }
+        } else {
+          console.log('[Kapak Debug] Kitabın halihazırda geçerli bir kapağı var, değiştirmiyorum:', book.cover);
         }
+        
         updateBook(book.id, updates);
         showToast('Fiyat başarıyla güncellendi.');
       } else {
