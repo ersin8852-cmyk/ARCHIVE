@@ -126,37 +126,66 @@ const ToastContext = createContext();
 const useToast = () => useContext(ToastContext);
 
 const ToastProvider = ({ children }) => {
-  const [toast, setToast] = useState(null);
-  const toastTimeoutRef = useRef(null);
+  const [toasts, setToasts] = useState([]);
   
-  const showToast = useCallback((msg, type = 'info') => {
-    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
-    setToast({ id: Date.now(), msg, type });
-    toastTimeoutRef.current = setTimeout(() => setToast(null), 3000);
+  const showToast = useCallback((msg, type = 'info', stackable = false) => {
+    const id = Date.now() + Math.random();
+    setToasts(prev => {
+      if (!stackable) {
+        return [{ id, msg, type }];
+      }
+      const newToasts = [...prev, { id, msg, type }];
+      return newToasts.length > 2 ? newToasts.slice(newToasts.length - 2) : newToasts;
+    });
+    
+    setTimeout(() => {
+      setToasts(prev => prev.filter(t => t.id !== id));
+    }, 4000);
   }, []);
 
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      {toast && window.ReactDOM.createPortal(
-        <>
+      {toasts.length > 0 && window.ReactDOM.createPortal(
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center justify-end z-[9999] pointer-events-none" style={{ width: '300px', height: '60px' }}>
           <style>{`
-            @keyframes toast-pop {
-              0% { transform: translate(-50%, 100%) scale(0.9); opacity: 0; }
-              50% { transform: translate(-50%, -10%) scale(1.05); opacity: 1; }
-              100% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+            @keyframes toast-slide-up {
+              0% { transform: translateY(30px) scale(0.9); opacity: 0; }
+              100% { transform: translateY(0) scale(1); opacity: 1; }
             }
-            .animate-toast-pop {
-              animation: toast-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            .toast-enter {
+              animation: toast-slide-up 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             }
           `}</style>
-          <div key={toast.id} className={`animate-toast-pop fixed bottom-20 left-1/2 px-5 py-3 rounded-2xl shadow-xl z-[9999] text-sm font-medium flex items-center justify-center text-center gap-2 max-w-[90vw] w-max break-words ${toast.type === 'error' ? 'bg-red-600 text-white' : toast.type === 'warning' ? 'bg-amber-400 text-amber-950' : 'bg-orange-600 text-white'}`}>
-            {toast.type === 'error' && <AlertCircle size={16} className="shrink-0" />}
-            {toast.type === 'warning' && <AlertCircle size={16} className="shrink-0" />}
-            {toast.type === 'info' && <Check size={16} className="shrink-0" />}
-            <span className="leading-tight">{toast.msg}</span>
+          <div className="relative w-full h-full flex justify-center">
+            {toasts.map((toast, index) => {
+              const distance = toasts.length - 1 - index;
+              if (distance > 1) return null;
+              return (
+                <div 
+                  key={toast.id} 
+                  className="absolute bottom-0 transition-all duration-400 ease-out w-full flex justify-center"
+                  style={{
+                    transform: `translateY(-${distance * 16}px) scale(${1 - distance * 0.05})`,
+                    opacity: 1 - (distance * 0.25),
+                    zIndex: 100 - distance
+                  }}
+                >
+                  <div className={`px-5 py-3 rounded-2xl shadow-xl text-sm font-medium flex items-center justify-center text-center gap-2 max-w-[90vw] w-max break-words toast-enter ${
+                    toast.type === 'error' ? 'bg-red-600 text-white' : 
+                    toast.type === 'warning' ? 'bg-amber-400 text-amber-950' : 
+                    'bg-zinc-800 text-white'
+                  }`}>
+                    {toast.type === 'error' && <AlertCircle size={16} className="shrink-0" />}
+                    {toast.type === 'warning' && <AlertCircle size={16} className="shrink-0" />}
+                    {toast.type === 'info' && <Check size={16} className="shrink-0" />}
+                    <span className="leading-tight">{toast.msg}</span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        </>,
+        </div>,
         document.body
       )}
     </ToastContext.Provider>

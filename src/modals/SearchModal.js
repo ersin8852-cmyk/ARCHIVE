@@ -215,11 +215,11 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
                 return [...prev, ...uniqueNewItems];
               });
             } else {
-              showToast(`${isbn} numaralı kitap bulunamadı`, 'warning');
+              showToast(`${isbn} numaralı kitap bulunamadı`, 'warning', true);
             }
           } catch (err) {
             if (currentSearchIdRef.current !== searchId) break;
-            showToast(`${isbn} numaralı kitap bulunamadı`, 'warning');
+            showToast(`${isbn} numaralı kitap bulunamadı`, 'warning', true);
           }
         }
         if (currentSearchIdRef.current === searchId) setIsbnSearchActive(false);
