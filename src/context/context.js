@@ -376,7 +376,9 @@ const DataProvider = ({ children }) => {
         folderId,
         order,
         inLibrary: false,
-        isRead: false
+        isRead: false,
+        priceFetchPending: !!bookData.isbn,
+        priceFetchAttempts: 0
       };
       return { ...prev, books: [...prev.books, newBook] };
     });
@@ -388,24 +390,7 @@ const DataProvider = ({ children }) => {
 
     showToast('Kitap başarıyla eklendi.');
 
-    if (bookData.isbn) {
-      fetch(`/api/scrape-price?isbn=${bookData.isbn}`)
-        .then(async (res) => {
-          if (!res.ok) throw new Error('API Hatası');
-          return res.json();
-        })
-        .then(result => {
-          if (result && result.cheapest) {
-            updateData(prev => ({
-              ...prev,
-              books: prev.books.map(b => b.id === newBookId ? { ...b, price: result.cheapest.price } : b)
-            }));
-          }
-        })
-        .catch(err => {
-          console.log('Arka plan fiyat taraması başarısız:', err.message);
-        });
-    }
+
 
     return true;
   }, [updateData, showToast]);
@@ -498,6 +483,54 @@ const DataProvider = ({ children }) => {
   }, [updateData]);
 
 
+
+  // Arka plan fiyat sorgulama kuyruğu (Background Queue)
+  useEffect(() => {
+    if (loadingData || !data.books) return;
+
+    // Beklemede olan ve deneme sayısı 3'ü geçmeyen ilk kitabı bul
+    const pendingBook = data.books.find(b => b.priceFetchPending && (b.priceFetchAttempts || 0) < 3);
+
+    if (pendingBook) {
+      console.log(`[Kuyruk] Fiyat sorgusu bekleniyor: ${pendingBook.title} (Deneme: ${(pendingBook.priceFetchAttempts || 0) + 1}/3)`);
+      
+      const timer = setTimeout(() => {
+        fetch(`/api/scrape-price?isbn=${pendingBook.isbn}`)
+          .then(async (res) => {
+            if (!res.ok) throw new Error('API Hatası');
+            return res.json();
+          })
+          .then(result => {
+            if (result && result.cheapest) {
+              updateData(prev => ({
+                ...prev,
+                books: prev.books.map(b => 
+                  b.id === pendingBook.id 
+                    ? { ...b, price: result.cheapest.price, priceFetchPending: false } 
+                    : b
+                )
+              }));
+            } else {
+              throw new Error('Fiyat verisi boş');
+            }
+          })
+          .catch(err => {
+            console.log(`[Kuyruk] Fiyat bulunamadı (${pendingBook.title}):`, err.message);
+            const newAttempts = (pendingBook.priceFetchAttempts || 0) + 1;
+            updateData(prev => ({
+              ...prev,
+              books: prev.books.map(b => 
+                b.id === pendingBook.id 
+                  ? { ...b, priceFetchAttempts: newAttempts, priceFetchPending: newAttempts < 3 } 
+                  : b
+              )
+            }));
+          });
+      }, 5000); // ScraperAPI kotasını korumak için 5 saniye bekle
+
+      return () => clearTimeout(timer);
+    }
+  }, [data.books, loadingData, updateData]);
 
   const contextValue = useMemo(() => ({
     loadingData,
