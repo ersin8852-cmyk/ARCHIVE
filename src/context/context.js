@@ -52,7 +52,7 @@ const Square = pickIcon('Square');
 const ArrowLeft = pickIcon('ArrowLeft');
 const Sparkles = pickIcon('Sparkles');
 
-const STORAGE_KEY = 'archive_app_data_v3';
+
 
 const generateId = () => {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
@@ -251,17 +251,27 @@ const DataProvider = ({ children }) => {
     }
   }, [user]);
 
+  const pendingSaveRef = useRef(null);
+
   const updateData = useCallback((updater) => {
     setData(prev => {
       const newData = typeof updater === 'function' ? updater(prev) : updater;
-      if (user) {
-        window.firebaseDb.collection('users').doc(user.uid).set(newData).catch(err => {
-          console.error(err);
-          showToast('Veri buluta kaydedilemedi!', 'error');
-        });
+      if (newData !== prev) {
+        pendingSaveRef.current = newData;
       }
       return newData;
     });
+    // Firestore'a kaydetme işlemi setState dışında yapılıyor (React best practice)
+    if (user && pendingSaveRef.current !== null) {
+      const dataToSave = pendingSaveRef.current;
+      pendingSaveRef.current = null;
+      window.firebaseDb.collection('users').doc(user.uid)
+        .set(dataToSave, { merge: true })
+        .catch(err => {
+          console.error(err);
+          showToast('Veri buluta kaydedilemedi!', 'error');
+        });
+    }
   }, [user, showToast]);
 
   const addFolder = useCallback((name, parentId = null, color = '#71717a', customCover = null) => {
@@ -342,20 +352,22 @@ const DataProvider = ({ children }) => {
       return false;
     }
 
-    const isDuplicate = data.books.some(b => {
-      if (bookData.isbn && b.isbn && b.isbn === bookData.isbn) return true;
-      return normalize(b.title) === normalize(bookData.title) &&
-             normalize(b.author) === normalize(bookData.author);
-    });
-
-    if (isDuplicate) {
-      showToast('Bu kitap zaten arşivinizde mevcut!', 'error');
-      return false;
-    }
-
+    let wasDuplicate = false;
     let newBookId = generateId();
-    
+
     updateData(prev => {
+      // Duplicate kontrolü en güncel veri üzerinden yapılıyor
+      const isDuplicate = prev.books.some(b => {
+        if (bookData.isbn && b.isbn && b.isbn === bookData.isbn) return true;
+        return normalize(b.title) === normalize(bookData.title) &&
+               normalize(b.author) === normalize(bookData.author);
+      });
+
+      if (isDuplicate) {
+        wasDuplicate = true;
+        return prev;
+      }
+
       const siblings = prev.books.filter(b => b.folderId === folderId);
       const order = siblings.length > 0 ? Math.max(...siblings.map(s => s.order)) + 1 : 0;
       const newBook = {
@@ -368,6 +380,11 @@ const DataProvider = ({ children }) => {
       };
       return { ...prev, books: [...prev.books, newBook] };
     });
+
+    if (wasDuplicate) {
+      showToast('Bu kitap zaten arşivinizde mevcut!', 'error');
+      return false;
+    }
 
     showToast('Kitap başarıyla eklendi.');
 
@@ -391,7 +408,7 @@ const DataProvider = ({ children }) => {
     }
 
     return true;
-  }, [updateData, showToast, data.books]);
+  }, [updateData, showToast]);
 
   const updateBook = useCallback((id, updates) => {
     updateData(prev => ({

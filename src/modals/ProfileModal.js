@@ -248,6 +248,3 @@ const ProfileModal = ({ isOpen, onClose }) => {
     document.body
   );
 };
-
-window.ProfileModal = ProfileModal;
-

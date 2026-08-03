@@ -216,4 +216,3 @@ const AuthModal = ({ isVisible }) => {
     </div>
   );
 };
-window.AuthModal = AuthModal;

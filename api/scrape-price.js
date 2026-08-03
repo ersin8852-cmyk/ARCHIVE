@@ -2,8 +2,12 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 
 module.exports = async (req, res) => {
-  // CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  // CORS headers — sadece kendi domain'lerimizden gelen isteklere izin ver
+  const origin = req.headers.origin || '';
+  const isAllowed = origin.endsWith('.vercel.app') || origin === 'http://localhost:3000' || origin === 'http://localhost:5500' || origin === 'http://127.0.0.1:5500';
+  if (isAllowed) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 

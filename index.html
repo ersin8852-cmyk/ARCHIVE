@@ -171,21 +171,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function showFatalError(failedUrl) {
             const root = document.getElementById('root');
-            root.innerHTML = `
-                <div style="height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px; font-family:sans-serif; gap:10px;">
-                    <div style="font-size:32px;">⚠️</div>
-                    <h2 style="margin:0; color:#18181b; font-size:16px;">Uygulama yüklenemedi</h2>
-                    <p style="margin:0; color:#71717a; font-size:13px; max-width:320px;">
-                        Gerekli bir kütüphane veya modül yüklenemedi:<br/>
-                        <code style="font-size:11px; word-break:break-all;">${failedUrl}</code>
-                    </p>
-                    <p style="margin:0; color:#a1a1aa; font-size:12px; max-width:320px;">
-                        Lütfen Vercel üzerinden çalıştırdığınıza emin olun. İnternet bağlantınızı kontrol edin.
-                    </p>
-                    <button onclick="window.location.reload()" style="margin-top:8px; padding:8px 16px; background:#18181b; color:white; border:none; border-radius:10px; font-size:13px; cursor:pointer;">
-                        Sayfayı Yenile
-                    </button>
-                </div>`;
+            root.innerHTML = '';
+            const container = document.createElement('div');
+            container.style.cssText = 'height:100dvh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:24px; font-family:sans-serif; gap:10px;';
+            
+            const icon = document.createElement('div');
+            icon.style.fontSize = '32px';
+            icon.textContent = '⚠️';
+            
+            const title = document.createElement('h2');
+            title.style.cssText = 'margin:0; color:#18181b; font-size:16px;';
+            title.textContent = 'Uygulama yüklenemedi';
+            
+            const desc = document.createElement('p');
+            desc.style.cssText = 'margin:0; color:#71717a; font-size:13px; max-width:320px;';
+            desc.textContent = 'Gerekli bir kütüphane veya modül yüklenemedi:';
+            const code = document.createElement('code');
+            code.style.cssText = 'font-size:11px; word-break:break-all; display:block; margin-top:4px;';
+            code.textContent = failedUrl;
+            desc.appendChild(code);
+            
+            const hint = document.createElement('p');
+            hint.style.cssText = 'margin:0; color:#a1a1aa; font-size:12px; max-width:320px;';
+            hint.textContent = 'Lütfen Vercel üzerinden çalıştırdığınıza emin olun. İnternet bağlantınızı kontrol edin.';
+            
+            const btn = document.createElement('button');
+            btn.style.cssText = 'margin-top:8px; padding:8px 16px; background:#18181b; color:white; border:none; border-radius:10px; font-size:13px; cursor:pointer;';
+            btn.textContent = 'Sayfayı Yenile';
+            btn.onclick = () => window.location.reload();
+            
+            container.append(icon, title, desc, hint, btn);
+            root.appendChild(container);
         }
 
         async function bootstrap() {
@@ -196,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 await loadScript('https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js');
                 if (!window.ReactDOM) throw new Error('ReactDOM yüklendi ama window.ReactDOM oluşmadı');
 
-                window.react = window.React;
+
 
                 await loadScript('https://unpkg.com/lucide-react@0.292.0/dist/umd/lucide-react.min.js');
                 if (!window.LucideReact) throw new Error('lucide-react yüklendi ama window.LucideReact oluşmadı');

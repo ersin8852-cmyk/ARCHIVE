@@ -31,7 +31,7 @@ window.api = {
           if (enriched.length && (enriched[0].publisher !== 'Yayınevi Belirtilmemiş' || enriched[0].pageCount)) {
             return { ...enriched[0], title: enriched[0].title || doc.title, author: enriched[0].author || doc.author_name?.join(', '), cover: enriched[0].cover || cover, year: enriched[0].year || doc.first_publish_year };
           }
-        } catch (e) {}
+        } catch (e) { console.warn('ISBN zenginleştirme başarısız:', e.message); }
       }
       const editionKey = doc.cover_edition_key || (doc.edition_key && doc.edition_key[0]);
       if (editionKey) {
@@ -42,7 +42,7 @@ window.api = {
             const isbn = (e.isbn_13 && e.isbn_13[0]) || (e.isbn_10 && e.isbn_10[0]) || '';
             return { isbn, title: e.title || doc.title, author: doc.author_name?.join(', '), publisher: (e.publishers && e.publishers.join(', ')) || (doc.publisher && doc.publisher[0]) || 'Yayınevi Belirtilmemiş', pageCount: e.number_of_pages || 0, year: (e.publish_date && e.publish_date.match(/\d{4}/)?.[0]) || doc.first_publish_year || '', price: '', cover };
           }
-        } catch (e) {}
+        } catch (e) { console.warn('ISBN zenginleştirme başarısız:', e.message); }
       }
       return { isbn: '', title: doc.title, author: doc.author_name?.join(', '), publisher: (doc.publisher && doc.publisher[0]) || 'Yayınevi Belirtilmemiş', pageCount: 0, year: doc.first_publish_year || '', price: '', cover };
     }));
