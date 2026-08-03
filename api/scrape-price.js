@@ -80,22 +80,57 @@ module.exports = async (req, res) => {
   const extractMetadata = ($) => {
     const meta = {};
     
-    const titleSelectors = ['.name', '.product-title', '.product-name', '.pr_header__heading', '#product-name', '.a-size-medium', '.prd-name'];
-    for (let s of titleSelectors) {
-      const txt = $(s).first().text().replace(/\n/g, ' ').trim();
-      if (txt && txt.length > 2 && !txt.includes('TL')) { meta.title = txt; break; }
+    // JSON-LD (Schema.org) Yapılandırılmış Veri Taraması (Kitapsepeti vb. sitelerin sağladığı en temiz veri)
+    $('script[type="application/ld+json"]').each((i, el) => {
+      try {
+        const jsonStr = $(el).html();
+        if (!jsonStr) return;
+        const data = JSON.parse(jsonStr);
+        const items = Array.isArray(data) ? data : [data];
+        for (const item of items) {
+          // Bazen ana obje içinde itemListElement olur
+          let products = [item];
+          if (item['@type'] === 'ItemList' && item.itemListElement) {
+             products = item.itemListElement.map(x => x.item || x);
+          }
+          
+          for (const p of products) {
+            if (p['@type'] === 'Product' || p['@type'] === 'Book') {
+              if (p.name && !meta.title) meta.title = p.name.trim();
+              if (p.author && p.author.name && !meta.author) meta.author = p.author.name.trim();
+              if (p.publisher && p.publisher.name && !meta.publisher) meta.publisher = p.publisher.name.trim();
+              if (p.brand && p.brand.name && !meta.publisher) meta.publisher = p.brand.name.trim();
+              if (p.numberOfPages && !meta.pageCount) meta.pageCount = p.numberOfPages;
+              if (p.datePublished && !meta.year) meta.year = p.datePublished.toString().substring(0, 4);
+            }
+          }
+        }
+      } catch (e) {}
+    });
+
+    if (!meta.title) {
+      const titleSelectors = ['.name', '.product-title', '.product-name', '.pr_header__heading', '#product-name', '.a-size-medium', '.prd-name'];
+      for (let s of titleSelectors) {
+        const txt = $(s).first().text().replace(/\n/g, ' ').trim();
+        if (txt && txt.length > 2 && !txt.includes('TL')) { meta.title = txt; break; }
+      }
     }
     
-    const authorSelectors = ['.author', '.product-author', '.writer', '.pr_producers__publisher', '.a-row .a-size-base', '.yazar'];
-    for (let s of authorSelectors) {
-      const txt = $(s).first().text().replace('Yazar:', '').replace(/\n/g, ' ').trim();
-      if (txt && txt.length > 2 && !txt.includes('TL')) { meta.author = txt; break; }
+    if (!meta.author) {
+      // DİKKAT: '.a-row .a-size-base' Amazon'un "Diğer satın alma seçenekleri" yazısını alıyordu, kaldırıldı!
+      const authorSelectors = ['.author', '.product-author', '.writer', '.pr_producers__publisher', '.yazar'];
+      for (let s of authorSelectors) {
+        const txt = $(s).first().text().replace('Yazar:', '').replace(/\n/g, ' ').trim();
+        if (txt && txt.length > 2 && !txt.includes('TL')) { meta.author = txt; break; }
+      }
     }
     
-    const pubSelectors = ['.publisher', '.product-publisher', '.yayinevi', '.pr_producers__manufacturer', '.brand', '.yayinevi-link'];
-    for (let s of pubSelectors) {
-      const txt = $(s).first().text().replace('Yayınevi:', '').replace(/\n/g, ' ').trim();
-      if (txt && txt.length > 2 && !txt.includes('TL')) { meta.publisher = txt; break; }
+    if (!meta.publisher) {
+      const pubSelectors = ['.publisher', '.product-publisher', '.yayinevi', '.pr_producers__manufacturer', '.brand', '.yayinevi-link'];
+      for (let s of pubSelectors) {
+        const txt = $(s).first().text().replace('Yayınevi:', '').replace(/\n/g, ' ').trim();
+        if (txt && txt.length > 2 && !txt.includes('TL')) { meta.publisher = txt; break; }
+      }
     }
     
     return meta;
