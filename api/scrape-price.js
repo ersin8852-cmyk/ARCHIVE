@@ -78,12 +78,26 @@ module.exports = async (req, res) => {
 
   const extractCover = ($) => {
     let cover = '';
+    
+    const selectors = ['.pr-img-src', '.product-image img', '.image img', '.product-cr img', '.img-inner img', '.prd-img'];
+    for (let selector of selectors) {
+      const img = $(selector).first();
+      if (img.length > 0) {
+        const src = img.attr('src') || img.attr('data-src') || img.attr('data-original') || '';
+        if (src && !src.includes('empty') && !src.includes('blank') && !src.startsWith('data:')) {
+          return src;
+        }
+      }
+    }
+
     $('img').each((i, el) => {
       if (cover) return;
       const src = $(el).attr('src') || $(el).attr('data-src') || $(el).attr('data-original') || '';
+      const alt = ($(el).attr('alt') || '').toLowerCase();
       const lowerSrc = src.toLowerCase();
-      if (src && !lowerSrc.includes('logo') && !lowerSrc.includes('icon') && !lowerSrc.includes('svg') && !lowerSrc.includes('gif') && !lowerSrc.includes('blank') && !lowerSrc.includes('empty')) {
-        if (lowerSrc.includes('product') || lowerSrc.includes('getimage') || lowerSrc.includes('katalog') || lowerSrc.includes('cache') || lowerSrc.includes('kitap') || lowerSrc.includes('cover')) {
+      
+      if (src && !lowerSrc.includes('logo') && !lowerSrc.includes('icon') && !alt.includes('banner') && !lowerSrc.includes('banner') && !lowerSrc.includes('blank') && !src.startsWith('data:')) {
+        if (lowerSrc.includes('product') || lowerSrc.includes('getimage') || lowerSrc.includes('katalog') || lowerSrc.includes('kitap') || lowerSrc.includes('cover')) {
           cover = src;
         }
       }
