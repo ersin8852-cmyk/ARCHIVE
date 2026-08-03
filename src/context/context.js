@@ -354,14 +354,11 @@ const DataProvider = ({ children }) => {
 
     let newBookId = generateId();
     
-    const correctedTitle = window.deasciifyTitle ? window.deasciifyTitle(bookData.title) : bookData.title;
-    
     updateData(prev => {
       const siblings = prev.books.filter(b => b.folderId === folderId);
       const order = siblings.length > 0 ? Math.max(...siblings.map(s => s.order)) + 1 : 0;
       const newBook = {
         ...bookData,
-        title: correctedTitle,
         id: newBookId,
         folderId,
         order,
