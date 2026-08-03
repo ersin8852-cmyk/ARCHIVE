@@ -166,12 +166,12 @@ const ToastProvider = ({ children }) => {
                   key={toast.id} 
                   className="absolute bottom-0 transition-all duration-400 ease-out w-full flex justify-center"
                   style={{
-                    transform: `translateY(-${distance * 16}px) scale(${1 - distance * 0.05})`,
+                    transform: `translateY(-${distance * 60}px)`,
                     opacity: 1 - (distance * 0.25),
                     zIndex: 100 - distance
                   }}
                 >
-                  <div className={`px-5 py-3 rounded-2xl shadow-xl text-sm font-medium flex items-center justify-center text-center gap-2 max-w-[90vw] w-max break-words toast-enter ${
+                  <div className={`px-5 py-3 rounded-2xl shadow-xl text-sm font-medium flex items-center justify-center text-center gap-2 max-w-[90vw] w-max whitespace-nowrap toast-enter ${
                     toast.type === 'error' ? 'bg-red-600 text-white' : 
                     toast.type === 'warning' ? 'bg-amber-400 text-amber-950' : 
                     'bg-zinc-800 text-white'
@@ -179,7 +179,7 @@ const ToastProvider = ({ children }) => {
                     {toast.type === 'error' && <AlertCircle size={16} className="shrink-0" />}
                     {toast.type === 'warning' && <AlertCircle size={16} className="shrink-0" />}
                     {toast.type === 'info' && <Check size={16} className="shrink-0" />}
-                    <span className="leading-tight">{toast.msg}</span>
+                    <span className="leading-tight truncate">{toast.msg}</span>
                   </div>
                 </div>
               );
