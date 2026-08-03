@@ -48,20 +48,17 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
         
         if (result.all_results) {
           const bestMeta = result.all_results.map(r => r.metadata).reduce((acc, curr) => {
-            if (curr) {
-              if (curr.author) acc.author = curr.author;
-              if (curr.publisher) acc.publisher = curr.publisher;
-              if (curr.title && (!acc.title || acc.title.length < curr.title.length)) acc.title = curr.title;
+            if (curr && curr.title && (!acc.title || acc.title.length < curr.title.length)) {
+              acc.title = curr.title;
             }
             return acc;
           }, {});
           
-          if (bestMeta.author) updates.author = bestMeta.author;
-          if (bestMeta.publisher) updates.publisher = bestMeta.publisher;
           if (bestMeta.title) updates.title = bestMeta.title;
         }
 
-        if (!book.cover || book.cover === 'default-cover.png' || !book.cover.startsWith('data:image')) {
+        // Kapak SADECE boşsa veya bizim varsayılan kapağımızsa değişsin (OpenLibrary vb. dokunulmasın)
+        if (!book.cover || book.cover === 'default-cover.png') {
           const foundCover = result.cheapest.cover || (result.all_results && result.all_results.find(r => r.cover)?.cover);
           if (foundCover && foundCover !== book.cover) {
             const img = new Image();
@@ -71,7 +68,7 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
         }
         
         updateBook(book.id, updates);
-        showToast('Veriler webden başarıyla çekildi.');
+        showToast('Fiyat ve isim başarıyla güncellendi.');
       } else {
         showToast('Fiyat bulunamadı.', 'error');
       }

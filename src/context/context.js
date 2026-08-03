@@ -499,23 +499,19 @@ const DataProvider = ({ children }) => {
                 books: prev.books.map(b => {
                   if (b.id === pendingBook.id) {
                     const updates = { price: result.cheapest.price, priceFetchPending: false };
-                    if (!b.cover || b.cover === 'default-cover.png' || !b.cover.startsWith('data:image')) {
+                    if (!b.cover || b.cover === 'default-cover.png') {
                       const foundCover = result.cheapest.cover || (result.all_results && result.all_results.find(r => r.cover)?.cover);
-                      if (foundCover) updates.cover = foundCover;
+                      if (foundCover && foundCover !== b.cover) updates.cover = foundCover;
                     }
                     
                     if (result.all_results) {
                       const bestMeta = result.all_results.map(r => r.metadata).reduce((acc, curr) => {
-                        if (curr) {
-                          if (curr.author) acc.author = curr.author;
-                          if (curr.publisher) acc.publisher = curr.publisher;
-                          if (curr.title && (!acc.title || acc.title.length < curr.title.length)) acc.title = curr.title;
+                        if (curr && curr.title && (!acc.title || acc.title.length < curr.title.length)) {
+                          acc.title = curr.title;
                         }
                         return acc;
                       }, {});
                       
-                      if (bestMeta.author) updates.author = bestMeta.author;
-                      if (bestMeta.publisher) updates.publisher = bestMeta.publisher;
                       if (bestMeta.title) updates.title = bestMeta.title;
                     }
                     
