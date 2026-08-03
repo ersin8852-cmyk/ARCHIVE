@@ -147,9 +147,29 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
           ) : (
             <div className="flex-1 overflow-y-auto p-4 bg-zinc-50/50">
               <div className="flex flex-col gap-3">
-                <div className="px-1 pb-2 flex justify-between items-center">
+                <div className="px-1 pb-2 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-3">
                   <span className="text-sm font-medium text-zinc-500">{parsedResults.length} kitap algılandı</span>
-                  <button onClick={() => setParsedResults([])} className="text-xs font-medium text-orange-600 hover:text-orange-700">Düzenlemeye Dön</button>
+                  <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <button 
+                      onClick={() => {
+                        let addedCount = 0;
+                        parsedResults.forEach(b => {
+                          const success = addBook(b, folderId);
+                          if (success) addedCount++;
+                        });
+                        if (addedCount > 0) {
+                          showToast(`Toplam ${addedCount} kitap eklendi!`, 'success');
+                          setParsedResults([]);
+                          setText('');
+                        }
+                      }} 
+                      className="flex-1 sm:flex-none px-4 py-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 font-medium transition-all duration-500 flex justify-center items-center gap-2 animate-in fade-in zoom-in-95 shadow-[0_0_15px_rgba(5,150,105,0.2)] text-sm"
+                    >
+                      <CheckSquare size={16} />
+                      Tümünü Ekle
+                    </button>
+                    <button onClick={() => setParsedResults([])} className="text-xs font-medium text-orange-600 hover:text-orange-700 whitespace-nowrap">Düzenlemeye Dön</button>
+                  </div>
                 </div>
                 {parsedResults.map((book, idx) => (
                   <div key={idx} className="bg-white p-4 rounded-xl border border-zinc-200 flex justify-between items-center shadow-sm gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300">

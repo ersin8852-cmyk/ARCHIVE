@@ -293,6 +293,27 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
           <button onClick={() => { if(onOpenManualAdd) onOpenManualAdd(); }} className="w-full py-2.5 bg-zinc-900 text-white rounded-xl hover:bg-zinc-800 font-medium transition-colors flex justify-center items-center">
              Manuel Ekle
           </button>
+          
+          {results.length > 0 && !loading && !isbnSearchActive && (
+            <button 
+              onClick={() => {
+                let addedCount = 0;
+                results.forEach(b => {
+                  const success = addBook(b, folderId);
+                  if (success) addedCount++;
+                });
+                if (addedCount > 0) {
+                  showToast(`Toplam ${addedCount} kitap eklendi!`, 'success');
+                  setResults([]);
+                  setQuery('');
+                }
+              }} 
+              className="w-full py-2.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 font-medium transition-all duration-500 flex justify-center items-center gap-2 animate-in fade-in zoom-in-95 slide-in-from-top-2 shadow-[0_0_15px_rgba(5,150,105,0.2)]"
+            >
+              <CheckSquare size={18} />
+              Tümünü Ekle ({results.length})
+            </button>
+          )}
         </div>
         <div className="flex-1 overflow-y-auto p-4 bg-zinc-50/50">
           {loading ? (
