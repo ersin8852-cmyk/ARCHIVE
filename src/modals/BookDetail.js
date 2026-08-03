@@ -6,6 +6,7 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
   const [formData, setFormData] = useState({});
   const [showMove, setShowMove] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isRefreshingPrice, setIsRefreshingPrice] = useState(false);
 
   useEffect(() => {
     if (book) { setFormData(book); setShowDeleteConfirm(false); setIsEditing(false); setShowMove(false); }
@@ -30,6 +31,31 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
   const toggleLibrary = () => updateBook(book.id, { inLibrary: !book.inLibrary });
   const toggleRead = () => updateBook(book.id, { isRead: !book.isRead });
   const handleDelete = () => { deleteBook(book.id); onClose(); };
+
+  const handleRefreshPrice = async (e) => {
+    e.stopPropagation();
+    if (!book.isbn) {
+      showToast('Fiyat sorgulamak için kitaba ISBN numarası eklemelisiniz.', 'error');
+      return;
+    }
+    setIsRefreshingPrice(true);
+    try {
+      const res = await fetch(`/api/scrape-price?isbn=${book.isbn}`);
+      if (!res.ok) throw new Error('API Hatası');
+      const result = await res.json();
+      if (result && result.cheapest) {
+        updateBook(book.id, { price: result.cheapest.price });
+        showToast('Fiyat başarıyla güncellendi.');
+      } else {
+        showToast('Fiyat bulunamadı.', 'error');
+      }
+    } catch (err) {
+      console.log('Fiyat taraması başarısız:', err.message);
+      showToast('Fiyat çekilirken hata oluştu.', 'error');
+    } finally {
+      setIsRefreshingPrice(false);
+    }
+  };
 
   return ReactDOM.createPortal(
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 z-[100]">
@@ -74,7 +100,23 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
             {[{ label: 'Yazar', name: 'author', col: 2 }, { label: 'Yayınevi', name: 'publisher', col: 2 }, { label: 'Sayfa', name: 'pageCount', type: 'number', col: 1 }, { label: 'Yıl', name: 'year', type: 'number', col: 1 }, { label: 'Fiyat (₺)', name: 'price', type: 'number', col: 2 }].map(field => (
               <div key={field.name} className={`flex flex-col ${field.col === 2 ? 'col-span-2' : 'col-span-1'} bg-zinc-50 p-3 rounded-xl border border-zinc-100`}>
                 <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">{field.label}</label>
-                {isEditing ? <input type={field.type || 'text'} name={field.name} value={formData[field.name] || ''} onChange={handleChange} className="w-full text-sm border-b border-zinc-300 focus:outline-none focus:border-zinc-800 bg-transparent py-0.5" /> : <div className="text-zinc-800 text-sm font-medium">{book[field.name] || '-'}</div>}
+                {isEditing ? (
+                  <input type={field.type || 'text'} name={field.name} value={formData[field.name] || ''} onChange={handleChange} className="w-full text-sm border-b border-zinc-300 focus:outline-none focus:border-zinc-800 bg-transparent py-0.5" />
+                ) : (
+                  <div className="flex items-center justify-between">
+                    <div className="text-zinc-800 text-sm font-medium">{book[field.name] || '-'}</div>
+                    {field.name === 'price' && (
+                      <button 
+                        onClick={handleRefreshPrice}
+                        disabled={isRefreshingPrice}
+                        className="p-1 -m-1 rounded-md text-zinc-400 hover:text-zinc-700 hover:bg-zinc-200 transition-colors disabled:opacity-50 flex items-center justify-center shrink-0"
+                        title="Fiyatı Güncelle"
+                      >
+                        <RefreshCw size={14} className={isRefreshingPrice ? "animate-spin" : ""} />
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>

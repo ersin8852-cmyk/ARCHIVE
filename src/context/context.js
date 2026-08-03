@@ -38,6 +38,7 @@ const Download = pickIcon('Download');
 const Upload = pickIcon('Upload');
 const CornerDownRight = pickIcon('CornerDownRight');
 const Settings = pickIcon('Settings');
+const RefreshCw = pickIcon('RefreshCw');
 const MoreVertical = pickIcon('MoreVertical');
 const LogOut = pickIcon('LogOut');
 const User = pickIcon('User');
