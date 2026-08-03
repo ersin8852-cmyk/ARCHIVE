@@ -7,6 +7,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+  const [isbnSearchActive, setIsbnSearchActive] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const scannerRef = useRef(null);
 
@@ -185,56 +186,43 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
   const performSearch = async (searchQuery) => {
     const q = (searchQuery ?? query).trim();
     if (!q) return;
-    setLoading(true); setResults([]); setHasSearched(true);
+    setLoading(true); setResults([]); setHasSearched(true); setIsbnSearchActive(false);
     
     const cleanQuery = q.replace(/-/g, '');
     const isbnMatches = cleanQuery.match(/\b\d{10,13}\b/g);
     
     try {
       if (isbnMatches && isbnMatches.length > 0) {
-        // Bulk ISBN Search
+        // Bulk ISBN Search progressively
         const uniqueIsbns = [...new Set(isbnMatches)];
+        setLoading(false); // Disable main loader
+        setIsbnSearchActive(true); // Enable bottom spinner
         
-        const resultsArray = await Promise.all(uniqueIsbns.map(async (isbn) => {
+        for (const isbn of uniqueIsbns) {
           try {
             const items = await window.api.fetchByIsbn(isbn);
             if (items && items.length > 0) {
-              return { success: true, items, isbn };
+              setResults(prev => [...prev, ...items]);
             } else {
-              return { success: false, isbn };
+              showToast(`${isbn} numaralı kitap bulunamadı`, 'warning');
             }
           } catch (err) {
-            return { success: false, isbn };
+            showToast(`${isbn} numaralı kitap bulunamadı`, 'warning');
           }
-        }));
-        
-        const allItems = [];
-        const notFoundIsbns = [];
-        resultsArray.forEach(res => {
-          if (res.success) {
-            allItems.push(...res.items);
-          } else {
-            notFoundIsbns.push(res.isbn);
-          }
-        });
-        
-        setResults(allItems);
-        
-        if (allItems.length === 0 && notFoundIsbns.length > 0) {
-          showToast('Hiçbir sonuç bulunamadı.', 'error');
-        } else if (notFoundIsbns.length > 0) {
-          showToast(`Şu numaralı kitaplar bulunamadı: ${notFoundIsbns.join(', ')}`, 'warning');
         }
+        setIsbnSearchActive(false);
       } else {
         // Single text search
         const items = await window.api.fetchByTitle(q);
         setResults(items);
         if (items.length === 0) showToast('Sonuç bulunamadı.', 'error');
+        setLoading(false);
       }
     } catch (err) {
       showToast('Arama başarısız oldu.', 'error');
+      setLoading(false);
+      setIsbnSearchActive(false);
     }
-    setLoading(false);
   };
 
   const handleAdd = (book) => { addBook(book, folderId); };
@@ -290,7 +278,7 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
           ) : results.length > 0 ? (
             <div className="flex flex-col gap-3">
               {results.map((book, idx) => (
-                <div key={idx} className="bg-white p-4 rounded-xl border border-zinc-200 flex justify-between items-center shadow-sm gap-3">
+                <div key={idx} className="bg-white p-4 rounded-xl border border-zinc-200 flex justify-between items-center shadow-sm gap-3 animate-in fade-in slide-in-from-bottom-4 duration-300">
                   <div className="flex items-center gap-3 flex-1 overflow-hidden">
                     {book.cover ? <img src={book.cover} alt="" className="w-10 h-14 object-cover rounded-md border border-zinc-200 shrink-0 bg-zinc-100" /> : <div className="w-10 h-14 bg-zinc-100 rounded-md border border-zinc-200 shrink-0 flex items-center justify-center"><BookOpen size={14} className="text-zinc-300" /></div>}
                     <div className="flex-1 min-w-0">
@@ -302,9 +290,20 @@ const SearchAddModal = ({ isOpen, onClose, folderId, onOpenManualAdd }) => {
                   <button onClick={() => handleAdd(book)} className="p-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-xl transition-colors shrink-0"><Plus size={20} /></button>
                 </div>
               ))}
+              {isbnSearchActive && (
+                <div className="bg-white/50 p-4 rounded-xl border border-dashed border-zinc-300 flex justify-center items-center shadow-sm gap-2 mt-2">
+                  <div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-sm font-medium text-zinc-500">Sıradaki kitap aranıyor...</span>
+                </div>
+              )}
             </div>
-          ) : hasSearched ? (
+          ) : hasSearched && !isbnSearchActive ? (
             <div className="h-full flex flex-col items-center justify-center py-8 text-zinc-400 text-sm gap-2"><WifiOff size={32} className="opacity-20" /><p>Sonuç bulunamadı. Farklı bir arama deneyin.</p></div>
+          ) : isbnSearchActive ? (
+             <div className="h-full flex flex-col items-center justify-center py-8 text-zinc-400 text-sm gap-3">
+                <div className="w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+                <p>Kitaplar sırayla taranıyor...</p>
+             </div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center py-8 text-zinc-400 text-sm gap-2"><Search size={32} className="opacity-20" /><p>Sonuçları görmek için arama yapın.</p></div>
           )}
