@@ -79,25 +79,38 @@ module.exports = async (req, res) => {
   const extractCover = ($) => {
     let cover = '';
     
+    // Güvenilir CSS sınıfları (Öncelikli arama)
     const selectors = ['.pr-img-src', '.product-image img', '.image img', '.product-cr img', '.img-inner img', '.prd-img'];
     for (let selector of selectors) {
       const img = $(selector).first();
       if (img.length > 0) {
-        const src = img.attr('src') || img.attr('data-src') || img.attr('data-original') || '';
-        if (src && !src.includes('empty') && !src.includes('blank') && !src.startsWith('data:')) {
+        // data-src ve data-original her zaman src'den daha gerçektir (lazy load siteleri)
+        const src = img.attr('data-src') || img.attr('data-original') || img.attr('src') || '';
+        if (src && !src.includes('empty') && !src.includes('blank') && !src.includes('lazy') && !src.startsWith('data:')) {
           return src;
         }
       }
     }
 
+    // Bulamazsa sayfadaki tüm resimleri tara (Agresif ama akıllı arama)
     $('img').each((i, el) => {
       if (cover) return;
-      const src = $(el).attr('src') || $(el).attr('data-src') || $(el).attr('data-original') || '';
+      // Yine data-src ve data-original öncelikli
+      let src = $(el).attr('data-src') || $(el).attr('data-original') || $(el).attr('src') || '';
+      
       const alt = ($(el).attr('alt') || '').toLowerCase();
       const lowerSrc = src.toLowerCase();
       
-      if (src && !lowerSrc.includes('logo') && !lowerSrc.includes('icon') && !alt.includes('banner') && !lowerSrc.includes('banner') && !lowerSrc.includes('blank') && !src.startsWith('data:')) {
-        if (lowerSrc.includes('product') || lowerSrc.includes('getimage') || lowerSrc.includes('katalog') || lowerSrc.includes('kitap') || lowerSrc.includes('cover')) {
+      // Kesinlikle engellenecek (Çöp) kelimeler
+      const isBad = lowerSrc.includes('logo') || lowerSrc.includes('icon') || lowerSrc.includes('banner') || 
+                    lowerSrc.includes('blank') || lowerSrc.includes('empty') || lowerSrc.includes('lazy') ||
+                    lowerSrc.includes('menu_item') || lowerSrc.includes('footer') || lowerSrc.includes('.svg') ||
+                    lowerSrc.includes('sprite') || src.startsWith('data:') || alt.includes('banner');
+
+      if (src && !isBad) {
+        // Kapağa benzeyen (product, kitap, getimage vb.) ilk resmi al
+        if (lowerSrc.includes('product') || lowerSrc.includes('getimage') || lowerSrc.includes('katalog') || 
+            lowerSrc.includes('kitap') || lowerSrc.includes('cover') || lowerSrc.includes('nemesis')) {
           cover = src;
         }
       }
