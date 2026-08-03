@@ -500,7 +500,8 @@ const DataProvider = ({ children }) => {
                   if (b.id === pendingBook.id) {
                     const updates = { price: result.cheapest.price, priceFetchPending: false };
                     if (!b.cover || b.cover === 'default-cover.png' || b.cover.includes('openlibrary')) {
-                      if (result.cheapest.cover) updates.cover = result.cheapest.cover;
+                      const foundCover = result.cheapest.cover || (result.all_results && result.all_results.find(r => r.cover)?.cover);
+                      if (foundCover) updates.cover = foundCover;
                     }
                     return { ...b, ...updates };
                   }

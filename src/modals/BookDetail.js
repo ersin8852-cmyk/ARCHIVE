@@ -44,7 +44,12 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
       if (!res.ok) throw new Error('API Hatası');
       const result = await res.json();
       if (result && result.cheapest) {
-        updateBook(book.id, { price: result.cheapest.price });
+        const updates = { price: result.cheapest.price };
+        if (!book.cover || book.cover === 'default-cover.png' || book.cover.includes('openlibrary')) {
+          const foundCover = result.cheapest.cover || (result.all_results && result.all_results.find(r => r.cover)?.cover);
+          if (foundCover) updates.cover = foundCover;
+        }
+        updateBook(book.id, updates);
         showToast('Fiyat başarıyla güncellendi.');
       } else {
         showToast('Fiyat bulunamadı.', 'error');
