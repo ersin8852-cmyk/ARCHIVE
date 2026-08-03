@@ -47,7 +47,7 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
         console.log('[Kapak Debug] API Yanıtı Geldi:', result);
         const updates = { price: result.cheapest.price };
         
-        if (!book.cover || book.cover === 'default-cover.png' || book.cover.includes('openlibrary')) {
+        if (!book.cover || book.cover === 'default-cover.png' || !book.cover.startsWith('data:image')) {
           const foundCover = result.cheapest.cover || (result.all_results && result.all_results.find(r => r.cover)?.cover);
           console.log('[Kapak Debug] Mevcut kapak boş/default, API\'den bulunan kapak:', foundCover);
           if (foundCover) {
