@@ -131,7 +131,7 @@ const ToastProvider = ({ children }) => {
   
   const showToast = useCallback((msg, type = 'info') => {
     if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
-    setToast({ msg, type });
+    setToast({ id: Date.now(), msg, type });
     toastTimeoutRef.current = setTimeout(() => setToast(null), 3000);
   }, []);
 
@@ -139,11 +139,24 @@ const ToastProvider = ({ children }) => {
     <ToastContext.Provider value={{ showToast }}>
       {children}
       {toast && window.ReactDOM.createPortal(
-        <div className={`fixed bottom-20 left-1/2 transform -translate-x-1/2 px-5 py-3 rounded-2xl shadow-xl z-[9999] text-sm font-medium flex items-center justify-center text-center gap-2 max-w-[90vw] w-max break-words ${toast.type === 'error' ? 'bg-red-600 text-white' : toast.type === 'warning' ? 'bg-amber-400 text-amber-950' : 'bg-orange-600 text-white'}`}>
-          {toast.type === 'error' && <AlertCircle size={16} className="shrink-0" />}
-          {toast.type === 'warning' && <AlertCircle size={16} className="shrink-0" />}
-          <span className="leading-tight">{toast.msg}</span>
-        </div>,
+        <>
+          <style>{`
+            @keyframes toast-pop {
+              0% { transform: translate(-50%, 100%) scale(0.9); opacity: 0; }
+              50% { transform: translate(-50%, -10%) scale(1.05); opacity: 1; }
+              100% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+            }
+            .animate-toast-pop {
+              animation: toast-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            }
+          `}</style>
+          <div key={toast.id} className={`animate-toast-pop fixed bottom-20 left-1/2 px-5 py-3 rounded-2xl shadow-xl z-[9999] text-sm font-medium flex items-center justify-center text-center gap-2 max-w-[90vw] w-max break-words ${toast.type === 'error' ? 'bg-red-600 text-white' : toast.type === 'warning' ? 'bg-amber-400 text-amber-950' : 'bg-orange-600 text-white'}`}>
+            {toast.type === 'error' && <AlertCircle size={16} className="shrink-0" />}
+            {toast.type === 'warning' && <AlertCircle size={16} className="shrink-0" />}
+            {toast.type === 'info' && <Check size={16} className="shrink-0" />}
+            <span className="leading-tight">{toast.msg}</span>
+          </div>
+        </>,
         document.body
       )}
     </ToastContext.Provider>
@@ -297,21 +310,24 @@ const DataProvider = ({ children }) => {
       showToast('Kitap başlığı boş olamaz.', 'error');
       return false;
     }
-    let isDuplicate = false;
+
+    const isDuplicate = data.books.some(b => {
+      if (bookData.isbn && b.isbn && b.isbn === bookData.isbn) return true;
+      return normalize(b.title) === normalize(bookData.title) &&
+             normalize(b.author) === normalize(bookData.author);
+    });
+
+    if (isDuplicate) {
+      showToast('Bu kitap zaten arşivinizde mevcut!', 'error');
+      return false;
+    }
+
     let newBookId = generateId();
-    let newBook = null;
     
     updateData(prev => {
-      isDuplicate = prev.books.some(b => {
-        if (bookData.isbn && b.isbn && b.isbn === bookData.isbn) return true;
-        return normalize(b.title) === normalize(bookData.title) &&
-               normalize(b.author) === normalize(bookData.author);
-      });
-      if (isDuplicate) return prev;
-      
       const siblings = prev.books.filter(b => b.folderId === folderId);
       const order = siblings.length > 0 ? Math.max(...siblings.map(s => s.order)) + 1 : 0;
-      newBook = {
+      const newBook = {
         ...bookData,
         id: newBookId,
         folderId,
@@ -322,15 +338,10 @@ const DataProvider = ({ children }) => {
       return { ...prev, books: [...prev.books, newBook] };
     });
 
-    if (isDuplicate) {
-      showToast('Bu kitap zaten arşivinizde mevcut!', 'error');
-      return false;
-    }
-
     showToast('Kitap başarıyla eklendi.');
 
-    if (newBook && newBook.isbn) {
-      fetch(`/api/scrape-price?isbn=${newBook.isbn}`)
+    if (bookData.isbn) {
+      fetch(`/api/scrape-price?isbn=${bookData.isbn}`)
         .then(async (res) => {
           if (!res.ok) throw new Error('API Hatası');
           return res.json();
@@ -339,7 +350,7 @@ const DataProvider = ({ children }) => {
           if (result && result.cheapest) {
             updateData(prev => ({
               ...prev,
-              books: prev.books.map(b => b.id === newBook.id ? { ...b, price: result.cheapest.price } : b)
+              books: prev.books.map(b => b.id === newBookId ? { ...b, price: result.cheapest.price } : b)
             }));
           }
         })
@@ -349,7 +360,7 @@ const DataProvider = ({ children }) => {
     }
 
     return true;
-  }, [updateData, showToast]);
+  }, [updateData, showToast, data.books]);
 
   const updateBook = useCallback((id, updates) => {
     updateData(prev => ({
