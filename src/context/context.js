@@ -390,14 +390,16 @@ const DataProvider = ({ children }) => {
     }
 
     if (window.ai && window.ai.getApiKey()) {
-      window.ai.correctBookData(bookData.title, bookData.author).then(corrected => {
+      window.ai.correctBookData(bookData.title, bookData.author, showToast).then(corrected => {
         if (corrected && (corrected.title !== bookData.title || corrected.author !== bookData.author)) {
+          showToast(`AI Başarıyla Düzeltti: ${corrected.title}`, 'success');
           updateData(prev => ({
             ...prev,
             books: prev.books.map(b => b.id === newBookId ? { ...b, title: corrected.title || b.title, author: corrected.author || b.author } : b)
           }));
         }
       }).catch(err => {
+        showToast('AI arka plan düzeltmesi başarısız oldu.', 'error');
         console.error('AI arka plan düzeltmesi başarısız:', err);
       });
     }

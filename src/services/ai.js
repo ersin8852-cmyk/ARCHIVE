@@ -9,7 +9,7 @@ window.ai = {
     }
   },
   
-  correctBookData: async (title, author) => {
+  correctBookData: async (title, author, showToast = console.log) => {
     const apiKey = window.ai.getApiKey();
     if (!apiKey) return null;
     
@@ -21,6 +21,7 @@ Girdi:
 { "title": "${title}", "author": "${author}" }
 `;
     try {
+      showToast('AI İstediği Gönderiliyor...', 'info');
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -30,19 +31,32 @@ Girdi:
         })
       });
       
-      if (!response.ok) return null;
+      if (!response.ok) {
+        const errText = await response.text();
+        showToast(`AI API Hatası (${response.status}): ${errText.substring(0, 60)}`, 'error');
+        return null;
+      }
       
       const data = await response.json();
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
       
-      if (!text) return null;
+      if (!text) {
+        showToast('AI boş yanıt döndürdü!', 'error');
+        return null;
+      }
+      
+      showToast(`AI Ham Yanıtı: ${text.substring(0, 60)}`, 'info');
       
       const cleaned = text.replace(/```json/gi, '').replace(/```/g, '').trim();
       const parsed = JSON.parse(cleaned);
       
-      if (parsed.title === title && parsed.author === author) return null; // Değişiklik yok
+      if (parsed.title === title && parsed.author === author) {
+        showToast('AI: Düzeltilecek bir şey bulunamadı.', 'info');
+        return null;
+      }
       return parsed;
     } catch (err) {
+      showToast(`AI Ayrıştırma Hatası: ${err.message}`, 'error');
       console.error("AI correction error:", err);
       return null;
     }
