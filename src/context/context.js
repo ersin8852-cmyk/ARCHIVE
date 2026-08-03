@@ -389,6 +389,19 @@ const DataProvider = ({ children }) => {
         });
     }
 
+    if (window.ai && window.ai.getApiKey()) {
+      window.ai.correctBookData(bookData.title, bookData.author).then(corrected => {
+        if (corrected && (corrected.title !== bookData.title || corrected.author !== bookData.author)) {
+          updateData(prev => ({
+            ...prev,
+            books: prev.books.map(b => b.id === newBookId ? { ...b, title: corrected.title || b.title, author: corrected.author || b.author } : b)
+          }));
+        }
+      }).catch(err => {
+        console.error('AI arka plan düzeltmesi başarısız:', err);
+      });
+    }
+
     return true;
   }, [updateData, showToast, data.books]);
 

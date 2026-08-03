@@ -12,6 +12,8 @@ const ProfileModal = ({ isOpen, onClose }) => {
   const [dob, setDob] = useState(profile?.dob || '');
   const [photo, setPhoto] = useState(profile?.photo || '');
   
+  const [apiKey, setApiKey] = useState(() => window.ai ? window.ai.getApiKey() || '' : '');
+  
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -198,8 +200,25 @@ const ProfileModal = ({ isOpen, onClose }) => {
           )}
         </div>
 
-
-
+        <div className="bg-white rounded-2xl p-4 shadow-sm border border-zinc-100 space-y-4 mb-4">
+          <h3 className="font-bold text-zinc-800 text-sm flex items-center gap-2 mb-2">
+            <span className="text-orange-500">✨</span> Yapay Zeka (AI) Ayarları
+          </h3>
+          <div>
+            <label className="block text-xs font-semibold text-zinc-500 mb-1.5 ml-1">Gemini API Anahtarı</label>
+            <input 
+              type="password" 
+              placeholder="API Anahtarınızı girin..." 
+              value={apiKey} 
+              onChange={e => setApiKey(e.target.value)} 
+              onBlur={() => window.ai && window.ai.setApiKey(apiKey)} 
+              className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/50 text-zinc-700 font-mono" 
+            />
+            <p className="text-[10px] text-zinc-400 mt-2 ml-1 leading-relaxed">
+              Kitap isimlerindeki bozuk karakterleri (Deasciification) otomatik düzeltmek için gereklidir. Sadece bu cihazın tarayıcısında (yerel olarak) saklanır. Google AI Studio'dan ücretsiz alınabilir.
+            </p>
+          </div>
+        </div>
         {user.providerData.some(p => p.providerId === 'password') && (
           <div className="bg-white rounded-2xl p-4 shadow-sm border border-zinc-100 space-y-4 mb-4">
             <h3 className="font-bold text-zinc-800 text-sm flex items-center gap-2 mb-2">
