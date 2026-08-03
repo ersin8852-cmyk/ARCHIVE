@@ -133,7 +133,8 @@ module.exports = async (req, res) => {
       const priceWhole = $('.a-price-whole').first().text().replace(/[^0-9]/g, '');
       const priceFraction = $('.a-price-fraction').first().text().replace(/[^0-9]/g, '');
       if (!priceWhole) return null;
-      return parseFloat(`${priceWhole}.${priceFraction || '00'}`);
+      const price = parseFloat(`${priceWhole}.${priceFraction || '00'}`);
+      return { price, cover: extractCover($) };
     }, true),
 
     // 5. D&R (ScraperAPI ile Anti-Bot bypass)
@@ -141,7 +142,8 @@ module.exports = async (req, res) => {
       const priceText = $('.prd-price').first().text().trim();
       if (!priceText) return null;
       const clean = priceText.replace(' TL', '').replace(',', '.');
-      return parseFloat(clean);
+      const price = parseFloat(clean);
+      return { price, cover: extractCover($) };
     }, true)
   ]);
 
