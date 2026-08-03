@@ -354,17 +354,19 @@ const DataProvider = ({ children }) => {
 
     let newBookId = generateId();
     
+    const correctedTitle = window.deasciifyTitle ? window.deasciifyTitle(bookData.title) : bookData.title;
+    
     updateData(prev => {
       const siblings = prev.books.filter(b => b.folderId === folderId);
       const order = siblings.length > 0 ? Math.max(...siblings.map(s => s.order)) + 1 : 0;
       const newBook = {
         ...bookData,
+        title: correctedTitle,
         id: newBookId,
         folderId,
         order,
         inLibrary: false,
-        isRead: false,
-        needsAiCorrection: true
+        isRead: false
       };
       return { ...prev, books: [...prev.books, newBook] };
     });
@@ -480,60 +482,6 @@ const DataProvider = ({ children }) => {
     }));
   }, [updateData]);
 
-  // --- AI QUEUE WORKER ---
-  const dataRef = useRef(data);
-  useEffect(() => {
-    dataRef.current = data;
-  }, [data]);
-  
-  const isProcessingAiRef = useRef(false);
-  
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (isProcessingAiRef.current || !window.ai || !window.ai.getApiKey()) return;
-      
-      const books = dataRef.current?.books;
-      if (!books) return;
-      
-      const pendingBook = books.find(b => b.needsAiCorrection);
-      if (!pendingBook) return;
-      
-      isProcessingAiRef.current = true;
-      
-      window.ai.correctBookData(pendingBook.title, pendingBook.author)
-        .then(corrected => {
-          if (corrected?.rateLimited) {
-            console.log("AI Queue: Google Rate Limit aşıldı, daha sonra tekrar denenecek.");
-            return;
-          }
-          
-          updateData(prev => {
-            const bIndex = prev.books.findIndex(b => b.id === pendingBook.id);
-            if (bIndex === -1) return prev;
-            
-            const updatedBooks = [...prev.books];
-            const updatedBook = { ...updatedBooks[bIndex], needsAiCorrection: false };
-            
-            if (corrected && (corrected.title !== pendingBook.title || corrected.author !== pendingBook.author)) {
-              updatedBook.title = corrected.title || updatedBook.title;
-              updatedBook.author = corrected.author || updatedBook.author;
-            }
-            
-            updatedBooks[bIndex] = updatedBook;
-            return { ...prev, books: updatedBooks };
-          });
-        })
-        .finally(() => {
-          setTimeout(() => {
-            isProcessingAiRef.current = false;
-          }, 5000);
-        });
-        
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, [updateData]);
-  // -----------------------
 
 
   const contextValue = useMemo(() => ({
