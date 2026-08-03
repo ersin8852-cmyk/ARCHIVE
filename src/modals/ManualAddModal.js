@@ -2,6 +2,7 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
   const { addBook, processImageFile } = useData();
   const { showToast } = useToast();
   const [formData, setFormData] = useState({ title: '', author: '', publisher: '', pageCount: '', year: '', price: '', cover: '', isbn: '' });
+  const [isBulkOpen, setIsBulkOpen] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -72,12 +73,16 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
             ))}
           </div>
         </div>
-        <div className="p-4 border-t bg-zinc-50 flex justify-end">
+        <div className="p-4 border-t bg-zinc-50 flex justify-between items-center">
+          <button onClick={() => setIsBulkOpen(true)} className="px-5 py-2 text-sm font-medium text-zinc-600 bg-white border border-zinc-200 rounded-xl hover:bg-zinc-100 transition-colors">
+            Toplu Ekle
+          </button>
           <button onClick={handleSave} className="px-6 py-2.5 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition-colors flex items-center gap-2">
             <Check size={18} /> Kaydet
           </button>
         </div>
       </div>
+      <BulkAddModal isOpen={isBulkOpen} onClose={() => setIsBulkOpen(false)} folderId={folderId} />
     </div>,
     document.body
   );
