@@ -29,6 +29,7 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
         let isbn = '';
         let pageCount = '';
         let author = '';
+        let publisher = '';
         let title = '';
 
         const isbnMatch = currentLine.match(/\b\d{10,13}\b/);
@@ -45,21 +46,20 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
 
         currentLine = currentLine.replace(/^[-\|,]+|[-\|,]+$/g, '').trim();
 
-        const separators = [' - ', ' | ', ',', ';'];
-        let splitPoint = -1;
-        let usedSeparator = '';
+        const separators = [' - ', ' | ', ';', ','];
+        let parts = [];
         
         for (const sep of separators) {
-          splitPoint = currentLine.indexOf(sep);
-          if (splitPoint !== -1) {
-            usedSeparator = sep;
+          if (currentLine.includes(sep)) {
+            parts = currentLine.split(sep).map(p => p.trim()).filter(p => p);
             break;
           }
         }
 
-        if (splitPoint !== -1) {
-          title = currentLine.substring(0, splitPoint).trim();
-          author = currentLine.substring(splitPoint + usedSeparator.length).trim();
+        if (parts.length > 0) {
+          title = parts[0];
+          if (parts.length >= 2) author = parts[1];
+          if (parts.length >= 3) publisher = parts.slice(2).join(' ');
         } else {
           title = currentLine;
         }
@@ -74,7 +74,7 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
             isbn: isbn || '',
             pageCount: pageCount || 0,
             cover: '',
-            publisher: '',
+            publisher: publisher || '',
             year: '',
             price: ''
           });
@@ -100,9 +100,9 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
   const infoContent = (
     <div className="text-sm space-y-2">
       <p>Her kitabı <strong>ayrı bir satıra</strong> yazmalısın.</p>
-      <p><strong>Önerilen Format:</strong> Kitap Adı - Yazar Adı - ISBN - Sayfa</p>
-      <p>Sistem ISBN ve Sayfa sayısını otomatik tanır. İsim ve yazarı ayırmak için <code className="bg-zinc-100 px-1 py-0.5 rounded">-</code>, <code className="bg-zinc-100 px-1 py-0.5 rounded">|</code> veya <code className="bg-zinc-100 px-1 py-0.5 rounded">,</code> kullanabilirsin.</p>
-      <p className="mt-2 text-zinc-500 italic text-xs border-t pt-2">Örnek:<br/>Suç ve Ceza - Dostoyevski - 9781234567890 - 600<br/>Simyacı, Paulo Coelho, 200 sayfa</p>
+      <p><strong>Önerilen Format:</strong> Kitap Adı - Yazar Adı - Yayın Evi - ISBN - Sayfa</p>
+      <p>Sistem ISBN ve Sayfa sayısını otomatik tanır. İsim, yazar ve yayın evini ayırmak için <code className="bg-zinc-100 px-1 py-0.5 rounded">-</code>, <code className="bg-zinc-100 px-1 py-0.5 rounded">|</code> veya <code className="bg-zinc-100 px-1 py-0.5 rounded">,</code> kullanabilirsin.</p>
+      <p className="mt-2 text-zinc-500 italic text-xs border-t pt-2">Örnek:<br/>Suç ve Ceza - Dostoyevski - İthaki Yayınları - 9781234567890 - 600<br/>Simyacı, Paulo Coelho, Can Yayınları, 200 sayfa</p>
     </div>
   );
 
@@ -159,7 +159,9 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="font-semibold text-zinc-800 leading-tight mb-1 truncate">{book.title}</h3>
-                        <p className="text-xs text-zinc-500 mb-0.5 truncate">{book.author || 'Yazar Belirtilmemiş'}</p>
+                        <p className="text-xs text-zinc-500 mb-0.5 truncate">
+                          {book.author || 'Yazar Belirtilmemiş'} {book.publisher ? ` • ${book.publisher}` : ''}
+                        </p>
                         <p className="text-[10px] text-zinc-400">ISBN: {book.isbn || 'Yok'} | {book.pageCount || 0} Sayfa</p>
                       </div>
                     </div>
@@ -203,8 +205,8 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
                 </div>
                 <div className="text-sm text-zinc-500 space-y-2 opacity-80">
                   <p>Her kitabı <strong>ayrı bir satıra</strong> yazmalısın.</p>
-                  <p><strong>Önerilen:</strong> Kitap Adı - Yazar Adı - ISBN - Sayfa</p>
-                  <p>İsim ve yazarı ayırmak için <code className="bg-zinc-200/50 px-1 rounded">-</code> veya <code className="bg-zinc-200/50 px-1 rounded">,</code> kullan.</p>
+                  <p><strong>Önerilen:</strong> Kitap Adı - Yazar Adı - Yayın Evi - ISBN - Sayfa</p>
+                  <p>Verileri ayırmak için <code className="bg-zinc-200/50 px-1 rounded">-</code> veya <code className="bg-zinc-200/50 px-1 rounded">,</code> kullan.</p>
                 </div>
               </div>
 
