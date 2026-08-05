@@ -394,6 +394,13 @@ const DataProvider = ({ children }) => {
     }));
   }, [updateData]);
 
+  const bulkUpdateBooksInFolder = useCallback((folderId, updates) => {
+    updateData(prev => ({
+      ...prev,
+      books: prev.books.map(b => b.folderId === folderId ? { ...b, ...updates } : b)
+    }));
+  }, [updateData]);
+
   const deleteBook = useCallback((id) => {
     updateData(prev => ({ ...prev, books: prev.books.filter(b => b.id !== id) }));
   }, [updateData]);
@@ -548,9 +555,9 @@ const DataProvider = ({ children }) => {
     folders: data.folders,
     profile: data.profile || initialState.profile,
     addFolder, updateFolder, deleteFolder, reorderFolder, deleteAllData,
-    addBook, updateBook, deleteBook, moveItemToPosition,
+    addBook, updateBook, deleteBook, moveItemToPosition, bulkUpdateBooksInFolder,
     importData, updateProfileData, processImageFile
-  }), [data, loadingData, addFolder, updateFolder, deleteFolder, reorderFolder, deleteAllData, addBook, updateBook, deleteBook, moveItemToPosition, importData, updateProfileData]);
+  }), [data, loadingData, addFolder, updateFolder, deleteFolder, reorderFolder, deleteAllData, addBook, updateBook, deleteBook, moveItemToPosition, bulkUpdateBooksInFolder, importData, updateProfileData]);
 
   return (
     <DataContext.Provider value={contextValue}>

@@ -70,11 +70,14 @@ const ListCreateModal = ({ isOpen, onClose, onCreate, parentId }) => {
 };
 
 const ListEditModal = ({ isOpen, onClose, folderId }) => {
-  const { folders, updateFolder, deleteFolder, processImageFile } = useData();
+  const { folders, updateFolder, deleteFolder, processImageFile, bulkUpdateBooksInFolder } = useData();
   const [name, setName] = useState('');
   const [color, setColor] = useState('#71717a');
   const [customCover, setCustomCover] = useState(null);
   const [showDelConfirm, setShowDelConfirm] = useState(false);
+  const [bulkAuthor, setBulkAuthor] = useState('');
+  const [bulkPublisher, setBulkPublisher] = useState('');
+  const [bulkConfirmField, setBulkConfirmField] = useState(null);
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -86,6 +89,9 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
       setColor(folder.color || '#71717a');
       setCustomCover(folder.customCover || null);
       setShowDelConfirm(false);
+      setBulkConfirmField(null);
+      setBulkAuthor('');
+      setBulkPublisher('');
       setTimeout(() => {
         if (inputRef.current) inputRef.current.select();
       }, 100);
@@ -130,7 +136,29 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
           <button onClick={onClose} className="p-2 text-zinc-500 hover:bg-zinc-100 rounded-full transition-colors"><X size={20} /></button>
         </div>
         
-        {showDelConfirm ? (
+        {bulkConfirmField ? (
+          <div className="p-6 flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-200">
+            <div className="w-16 h-16 bg-orange-50 text-orange-500 rounded-full flex items-center justify-center mb-4">
+              <Check size={32} />
+            </div>
+            <h3 className="text-lg font-bold text-zinc-900 mb-2">Toplu Güncelleme Onayı</h3>
+            <p className="text-sm text-zinc-500 mb-6">
+              Bu listedeki tüm kitapların {bulkConfirmField === 'author' ? 'yazar' : 'yayınevi'} bilgisini <br/>
+              <span className="font-bold text-zinc-900 text-base">"{bulkConfirmField === 'author' ? bulkAuthor : bulkPublisher}"</span> <br/>
+              olarak değiştirmek istediğinize emin misiniz?
+            </p>
+            <div className="flex gap-3 w-full">
+              <button onClick={() => setBulkConfirmField(null)} className="flex-1 py-3 bg-zinc-100 text-zinc-700 rounded-xl font-semibold hover:bg-zinc-200 transition-colors">İptal</button>
+              <button onClick={() => {
+                if (bulkConfirmField === 'author') bulkUpdateBooksInFolder(folder.id, { author: bulkAuthor });
+                else bulkUpdateBooksInFolder(folder.id, { publisher: bulkPublisher });
+                setBulkConfirmField(null);
+                if (bulkConfirmField === 'author') setBulkAuthor('');
+                else setBulkPublisher('');
+              }} className="flex-1 py-3 bg-orange-600 text-white rounded-xl font-semibold hover:bg-orange-700 transition-colors">Evet, Güncelle</button>
+            </div>
+          </div>
+        ) : showDelConfirm ? (
           <div className="p-6 flex flex-col items-center text-center animate-in fade-in zoom-in-95 duration-200">
             <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-4">
               <AlertCircle size={32} />
@@ -193,6 +221,55 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
                 <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="image/*" className="hidden" />
               </div>
             </div>
+
+            <div className="mb-6 pt-4 border-t border-zinc-100">
+              <label className="block text-sm font-bold text-zinc-900 mb-2">Listenizde toplu değişiklik yapın</label>
+              
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <input 
+                      type="text" 
+                      placeholder="Yazar (Tüm listeye uygula)" 
+                      value={bulkAuthor}
+                      onChange={e => setBulkAuthor(e.target.value)}
+                      className="w-full pl-3 pr-10 py-2 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent text-sm"
+                    />
+                    <button 
+                      type="button"
+                      disabled={!bulkAuthor.trim()}
+                      onClick={() => setBulkConfirmField('author')}
+                      className="absolute right-1 top-1 p-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Uygula"
+                    >
+                      <Check size={16} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <input 
+                      type="text" 
+                      placeholder="Yayınevi (Tüm listeye uygula)" 
+                      value={bulkPublisher}
+                      onChange={e => setBulkPublisher(e.target.value)}
+                      className="w-full pl-3 pr-10 py-2 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent text-sm"
+                    />
+                    <button 
+                      type="button"
+                      disabled={!bulkPublisher.trim()}
+                      onClick={() => setBulkConfirmField('publisher')}
+                      className="absolute right-1 top-1 p-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Uygula"
+                    >
+                      <Check size={16} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="flex gap-3">
               <button type="button" onClick={() => setShowDelConfirm(true)} className="py-3 px-4 bg-red-50 text-red-600 rounded-xl font-semibold hover:bg-red-100 transition-colors flex items-center justify-center">
                 <Trash2 size={20} />
