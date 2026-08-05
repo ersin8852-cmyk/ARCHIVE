@@ -213,12 +213,6 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
               onClick={(e) => e.stopPropagation()}
               onError={(e) => { e.target.style.display = 'none'; }}
             />
-            <button 
-              className="absolute -top-4 -right-4 p-2 bg-white text-zinc-900 rounded-full shadow-lg hover:bg-zinc-100 transition-colors z-[210]" 
-              onClick={() => setShowLargeCover(false)}
-            >
-              <X size={20} />
-            </button>
           </div>
         </div>
       )}
