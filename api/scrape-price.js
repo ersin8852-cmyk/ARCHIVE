@@ -183,26 +183,32 @@ module.exports = async (req, res) => {
     return cover;
   };
 
+  // Binlik ayracı (nokta) ve ondalık ayracını (virgül) doğru çözümleyen yardımcı fonksiyon
+  const parseTurkishPrice = (text) => {
+    if (!text) return null;
+    let clean = text.replace(/[^0-9.,]/g, '');
+    clean = clean.replace(/\./g, ''); // Binlik ayracını sil (örn: 2.245,50 -> 2245,50)
+    clean = clean.replace(',', '.'); // Ondalık ayracını noktaya çevir (örn: 2245,50 -> 2245.50)
+    return parseFloat(clean) || null;
+  };
+
   // Tüm siteleri aynı anda (paralel) tara
   await Promise.allSettled([
     // 1. Kitapyurdu (Normal Tarama)
     fetchPrice('Kitapyurdu', `https://www.kitapyurdu.com/index.php?route=product/search&filter_name=${cleanIsbn}`, ($) => {
-      const priceText = $('.price .value').first().text().trim();
-      const price = priceText ? parseFloat(priceText.replace(',', '.').replace(/[^0-9.]/g, '')) : null;
+      const price = parseTurkishPrice($('.price .value').first().text());
       return { price, cover: extractCover($), metadata: extractMetadata($) };
     }),
 
     // 2. BKM Kitap (Normal Tarama)
     fetchPrice('BKM Kitap', `https://www.bkmkitap.com/arama?q=${cleanIsbn}`, ($) => {
-      const priceText = $('.current-price').first().text().trim();
-      const price = priceText ? parseFloat(priceText.replace(',', '.').replace(/[^0-9.]/g, '')) : null;
+      const price = parseTurkishPrice($('.current-price').first().text());
       return { price, cover: extractCover($), metadata: extractMetadata($) };
     }),
 
     // 3. Kitapsepeti (Normal Tarama)
     fetchPrice('Kitapsepeti', `https://www.kitapsepeti.com/arama?q=${cleanIsbn}`, ($) => {
-      const priceText = $('.current-price').first().text().trim();
-      const price = priceText ? parseFloat(priceText.replace(',', '.').replace(/[^0-9.]/g, '')) : null;
+      const price = parseTurkishPrice($('.current-price').first().text());
       return { price, cover: extractCover($), metadata: extractMetadata($) };
     }),
 
@@ -217,10 +223,7 @@ module.exports = async (req, res) => {
 
     // 5. D&R (ScraperAPI ile Anti-Bot bypass)
     fetchPrice('D&R', `https://www.dr.com.tr/search?q=${cleanIsbn}`, ($) => {
-      const priceText = $('.prd-price').first().text().trim();
-      if (!priceText) return null;
-      const clean = priceText.replace(' TL', '').replace(',', '.');
-      const price = parseFloat(clean);
+      const price = parseTurkishPrice($('.prd-price').first().text());
       return { price, cover: extractCover($), metadata: extractMetadata($) };
     }, true)
   ]);
