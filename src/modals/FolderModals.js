@@ -223,47 +223,49 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
             </div>
 
             <div className="mb-6 pt-4 border-t border-zinc-100">
-              <label className="block text-sm font-bold text-zinc-900 mb-2">Listenizde toplu değişiklik yapın</label>
+              <label className="block text-base font-bold text-zinc-900 mb-4">Listenizde toplu değişiklik yapın:</label>
               
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-2">
-                  <div className="relative flex-1">
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider pl-1">Yazar</label>
+                  <div className="relative w-full">
                     <input 
                       type="text" 
-                      placeholder="Yazar (Tüm listeye uygula)" 
+                      placeholder="Listedeki tüm kitaplara uygulanacak.." 
                       value={bulkAuthor}
                       onChange={e => setBulkAuthor(e.target.value)}
-                      className="w-full pl-3 pr-10 py-2 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent text-sm"
+                      className="w-full pl-3 pr-10 py-2 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent text-sm placeholder:text-zinc-300"
                     />
                     <button 
                       type="button"
                       disabled={!bulkAuthor.trim()}
                       onClick={() => setBulkConfirmField('author')}
-                      className="absolute right-1 top-1 p-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className={`absolute right-1.5 top-1.5 p-1.5 rounded-lg transition-colors ${bulkAuthor.trim() ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-zinc-100 text-zinc-300 disabled:cursor-not-allowed'}`}
                       title="Uygula"
                     >
-                      <Check size={16} />
+                      <Check size={16} strokeWidth={bulkAuthor.trim() ? 3 : 2} />
                     </button>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <div className="relative flex-1">
+                <div className="flex flex-col gap-1">
+                  <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider pl-1">Yayınevi</label>
+                  <div className="relative w-full">
                     <input 
                       type="text" 
-                      placeholder="Yayınevi (Tüm listeye uygula)" 
+                      placeholder="Listedeki tüm kitaplara uygulanacak.." 
                       value={bulkPublisher}
                       onChange={e => setBulkPublisher(e.target.value)}
-                      className="w-full pl-3 pr-10 py-2 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent text-sm"
+                      className="w-full pl-3 pr-10 py-2 border border-zinc-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-transparent text-sm placeholder:text-zinc-300"
                     />
                     <button 
                       type="button"
                       disabled={!bulkPublisher.trim()}
                       onClick={() => setBulkConfirmField('publisher')}
-                      className="absolute right-1 top-1 p-1.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className={`absolute right-1.5 top-1.5 p-1.5 rounded-lg transition-colors ${bulkPublisher.trim() ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-zinc-100 text-zinc-300 disabled:cursor-not-allowed'}`}
                       title="Uygula"
                     >
-                      <Check size={16} />
+                      <Check size={16} strokeWidth={bulkPublisher.trim() ? 3 : 2} />
                     </button>
                   </div>
                 </div>
