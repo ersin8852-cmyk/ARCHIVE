@@ -26,12 +26,12 @@ const ListCreateModal = ({ isOpen, onClose, onCreate, parentId }) => {
   const colors = ['#71717a', '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
 
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-[15vh]">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-[5vh]">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       <div className="bg-white w-full max-w-sm rounded-2xl shadow-xl z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        <div className="flex justify-between items-center p-4 border-b border-zinc-100">
-          <h2 className="text-lg font-bold text-zinc-900">Yeni Liste Oluştur</h2>
-          <button onClick={onClose} className="p-2 text-zinc-500 hover:bg-zinc-100 rounded-full transition-colors"><X size={20} /></button>
+        <div className="flex justify-between items-center py-2.5 px-4 border-b border-zinc-100">
+          <h2 className="text-base font-bold text-zinc-900">Yeni Liste Oluştur</h2>
+          <button onClick={onClose} className="p-1.5 text-zinc-500 hover:bg-zinc-100 rounded-full transition-colors"><X size={20} /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-4">
           <div className="mb-4">
@@ -128,12 +128,12 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
   const colors = ['#71717a', '#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
 
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-[15vh]">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-[5vh]">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       <div className="bg-white w-full max-w-sm rounded-2xl shadow-xl z-10 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        <div className="flex justify-between items-center p-4 border-b border-zinc-100">
-          <h2 className="text-lg font-bold text-zinc-900">Liste Ayarları</h2>
-          <button onClick={onClose} className="p-2 text-zinc-500 hover:bg-zinc-100 rounded-full transition-colors"><X size={20} /></button>
+        <div className="flex justify-between items-center py-2.5 px-4 border-b border-zinc-100">
+          <h2 className="text-base font-bold text-zinc-900">Liste Ayarları</h2>
+          <button onClick={onClose} className="p-1.5 text-zinc-500 hover:bg-zinc-100 rounded-full transition-colors"><X size={20} /></button>
         </div>
         
         {bulkConfirmField ? (
