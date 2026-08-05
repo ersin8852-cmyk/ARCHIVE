@@ -20,11 +20,18 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
   if (!isOpen) return null;
 
   const handleSave = () => {
-    if (!formData.title || !formData.title.trim()) {
-      showToast('Kitap başlığı boş olamaz.', 'error');
-      return;
+    let finalData = { ...formData };
+    
+    if (!finalData.title || !finalData.title.trim()) {
+      if (finalData.isbn && finalData.isbn.trim()) {
+        finalData.title = 'Kitap bilgisi yükleniyor...';
+      } else {
+        showToast('Kitap başlığı boş olamaz.', 'error');
+        return;
+      }
     }
-    const success = addBook({ ...formData, isManual: true }, folderId);
+    
+    const success = addBook({ ...finalData, isManual: true }, folderId);
     if (success) {
       onClose();
     }
