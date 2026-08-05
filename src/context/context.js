@@ -631,7 +631,9 @@ const DataProvider = ({ children }) => {
       {children}
     </DataContext.Provider>
   );
-};\n\n// Kombine Provider (Geriye Dönük Uyumluluk ve Root Sarımı İçin)
+};
+
+// Kombine Provider (Geriye Dönük Uyumluluk ve Root Sarımı İçin)
 const ArchiveProvider = ({ children }) => {
   return (
     <ToastProvider>
