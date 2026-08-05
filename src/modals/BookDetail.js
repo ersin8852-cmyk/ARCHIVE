@@ -86,6 +86,14 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
     }
   };
 
+  const getLargeCover = (url) => {
+    if (!url || url === 'default-cover.png') return 'default-cover.png';
+    if (url.includes('covers.openlibrary.org')) {
+      return url.replace('-M.jpg', '-L.jpg').replace('-S.jpg', '-L.jpg');
+    }
+    return url;
+  };
+
   return ReactDOM.createPortal(
     <React.Fragment>
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 z-[100]">
@@ -199,7 +207,7 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
         >
           <div className="relative max-w-[85vw] max-h-[85vh] animate-in zoom-in-95 duration-200">
             <img 
-              src={book.cover || 'default-cover.png'} 
+              src={getLargeCover(book.cover)} 
               alt="Büyük Kapak" 
               className="max-w-[85vw] max-h-[85vh] object-contain rounded-xl shadow-2xl" 
               onClick={(e) => e.stopPropagation()}
