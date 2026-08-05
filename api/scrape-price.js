@@ -112,7 +112,9 @@ module.exports = async (req, res) => {
       const titleSelectors = ['.name', '.product-title', '.product-name', '.pr_header__heading', '#product-name', '.a-size-medium', '.prd-name'];
       for (let s of titleSelectors) {
         const txt = $(s).first().text().replace(/\n/g, ' ').trim();
-        if (txt && txt.length > 2 && !txt.includes('TL')) { meta.title = txt; break; }
+        const lowerTxt = txt.toLowerCase();
+        const isBadTitle = ['filtreler', 'kategoriler', 'markalar', 'yazarlar', 'yayınevleri'].includes(lowerTxt) || lowerTxt.includes('sepete ekle');
+        if (txt && txt.length > 2 && !txt.includes('TL') && !isBadTitle) { meta.title = txt; break; }
       }
     }
     
