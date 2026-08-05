@@ -496,6 +496,7 @@ const DataProvider = ({ children }) => {
       const timer = setTimeout(() => {
         fetch(`/api/scrape-price?isbn=${pendingBook.isbn}`)
           .then(async (res) => {
+            if (res.status === 429) throw new Error('ScraperAPI Kotası Doldu (429)');
             if (!res.ok) throw new Error('API Hatası');
             return res.json();
           })
@@ -530,6 +531,15 @@ const DataProvider = ({ children }) => {
                   }
                   return b;
                 })
+              }));
+            } else if (result && result.notFound) {
+              console.log(`[Kuyruk] Kitap hiçbir sitede bulunamadı (${pendingBook.title}).`);
+              // Tekrar denemeyi durdur
+              updateData(prev => ({
+                ...prev,
+                books: prev.books.map(b => 
+                  b.id === pendingBook.id ? { ...b, priceFetchPending: false, priceFetchAttempts: 3 } : b
+                )
               }));
             } else {
               throw new Error('Fiyat verisi boş');

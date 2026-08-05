@@ -46,6 +46,7 @@ module.exports = async (req, res) => {
   };
 
   const results = [];
+  let quotaExceeded = false;
 
   const fetchPrice = async (siteName, url, parseCallback, useScraperApi = false) => {
     try {
@@ -74,6 +75,9 @@ module.exports = async (req, res) => {
       }
     } catch (error) {
       console.log(`[Scraper] ${siteName} hatası: ${error.message}`);
+      if (useScraperApi && error.response && (error.response.status === 401 || error.response.status === 403 || error.response.status === 429)) {
+        quotaExceeded = true;
+      }
     }
   };
 
@@ -223,7 +227,11 @@ module.exports = async (req, res) => {
   ]);
 
   if (results.length === 0) {
-    return res.status(404).json({ error: 'Hiçbir sitede fiyat bulunamadı veya tüm aramalar zaman aşımına uğradı.' });
+    if (quotaExceeded) {
+      return res.status(429).json({ error: 'ScraperAPI kotası doldu (429).' });
+    }
+    // Kitap gerçekten bulunamadıysa 404 hatası üretme (konsolu kirletme), 200 ve notFound=true dön
+    return res.status(200).json({ notFound: true, error: 'Hiçbir sitede fiyat bulunamadı.' });
   }
 
   // En ucuzunu bul

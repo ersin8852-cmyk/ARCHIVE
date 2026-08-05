@@ -48,6 +48,10 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
     setIsRefreshingPrice(true);
     try {
       const res = await fetch(`/api/scrape-price?isbn=${book.isbn}`);
+      if (res.status === 429) {
+        showToast('ScraperAPI Kotası Doldu.', 'error');
+        return;
+      }
       if (!res.ok) throw new Error('API Hatası');
       const result = await res.json();
       if (result && result.cheapest) {
@@ -76,6 +80,8 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
         
         updateBook(book.id, updates);
         showToast('Fiyat ve isim başarıyla güncellendi.');
+      } else if (result && result.notFound) {
+        showToast('Kitap mağazalarda bulunamadı (Stok yok).', 'info');
       } else {
         showToast('Fiyat bulunamadı.', 'error');
       }
