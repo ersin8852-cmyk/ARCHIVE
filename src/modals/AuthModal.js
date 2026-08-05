@@ -53,8 +53,6 @@ const AuthModal = ({ isVisible }) => {
         
         // Save extra profile data in Firestore
         await window.firebaseDb.collection('users').doc(cred.user.uid).set({
-          books: [],
-          folders: [],
           profile: {
             fullName,
             username,
