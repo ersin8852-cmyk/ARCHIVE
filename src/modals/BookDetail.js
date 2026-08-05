@@ -8,6 +8,7 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isRefreshingPrice, setIsRefreshingPrice] = useState(false);
   const [showLargeCover, setShowLargeCover] = useState(false);
+  const [largeCoverLoaded, setLargeCoverLoaded] = useState(false);
 
   useEffect(() => {
     if (book) { setFormData(book); setShowDeleteConfirm(false); setIsEditing(false); setShowMove(false); }
@@ -127,7 +128,7 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
           ) : (
             <div 
               className="w-14 h-20 shrink-0 relative rounded-lg overflow-hidden border border-zinc-200 bg-zinc-100 flex items-center justify-center shadow-sm cursor-pointer hover:opacity-90 transition-opacity"
-              onClick={() => setShowLargeCover(true)}
+              onClick={() => { setLargeCoverLoaded(false); setShowLargeCover(true); }}
               title="Görseli Büyüt"
             >
               <BookOpen size={20} className="text-zinc-400 absolute z-0" />
@@ -205,13 +206,19 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
           className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 cursor-pointer animate-in fade-in duration-200"
           onClick={() => setShowLargeCover(false)}
         >
-          <div className="relative h-[55vh] sm:h-[70vh] animate-in zoom-in-95 duration-200 flex shrink-0">
+          <div className="relative h-[55vh] sm:h-[70vh] animate-in zoom-in-95 duration-200 flex items-center justify-center shrink-0 min-w-[200px]">
+            {!largeCoverLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-8 h-8 border-4 border-zinc-700 border-t-white rounded-full animate-spin opacity-80"></div>
+              </div>
+            )}
             <img 
               src={getLargeCover(book.cover)} 
               alt="Büyük Kapak" 
-              className="h-full w-auto object-contain rounded-xl shadow-2xl" 
+              className={`h-full w-auto object-contain rounded-xl shadow-2xl transition-opacity duration-300 ${largeCoverLoaded ? 'opacity-100' : 'opacity-0'}`} 
+              onLoad={() => setLargeCoverLoaded(true)}
               onClick={(e) => e.stopPropagation()}
-              onError={(e) => { e.target.style.display = 'none'; }}
+              onError={(e) => { e.target.style.display = 'none'; setLargeCoverLoaded(true); }}
             />
           </div>
         </div>
