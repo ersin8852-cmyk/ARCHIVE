@@ -205,11 +205,11 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
           className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 cursor-pointer animate-in fade-in duration-200"
           onClick={() => setShowLargeCover(false)}
         >
-          <div className="relative max-w-[85vw] max-h-[85vh] animate-in zoom-in-95 duration-200">
+          <div className="relative h-[55vh] sm:h-[70vh] animate-in zoom-in-95 duration-200 flex shrink-0">
             <img 
               src={getLargeCover(book.cover)} 
               alt="Büyük Kapak" 
-              className="max-w-[85vw] max-h-[85vh] object-contain rounded-xl shadow-2xl" 
+              className="h-full w-auto object-contain rounded-xl shadow-2xl" 
               onClick={(e) => e.stopPropagation()}
               onError={(e) => { e.target.style.display = 'none'; }}
             />
