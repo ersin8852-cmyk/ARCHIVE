@@ -118,9 +118,9 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
           <button onClick={toggleLibrary} className={`flex-1 py-3 px-2 flex flex-col items-center gap-1.5 transition-colors ${book.inLibrary ? 'bg-zinc-900 text-white' : 'text-zinc-500 hover:bg-zinc-50'}`}><Library size={18} /><span className="text-[10px] uppercase font-bold tracking-wider">Kütüphanemde</span></button>
           <button onClick={toggleRead} className={`flex-1 py-3 px-2 flex flex-col items-center gap-1.5 transition-colors ${book.isRead ? 'bg-green-600 text-white' : 'text-zinc-500 hover:bg-zinc-50'}`}><Check size={18} /><span className="text-[10px] uppercase font-bold tracking-wider">Okundu</span></button>
         </div>
-        <div className="p-5 flex-1 overflow-y-auto space-y-4">
+        <div className="p-5 flex-1 overflow-visible space-y-4">
           <div className="grid grid-cols-2 gap-4">
-            {[{ label: 'Yazar', name: 'author', col: 2 }, { label: 'Yayınevi', name: 'publisher', col: 2 }, { label: 'Sayfa', name: 'pageCount', type: 'number', col: 1 }, { label: 'Yıl', name: 'year', type: 'number', col: 1 }, { label: 'Fiyat (₺)', name: 'price', type: 'number', col: 2 }].map(field => (
+            {[{ label: 'Yazar', name: 'author', col: 2 }, { label: 'Yayınevi', name: 'publisher', col: 2 }, { label: 'Sayfa', name: 'pageCount', type: 'number', col: 1 }, { label: 'Fiyat (₺)', name: 'price', type: 'number', col: 1 }].map(field => (
               <div key={field.name} className={`flex flex-col ${field.col === 2 ? 'col-span-2' : 'col-span-1'} bg-zinc-50 p-3 rounded-xl border border-zinc-100`}>
                 <label className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider mb-1">{field.label}</label>
                 {isEditing ? (
@@ -135,7 +135,7 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
           </div>
           {!isEditing && (
             <div className="pt-2">
-              <button onClick={() => setShowMove(!showMove)} className="flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 font-medium py-2"><MoveRight size={16} /> Klasörü Değiştir</button>
+              <button onClick={() => setShowMove(!showMove)} className="flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900 font-medium py-2"><MoveRight size={16} /> Konumu Değiştir</button>
               {showMove && (
                 <div className="mt-2 p-2 border border-zinc-200 rounded-xl bg-white max-h-40 overflow-y-auto shadow-inner">
                   <div onClick={() => { moveItemToPosition(book.id, 'book', null); setShowMove(false); }} className={`p-2.5 text-sm rounded-lg cursor-pointer transition-colors ${book.folderId === null ? 'bg-zinc-100 font-semibold text-zinc-900' : 'hover:bg-zinc-50 text-zinc-600'}`}>/ Ana Dizin</div>
