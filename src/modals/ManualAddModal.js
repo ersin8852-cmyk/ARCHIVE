@@ -24,7 +24,7 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
       showToast('Kitap başlığı boş olamaz.', 'error');
       return;
     }
-    const success = addBook(formData, folderId);
+    const success = addBook({ ...formData, isManual: true }, folderId);
     if (success) {
       onClose();
     }
