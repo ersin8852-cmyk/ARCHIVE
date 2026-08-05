@@ -190,6 +190,7 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
           )}
         </div>
       </div>
+      </div>
 
       {showLargeCover && (
         <div 
