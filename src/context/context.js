@@ -254,13 +254,14 @@ const DataProvider = ({ children }) => {
           console.log("Migration started...");
           const batch = window.firebaseDb.batch();
           
+          let operations = [];
           if (docData.books && Array.isArray(docData.books)) {
             docData.books.forEach(b => {
               const cleanBook = Object.entries(b).reduce((acc, [k, v]) => {
                 if (v !== undefined) acc[k] = v;
                 return acc;
               }, {});
-              batch.set(booksRef.doc(b.id || generateId()), cleanBook);
+              operations.push({ ref: booksRef.doc(b.id || generateId()), data: cleanBook, type: 'set' });
             });
           }
           
@@ -270,17 +271,30 @@ const DataProvider = ({ children }) => {
                 if (v !== undefined) acc[k] = v;
                 return acc;
               }, {});
-              batch.set(foldersRef.doc(f.id || generateId()), cleanFolder);
+              operations.push({ ref: foldersRef.doc(f.id || generateId()), data: cleanFolder, type: 'set' });
             });
           }
           
-          batch.update(userDocRef, {
-            books: window.firebase.firestore.FieldValue.delete(),
-            folders: window.firebase.firestore.FieldValue.delete()
+          operations.push({
+            ref: userDocRef,
+            data: {
+              books: window.firebase.firestore.FieldValue.delete(),
+              folders: window.firebase.firestore.FieldValue.delete()
+            },
+            type: 'update'
           });
           
           try {
-            await batch.commit();
+            const CHUNK_SIZE = 450;
+            for (let i = 0; i < operations.length; i += CHUNK_SIZE) {
+              const chunk = operations.slice(i, i + CHUNK_SIZE);
+              const batch = window.firebaseDb.batch();
+              chunk.forEach(op => {
+                if (op.type === 'set') batch.set(op.ref, op.data);
+                if (op.type === 'update') batch.update(op.ref, op.data);
+              });
+              await batch.commit();
+            }
             console.log("Migration completed!");
             showToast('Verileriniz yeni güvenli sisteme aktarıldı.', 'success');
           } catch (e) {
@@ -357,33 +371,38 @@ const DataProvider = ({ children }) => {
   const deleteFolder = useCallback((id) => {
     if (!user) return;
     const folderIdsToDelete = [id, ...getDescendantFolderIds(data.folders, id)];
-    const batch = window.firebaseDb.batch();
+    let ops = [];
+    folderIdsToDelete.forEach(fid => ops.push(window.firebaseDb.collection('users').doc(user.uid).collection('folders').doc(fid)));
+    data.books.filter(b => folderIdsToDelete.includes(b.folderId)).forEach(b => ops.push(window.firebaseDb.collection('users').doc(user.uid).collection('books').doc(b.id)));
     
-    folderIdsToDelete.forEach(fid => {
-      batch.delete(window.firebaseDb.collection('users').doc(user.uid).collection('folders').doc(fid));
-    });
-    
-    data.books.filter(b => folderIdsToDelete.includes(b.folderId)).forEach(b => {
-      batch.delete(window.firebaseDb.collection('users').doc(user.uid).collection('books').doc(b.id));
-    });
-    
-    batch.commit().catch(console.error);
+    const CHUNK_SIZE = 450;
+    (async () => {
+      try {
+        for (let i = 0; i < ops.length; i += CHUNK_SIZE) {
+          const chunk = ops.slice(i, i + CHUNK_SIZE);
+          const batch = window.firebaseDb.batch();
+          chunk.forEach(ref => batch.delete(ref));
+          await batch.commit();
+        }
+      } catch(e) { console.error(e); }
+    })();
   }, [data.folders, data.books, user]);
 
   const deleteAllData = useCallback(async () => {
     if (!user) return;
     showToast('Tüm verileriniz siliniyor...', 'info');
-    const batch = window.firebaseDb.batch();
+    let ops = [];
+    data.books.forEach(b => ops.push(window.firebaseDb.collection('users').doc(user.uid).collection('books').doc(b.id)));
+    data.folders.forEach(f => ops.push(window.firebaseDb.collection('users').doc(user.uid).collection('folders').doc(f.id)));
     
-    data.books.forEach(b => {
-      batch.delete(window.firebaseDb.collection('users').doc(user.uid).collection('books').doc(b.id));
-    });
-    data.folders.forEach(f => {
-      batch.delete(window.firebaseDb.collection('users').doc(user.uid).collection('folders').doc(f.id));
-    });
-    
+    const CHUNK_SIZE = 450;
     try {
-      await batch.commit();
+      for (let i = 0; i < ops.length; i += CHUNK_SIZE) {
+        const chunk = ops.slice(i, i + CHUNK_SIZE);
+        const batch = window.firebaseDb.batch();
+        chunk.forEach(ref => batch.delete(ref));
+        await batch.commit();
+      }
       showToast('Tüm verileriniz başarıyla silindi.');
     } catch (e) {
       console.error(e);
@@ -456,14 +475,21 @@ const DataProvider = ({ children }) => {
 
   const bulkUpdateBooksInFolder = useCallback((folderId, updates) => {
     if (!user) return;
-    const batch = window.firebaseDb.batch();
     const booksInFolder = data.books.filter(b => b.folderId === folderId);
+    let ops = [];
+    booksInFolder.forEach(b => ops.push(window.firebaseDb.collection('users').doc(user.uid).collection('books').doc(b.id)));
     
-    booksInFolder.forEach(b => {
-      batch.update(window.firebaseDb.collection('users').doc(user.uid).collection('books').doc(b.id), updates);
-    });
-    
-    batch.commit().catch(console.error);
+    const CHUNK_SIZE = 450;
+    (async () => {
+      try {
+        for (let i = 0; i < ops.length; i += CHUNK_SIZE) {
+          const chunk = ops.slice(i, i + CHUNK_SIZE);
+          const batch = window.firebaseDb.batch();
+          chunk.forEach(ref => batch.update(ref, updates));
+          await batch.commit();
+        }
+      } catch (e) { console.error(e); }
+    })();
   }, [data.books, user]);
 
   const deleteBook = useCallback((id) => {
@@ -501,17 +527,24 @@ const DataProvider = ({ children }) => {
 
     siblings.splice(insertIndex, 0, updatedItem);
 
-    const batch = window.firebaseDb.batch();
-    
-    siblings.forEach((s, i) => {
-      if (s._type === 'folder') {
-        batch.update(window.firebaseDb.collection('users').doc(user.uid).collection('folders').doc(s.id), { order: i, parentId: s.id === itemId ? targetFolderId : s.parentId });
-      } else if (s._type === 'book') {
-        batch.update(window.firebaseDb.collection('users').doc(user.uid).collection('books').doc(s.id), { order: i, folderId: s.id === itemId ? targetFolderId : s.folderId });
-      }
-    });
-
-    batch.commit().catch(console.error);
+    const CHUNK_SIZE = 450;
+    (async () => {
+      try {
+        for (let i = 0; i < siblings.length; i += CHUNK_SIZE) {
+          const chunk = siblings.slice(i, i + CHUNK_SIZE);
+          const batch = window.firebaseDb.batch();
+          chunk.forEach((s, idx) => {
+            const actualIndex = i + idx;
+            if (s._type === 'folder') {
+              batch.update(window.firebaseDb.collection('users').doc(user.uid).collection('folders').doc(s.id), { order: actualIndex, parentId: s.id === itemId ? targetFolderId : s.parentId });
+            } else if (s._type === 'book') {
+              batch.update(window.firebaseDb.collection('users').doc(user.uid).collection('books').doc(s.id), { order: actualIndex, folderId: s.id === itemId ? targetFolderId : s.folderId });
+            }
+          });
+          await batch.commit();
+        }
+      } catch (e) { console.error(e); }
+    })();
   }, [data.books, data.folders, user]);
 
   const importData = useCallback(async (importedData) => {
@@ -522,27 +555,35 @@ const DataProvider = ({ children }) => {
     
     showToast('Veriler içe aktarılıyor, lütfen bekleyin...', 'info');
     try {
-      const batch = window.firebaseDb.batch();
-      
+      let ops = [];
       importedData.books.forEach(b => {
         const bookId = b.id || generateId();
         const cleanBook = { ...b };
         delete cleanBook.id;
-        batch.set(window.firebaseDb.collection('users').doc(user.uid).collection('books').doc(bookId), cleanBook);
+        ops.push({ ref: window.firebaseDb.collection('users').doc(user.uid).collection('books').doc(bookId), data: cleanBook, type: 'set' });
       });
       
       importedData.folders.forEach(f => {
         const folderId = f.id || generateId();
         const cleanFolder = { ...f };
         delete cleanFolder.id;
-        batch.set(window.firebaseDb.collection('users').doc(user.uid).collection('folders').doc(folderId), cleanFolder);
+        ops.push({ ref: window.firebaseDb.collection('users').doc(user.uid).collection('folders').doc(folderId), data: cleanFolder, type: 'set' });
       });
       
       if (importedData.profile) {
-        batch.set(window.firebaseDb.collection('users').doc(user.uid), { profile: importedData.profile }, { merge: true });
+        ops.push({ ref: window.firebaseDb.collection('users').doc(user.uid), data: { profile: importedData.profile }, type: 'update' });
       }
       
-      await batch.commit();
+      const CHUNK_SIZE = 450;
+      for (let i = 0; i < ops.length; i += CHUNK_SIZE) {
+        const chunk = ops.slice(i, i + CHUNK_SIZE);
+        const batch = window.firebaseDb.batch();
+        chunk.forEach(op => {
+          if (op.type === 'set') batch.set(op.ref, op.data);
+          else if (op.type === 'update') batch.set(op.ref, op.data, { merge: true });
+        });
+        await batch.commit();
+      }
       showToast('Veriler başarıyla cihaza yüklendi!');
       return true;
     } catch (e) {
