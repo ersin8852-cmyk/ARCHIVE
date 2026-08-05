@@ -227,7 +227,7 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
               
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider pl-1">Yazar</label>
+                  <label className="text-xs font-semibold text-zinc-700 uppercase tracking-wider pl-1">Yazar</label>
                   <div className="relative w-full">
                     <input 
                       type="text" 
@@ -249,7 +249,7 @@ const ListEditModal = ({ isOpen, onClose, folderId }) => {
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wider pl-1">Yayınevi</label>
+                  <label className="text-xs font-semibold text-zinc-700 uppercase tracking-wider pl-1">Yayınevi</label>
                   <div className="relative w-full">
                     <input 
                       type="text" 
