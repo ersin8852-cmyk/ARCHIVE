@@ -105,7 +105,6 @@ module.exports = async (req, res) => {
               if (p.publisher && p.publisher.name && !meta.publisher) meta.publisher = p.publisher.name.trim();
               if (p.brand && p.brand.name && !meta.publisher) meta.publisher = p.brand.name.trim();
               if (p.numberOfPages && !meta.pageCount) meta.pageCount = p.numberOfPages;
-              if (p.datePublished && !meta.year) meta.year = p.datePublished.toString().substring(0, 4);
             }
           }
         }

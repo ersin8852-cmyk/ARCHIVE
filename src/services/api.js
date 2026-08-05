@@ -10,7 +10,6 @@ window.api = {
       author: (data.authors || []).map(a => a.name).join(', ') || 'Bilinmeyen Yazar',
       publisher: (data.publishers || []).map(p => p.name).join(', ') || 'Yayınevi Belirtilmemiş',
       pageCount: data.number_of_pages || 0,
-      year: (data.publish_date && data.publish_date.match(/\d{4}/)?.[0]) || '',
       price: '', cover: data.cover ? (data.cover.medium || data.cover.large || data.cover.small || '') : ''
     }];
   },
@@ -29,7 +28,7 @@ window.api = {
         try {
           const enriched = await window.api.fetchByIsbn(isbnCandidate);
           if (enriched.length && (enriched[0].publisher !== 'Yayınevi Belirtilmemiş' || enriched[0].pageCount)) {
-            return { ...enriched[0], title: enriched[0].title || doc.title, author: enriched[0].author || doc.author_name?.join(', '), cover: enriched[0].cover || cover, year: enriched[0].year || doc.first_publish_year };
+            return { ...enriched[0], title: enriched[0].title || doc.title, author: enriched[0].author || doc.author_name?.join(', '), cover: enriched[0].cover || cover };
           }
         } catch (e) { console.warn('ISBN zenginleştirme başarısız:', e.message); }
       }
@@ -40,11 +39,11 @@ window.api = {
           if (eRes.ok) {
             const e = await eRes.json();
             const isbn = (e.isbn_13 && e.isbn_13[0]) || (e.isbn_10 && e.isbn_10[0]) || '';
-            return { isbn, title: e.title || doc.title, author: doc.author_name?.join(', '), publisher: (e.publishers && e.publishers.join(', ')) || (doc.publisher && doc.publisher[0]) || 'Yayınevi Belirtilmemiş', pageCount: e.number_of_pages || 0, year: (e.publish_date && e.publish_date.match(/\d{4}/)?.[0]) || doc.first_publish_year || '', price: '', cover };
+            return { isbn, title: e.title || doc.title, author: doc.author_name?.join(', '), publisher: (e.publishers && e.publishers.join(', ')) || (doc.publisher && doc.publisher[0]) || 'Yayınevi Belirtilmemiş', pageCount: e.number_of_pages || 0, price: '', cover };
           }
         } catch (e) { console.warn('ISBN zenginleştirme başarısız:', e.message); }
       }
-      return { isbn: '', title: doc.title, author: doc.author_name?.join(', '), publisher: (doc.publisher && doc.publisher[0]) || 'Yayınevi Belirtilmemiş', pageCount: 0, year: doc.first_publish_year || '', price: '', cover };
+      return { isbn: '', title: doc.title, author: doc.author_name?.join(', '), publisher: (doc.publisher && doc.publisher[0]) || 'Yayınevi Belirtilmemiş', pageCount: 0, price: '', cover };
     }));
   }
 };

@@ -234,7 +234,22 @@ const DataProvider = ({ children }) => {
       const docRef = window.firebaseDb.collection('users').doc(user.uid);
       const unsubscribeDb = docRef.onSnapshot(doc => {
         if (doc.exists) {
-          setData({ ...initialState, ...doc.data() });
+          let loadedData = { ...initialState, ...doc.data() };
+          let needsClean = false;
+          if (loadedData.books) {
+            loadedData.books = loadedData.books.map(b => {
+              if ('year' in b) {
+                needsClean = true;
+                const { year, ...rest } = b;
+                return rest;
+              }
+              return b;
+            });
+          }
+          setData(loadedData);
+          if (needsClean) {
+            window.firebaseDb.collection('users').doc(user.uid).set(loadedData, { merge: true }).catch(console.error);
+          }
         } else {
           // KRİTİK HATA DÜZELTİLDİ: Artık boş veriyi zorla Firestore'a yazmıyoruz. Sadece lokal state'i temizliyoruz.
           setData(initialState);

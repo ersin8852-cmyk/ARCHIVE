@@ -75,7 +75,6 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
             pageCount: pageCount || 0,
             cover: '',
             publisher: publisher || '',
-            year: '',
             price: ''
           });
         }
