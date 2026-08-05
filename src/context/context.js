@@ -517,6 +517,9 @@ const DataProvider = ({ children }) => {
           })
           .then(result => {
             if (result && result.cheapest) {
+              if (pendingBook.isManual) {
+                showToast(`"${pendingBook.title}" başarıyla güncellendi.`, 'success');
+              }
               updateData(prev => ({
                 ...prev,
                 books: prev.books.map(b => {
@@ -548,6 +551,9 @@ const DataProvider = ({ children }) => {
                 })
               }));
             } else if (result && result.notFound) {
+              if (pendingBook.isManual) {
+                showToast(`"${pendingBook.title}" mağazalarda bulunamadı (Stok yok).`, 'warning');
+              }
               console.log(`[Kuyruk] Kitap hiçbir sitede bulunamadı (${pendingBook.title}).`);
               // Tekrar denemeyi durdur
               updateData(prev => ({

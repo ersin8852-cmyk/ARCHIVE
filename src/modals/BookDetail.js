@@ -6,7 +6,6 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
   const [formData, setFormData] = useState({});
   const [showMove, setShowMove] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [isRefreshingPrice, setIsRefreshingPrice] = useState(false);
   const [showLargeCover, setShowLargeCover] = useState(false);
   const [largeCoverLoaded, setLargeCoverLoaded] = useState(false);
 
@@ -39,58 +38,14 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
   const toggleRead = () => updateBook(book.id, { isRead: !book.isRead });
   const handleDelete = () => { deleteBook(book.id); onClose(); };
 
-  const handleRefreshPrice = async (e) => {
+  const handleRefreshPrice = (e) => {
     e.stopPropagation();
     if (!book.isbn) {
       showToast('Fiyat sorgulamak için kitaba ISBN numarası eklemelisiniz.', 'error');
       return;
     }
-    setIsRefreshingPrice(true);
-    try {
-      const res = await fetch(`/api/scrape-price?isbn=${book.isbn}`);
-      if (res.status === 429) {
-        showToast('ScraperAPI Kotası Doldu.', 'error');
-        return;
-      }
-      if (!res.ok) throw new Error('API Hatası');
-      const result = await res.json();
-      if (result && result.cheapest) {
-        const updates = { price: result.cheapest.price };
-        
-        if (result.all_results) {
-          const bestMeta = result.all_results.map(r => r.metadata).reduce((acc, curr) => {
-            if (curr && curr.title && (!acc.title || acc.title.length < curr.title.length)) {
-              acc.title = curr.title;
-            }
-            return acc;
-          }, {});
-          
-          if (bestMeta.title) updates.title = bestMeta.title;
-        }
-
-        // Kapak SADECE boşsa veya bizim varsayılan kapağımızsa değişsin (OpenLibrary vb. dokunulmasın)
-        if (!book.cover || book.cover === 'default-cover.png') {
-          const foundCover = result.cheapest.cover || (result.all_results && result.all_results.find(r => r.cover)?.cover);
-          if (foundCover && foundCover !== book.cover) {
-            const img = new Image();
-            img.onload = () => updateBook(book.id, { cover: foundCover });
-            img.src = foundCover;
-          }
-        }
-        
-        updateBook(book.id, updates);
-        showToast('Fiyat ve isim başarıyla güncellendi.');
-      } else if (result && result.notFound) {
-        showToast('Kitap mağazalarda bulunamadı (Stok yok).', 'info');
-      } else {
-        showToast('Fiyat bulunamadı.', 'error');
-      }
-    } catch (err) {
-      console.log('Fiyat taraması başarısız:', err.message);
-      showToast('Fiyat çekilirken hata oluştu.', 'error');
-    } finally {
-      setIsRefreshingPrice(false);
-    }
+    updateBook(book.id, { priceFetchPending: true, priceFetchAttempts: 0, isManual: true });
+    showToast('Kitap arama kuyruğuna eklendi.', 'info');
   };
 
   const getLargeCover = (url) => {
@@ -198,8 +153,8 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
             <div className="flex gap-2">
               <button onClick={() => setShowDeleteConfirm(true)} className="p-2.5 rounded-xl border border-zinc-200 text-red-500 hover:bg-red-50 transition-colors shrink-0" title="Kitabı Sil"><Trash2 size={20} /></button>
               <button onClick={() => setIsEditing(true)} className="flex-1 py-2.5 rounded-xl flex items-center justify-center gap-2 bg-zinc-900 text-white font-medium hover:bg-zinc-800 transition-colors">Bilgileri Düzenle</button>
-              <button onClick={handleRefreshPrice} disabled={isRefreshingPrice} className="p-2.5 rounded-xl bg-orange-500 text-white font-medium hover:bg-orange-600 transition-colors shrink-0 disabled:opacity-70 border border-orange-500" title="Tüm Verileri Web'den Çek / Güncelle">
-                <RefreshCw size={20} className={isRefreshingPrice ? "animate-spin" : ""} />
+              <button onClick={handleRefreshPrice} disabled={book.priceFetchPending} className="p-2.5 rounded-xl bg-orange-500 text-white font-medium hover:bg-orange-600 transition-colors shrink-0 disabled:opacity-70 border border-orange-500" title="Tüm Verileri Web'den Çek / Güncelle">
+                <RefreshCw size={20} className={book.priceFetchPending ? "animate-spin" : ""} />
               </button>
             </div>
           )}
