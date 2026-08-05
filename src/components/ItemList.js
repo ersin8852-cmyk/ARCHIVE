@@ -86,11 +86,6 @@ const ItemList = React.memo(({ ids, items, folders, books, folderKey, onOpenBook
     }
     const item = items.find(i => i.id === id);
     if (!item) return null;
-    let folderColor = null;
-    if (item._type === 'book' && item.folderId) {
-      const folder = folders.find(f => f.id === item.folderId);
-      if (folder) folderColor = folder.color;
-    }
 
     return (
       <div 
@@ -105,7 +100,7 @@ const ItemList = React.memo(({ ids, items, folders, books, folderKey, onOpenBook
         {item._type === 'folder' ? (
           <FolderNode folder={item} allFolders={folders} allBooks={books} onOpenFolder={onOpenFolder} onEdit={onEditFolder} isLibraryView={isLibraryView} index={visibleIds.indexOf(id) + 1} />
         ) : (
-          <BookCard book={item} onOpen={onOpenBook} showIndicator={showIndicator} isLibraryView={isLibraryView} containerFolderId={folderKey} index={visibleIds.indexOf(id) + 1} folderColor={folderColor} />
+          <BookCard book={item} onOpen={onOpenBook} showIndicator={showIndicator} isLibraryView={isLibraryView} containerFolderId={folderKey} index={visibleIds.indexOf(id) + 1} />
         )}
       </div>
     );

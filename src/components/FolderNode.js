@@ -13,6 +13,19 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
 
   const { cardRef, handlePointerDown, handleClick, isBeingDragged } = useDraggableItem(folder, folder.parentId || 'root', () => onOpenFolder(folder.id), 'folder');
 
+  const hexToRgba = (hex, alpha) => {
+    if (!hex) return '';
+    const r = parseInt(hex.slice(1, 3), 16) || 0;
+    const g = parseInt(hex.slice(3, 5), 16) || 0;
+    const b = parseInt(hex.slice(5, 7), 16) || 0;
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
+  const customStyle = (!isDropInside && folder.color) ? {
+    backgroundColor: hexToRgba(folder.color, 0.08),
+    borderColor: hexToRgba(folder.color, 0.3)
+  } : undefined;
+
   return (
     <div className="relative">
       {isDropBefore && <div className="absolute -top-1 left-4 right-4 h-0.5 bg-orange-600 rounded-full z-10" />}
@@ -22,8 +35,10 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
         data-item-type="folder"
         data-item-folder={folder.parentId || 'root'}
         className={`group flex items-center justify-between py-[5px] pl-[5px] pr-3 rounded-xl transition-all border shadow-sm cursor-pointer relative select-none
-            ${isDropInside ? 'bg-orange-600/5 border-orange-600 border-dashed scale-[1.02]' : 'bg-zinc-50 border-zinc-200 hover:border-zinc-300 hover:shadow-md'}
+            ${isDropInside ? 'bg-orange-600/5 border-orange-600 border-dashed scale-[1.02]' : 'hover:shadow-md'}
+            ${!isDropInside && !folder.color ? 'bg-zinc-50 border-zinc-200 hover:border-zinc-300' : ''}
             ${isBeingDragged ? 'opacity-0' : ''}`}
+        style={customStyle}
         onPointerDown={isLibraryView ? undefined : handlePointerDown}
         onClick={handleClick}
       >

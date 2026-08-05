@@ -129,10 +129,7 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
             </div>
           ) : filteredBooks.length > 0 ? (
             <div className="space-y-[3.6px]">
-              {filteredBooks.map(book => {
-                const folder = folders.find(f => f.id === book.folderId);
-                return <BookCard key={book.id} book={book} onOpen={handleOpenBook} isLibraryView={true} folderPath={getFolderPath(book.folderId)} onNavigate={handleNavigate} folderColor={folder?.color} />;
-              })}
+              {filteredBooks.map(book => <BookCard key={book.id} book={book} onOpen={handleOpenBook} isLibraryView={true} folderPath={getFolderPath(book.folderId)} onNavigate={handleNavigate} />)}
             </div>
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-zinc-400 space-y-3 pb-20">

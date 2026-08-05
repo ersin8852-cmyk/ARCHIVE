@@ -1,4 +1,4 @@
-const BookCard = React.memo(({ book, onOpen, showIndicator = false, folderPath = null, onNavigate = null, containerFolderId = null, index, isLibraryView = false, folderColor = null }) => {
+const BookCard = React.memo(({ book, onOpen, showIndicator = false, folderPath = null, onNavigate = null, containerFolderId = null, index, isLibraryView = false }) => {
   const handleNavigateOrOpen = (item) => {
     if (onNavigate) {
       onNavigate(item);
@@ -9,19 +9,6 @@ const BookCard = React.memo(({ book, onOpen, showIndicator = false, folderPath =
 
   const { cardRef, handlePointerDown, handleClick, isBeingDragged } = useDraggableItem(book, containerFolderId, handleNavigateOrOpen, 'book');
 
-  const hexToRgba = (hex, alpha) => {
-    if (!hex) return '';
-    const r = parseInt(hex.slice(1, 3), 16) || 0;
-    const g = parseInt(hex.slice(3, 5), 16) || 0;
-    const b = parseInt(hex.slice(5, 7), 16) || 0;
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-  };
-
-  const customStyle = folderColor ? {
-    backgroundColor: hexToRgba(folderColor, 0.08),
-    borderColor: hexToRgba(folderColor, 0.25)
-  } : {};
-
   return (
     <div
       id={`book-node-${book.id}`}
@@ -30,7 +17,6 @@ const BookCard = React.memo(({ book, onOpen, showIndicator = false, folderPath =
       data-item-type="book"
       data-item-folder={containerFolderId || 'root'}
       className={`group flex items-center justify-between py-[5px] pl-[5px] pr-3 bg-white border border-zinc-100 rounded-xl shadow-sm hover:border-zinc-300 cursor-pointer transition-colors select-none ${isBeingDragged ? 'opacity-0' : ''}`}
-      style={folderColor ? customStyle : undefined}
       onPointerDown={isLibraryView ? undefined : handlePointerDown}
       onClick={handleClick}
     >
