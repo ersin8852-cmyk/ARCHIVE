@@ -7,6 +7,7 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
   const [showMove, setShowMove] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isRefreshingPrice, setIsRefreshingPrice] = useState(false);
+  const [showLargeCover, setShowLargeCover] = useState(false);
 
   useEffect(() => {
     if (book) { setFormData(book); setShowDeleteConfirm(false); setIsEditing(false); setShowMove(false); }
@@ -14,10 +15,15 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
 
   useEffect(() => {
     if (!isOpen) return;
-    const handleKey = (e) => { if (e.key === 'Escape') onClose(); };
+    const handleKey = (e) => { 
+      if (e.key === 'Escape') {
+        if (showLargeCover) setShowLargeCover(false);
+        else onClose();
+      }
+    };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, showLargeCover]);
 
   if (!isOpen || !book) return null;
 
@@ -81,8 +87,9 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
   };
 
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 z-[100]">
-      <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col max-h-[90vh] sm:h-auto animate-in slide-in-from-bottom-10">
+    <>
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4 z-[100]">
+        <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full max-w-md overflow-hidden shadow-2xl flex flex-col max-h-[90vh] sm:h-auto animate-in slide-in-from-bottom-10">
         <div className="p-4 border-b flex justify-between items-start bg-zinc-50 relative gap-3">
           {isEditing ? (
             <div className="flex flex-col items-center gap-1 shrink-0">
@@ -110,7 +117,11 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
               )}
             </div>
           ) : (
-            <div className="w-14 h-20 shrink-0 relative rounded-lg overflow-hidden border border-zinc-200 bg-zinc-100 flex items-center justify-center shadow-sm">
+            <div 
+              className="w-14 h-20 shrink-0 relative rounded-lg overflow-hidden border border-zinc-200 bg-zinc-100 flex items-center justify-center shadow-sm cursor-pointer hover:opacity-90 transition-opacity"
+              onClick={() => setShowLargeCover(true)}
+              title="Görseli Büyüt"
+            >
               <BookOpen size={20} className="text-zinc-400 absolute z-0" />
               <img src={book.cover || 'default-cover.png'} alt="" className="w-full h-full object-cover absolute inset-0 z-10" onError={(e) => { e.target.style.display = 'none'; }} />
             </div>
@@ -179,7 +190,30 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
           )}
         </div>
       </div>
-    </div>,
+
+      {showLargeCover && (
+        <div 
+          className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 cursor-pointer animate-in fade-in duration-200"
+          onClick={() => setShowLargeCover(false)}
+        >
+          <div className="relative max-w-[85vw] max-h-[85vh] animate-in zoom-in-95 duration-200">
+            <img 
+              src={book.cover || 'default-cover.png'} 
+              alt="Büyük Kapak" 
+              className="max-w-[85vw] max-h-[85vh] object-contain rounded-xl shadow-2xl" 
+              onClick={(e) => e.stopPropagation()}
+              onError={(e) => { e.target.style.display = 'none'; }}
+            />
+            <button 
+              className="absolute -top-4 -right-4 p-2 bg-white text-zinc-900 rounded-full shadow-lg hover:bg-zinc-100 transition-colors z-[210]" 
+              onClick={() => setShowLargeCover(false)}
+            >
+              <X size={20} />
+            </button>
+          </div>
+        </div>
+      )}
+    </>,
     document.body
   );
 };
