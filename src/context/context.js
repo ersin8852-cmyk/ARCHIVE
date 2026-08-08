@@ -627,10 +627,14 @@ const DataProvider = ({ children }) => {
                     if (curr && curr.title && (!acc.title || acc.title.length < curr.title.length)) {
                       acc.title = curr.title;
                     }
+                    if (curr && curr.pageCount && !acc.pageCount) {
+                      acc.pageCount = curr.pageCount;
+                    }
                     return acc;
                   }, {});
                   
                   if (bestMeta.title) updates.title = bestMeta.title;
+                  if (bestMeta.pageCount && !pendingBook.pageCount) updates.pageCount = bestMeta.pageCount;
                 }
               }
               

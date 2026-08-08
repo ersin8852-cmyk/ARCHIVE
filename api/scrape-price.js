@@ -138,6 +138,22 @@ module.exports = async (req, res) => {
       }
     }
     
+    if (!meta.pageCount) {
+      const labels = $('td, th, span, div, li, strong, b');
+      labels.each((i, el) => {
+        if (meta.pageCount) return;
+        const text = $(el).text().replace(/\n/g, ' ').trim().toLowerCase();
+        if (text === 'sayfa sayısı:' || text === 'sayfa sayısı' || text === 'sayfa sayisi:' || text === 'sayfa sayisi') {
+          let val = $(el).next().text().trim();
+          if (!val) val = $(el).parent().text().replace($(el).text(), '').trim();
+          const match = val.match(/\d+/);
+          if (match && parseInt(match[0]) > 0 && parseInt(match[0]) < 5000) {
+            meta.pageCount = match[0];
+          }
+        }
+      });
+    }
+
     return meta;
   };
 
