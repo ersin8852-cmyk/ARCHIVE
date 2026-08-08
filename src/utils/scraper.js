@@ -273,7 +273,7 @@ const scrapeBookPrices = async (isbn) => {
       let el = doc.querySelector('.campaign-price') || doc.querySelector('.prd-price') || doc.querySelector('.current-price') || doc.querySelector('.price') || doc.querySelector('#salePrice') || doc.querySelector('.product-price');
       let priceText = el ? el.textContent : '';
       const price = parseTurkishPrice(priceText);
-      return { price, cover: extractCover(doc), metadata: extractMetadata(doc) };
+      return { price, cover: null, metadata: extractMetadata(doc) }; // D&R'dan asla görsel çekilmemesi istendi
     })
   ]);
 
