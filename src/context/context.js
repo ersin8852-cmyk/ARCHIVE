@@ -610,6 +610,21 @@ const DataProvider = ({ children }) => {
             return res.json();
           })
           .then(result => {
+            if (result && result.all_results && result.all_results.length > 0) {
+              console.groupCollapsed(`[Scraper] 🕵️‍♂️ "${pendingBook.title}" tarama sonuçları:`);
+              result.all_results.forEach(r => {
+                console.log(`📌 ${r.site}`, {
+                  Fiyat: r.price ? r.price + ' ₺' : 'Yok',
+                  Kapak_Var_Mi: !!r.cover,
+                  ...r.metadata
+                });
+              });
+              if (result.cheapest) {
+                console.log(`✅ Seçilen En Ucuz: ${result.cheapest.site} (${result.cheapest.price} ₺)`);
+              }
+              console.groupEnd();
+            }
+
             if (result && result.cheapest) {
               if (pendingBook.isManual) {
                 showToast(`"${pendingBook.title}" başarıyla güncellendi.`, 'success');
