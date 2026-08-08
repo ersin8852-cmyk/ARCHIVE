@@ -71,10 +71,13 @@ module.exports = async (req, res) => {
       }
       
       if (price && !isNaN(price) && price > 0) {
-        results.push({ site: siteName, price: price, cover: cover, metadata: metadata });
+        results.push({ site: siteName, price: price, cover: cover, metadata: metadata, status: 'success' });
+      } else {
+        results.push({ site: siteName, price: null, cover: null, metadata: {}, status: 'failed_or_bot_blocked' });
       }
     } catch (error) {
       console.log(`[Scraper] ${siteName} hatası: ${error.message}`);
+      results.push({ site: siteName, price: null, cover: null, metadata: {}, status: 'error', error: error.message });
       if (useScraperApi && error.response && (error.response.status === 401 || error.response.status === 403 || error.response.status === 429)) {
         quotaExceeded = true;
       }
@@ -244,16 +247,17 @@ module.exports = async (req, res) => {
     }, true)
   ]);
 
-  if (results.length === 0) {
+  const validResults = results.filter(r => r.price !== null && r.price > 0);
+
+  if (validResults.length === 0) {
     if (quotaExceeded) {
-      return res.status(429).json({ error: 'ScraperAPI kotası doldu (429).' });
+      return res.status(429).json({ error: 'ScraperAPI kotası doldu (429).', all_results: results });
     }
-    // Kitap gerçekten bulunamadıysa 404 hatası üretme (konsolu kirletme), 200 ve notFound=true dön
-    return res.status(200).json({ notFound: true, error: 'Hiçbir sitede fiyat bulunamadı.' });
+    return res.status(200).json({ notFound: true, error: 'Hiçbir sitede fiyat bulunamadı.', all_results: results });
   }
 
   // En ucuzunu bul
-  const cheapest = results.reduce((min, curr) => curr.price < min.price ? curr : min, results[0]);
+  const cheapest = validResults.reduce((min, curr) => curr.price < min.price ? curr : min, validResults[0]);
 
   return res.status(200).json({
     isbn: cleanIsbn,
