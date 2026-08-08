@@ -48,41 +48,7 @@ module.exports = async (req, res) => {
   const results = [];
   let quotaExceeded = false;
 
-  const fetchPrice = async (siteName, url, parseCallback, useScraperApi = false) => {
-    try {
-      let fetchUrl = url;
-      if (useScraperApi) {
-        fetchUrl = `http://api.scraperapi.com/?api_key=${SCRAPER_API_KEY}&url=${encodeURIComponent(url)}`;
-      }
 
-      const response = await axios.get(fetchUrl, { headers, timeout: 8500 });
-      const $ = cheerio.load(response.data);
-      let parsed = parseCallback($);
-      let price = null;
-      let cover = '';
-      let metadata = {};
-      
-      if (typeof parsed === 'number') {
-        price = parsed;
-      } else if (parsed && typeof parsed === 'object') {
-        price = parsed.price;
-        cover = parsed.cover || '';
-        metadata = parsed.metadata || {};
-      }
-      
-      if (price && !isNaN(price) && price > 0) {
-        results.push({ site: siteName, price: price, cover: cover, metadata: metadata, status: 'success' });
-      } else {
-        results.push({ site: siteName, price: null, cover: null, metadata: {}, status: 'failed_or_bot_blocked' });
-      }
-    } catch (error) {
-      console.log(`[Scraper] ${siteName} hatası: ${error.message}`);
-      results.push({ site: siteName, price: null, cover: null, metadata: {}, status: 'error', error: error.message });
-      if (useScraperApi && error.response && (error.response.status === 401 || error.response.status === 403 || error.response.status === 429)) {
-        quotaExceeded = true;
-      }
-    }
-  };
 
   const extractMetadata = ($) => {
     const meta = {};
