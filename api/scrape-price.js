@@ -157,6 +157,8 @@ module.exports = async (req, res) => {
       });
     }
 
+    meta._debug_title = $('title').text().trim().substring(0, 50);
+
     return meta;
   };
 
