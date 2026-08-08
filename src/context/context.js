@@ -603,12 +603,7 @@ const DataProvider = ({ children }) => {
       console.log(`[Kuyruk] Fiyat sorgusu bekleniyor: ${pendingBook.title} (Deneme: ${(pendingBook.priceFetchAttempts || 0) + 1}/3)`);
       
       const timer = setTimeout(() => {
-        fetch(`/api/scrape-price?isbn=${pendingBook.isbn}`)
-          .then(async (res) => {
-            if (res.status === 429) throw new Error('ScraperAPI Kotası Doldu (429)');
-            if (!res.ok) throw new Error('API Hatası');
-            return res.json();
-          })
+        scrapeBookPrices(pendingBook.isbn)
           .then(result => {
             if (result && result.all_results && result.all_results.length > 0) {
               console.groupCollapsed(`[Scraper] 🕵️‍♂️ "${pendingBook.title}" tarama sonuçları:`);
