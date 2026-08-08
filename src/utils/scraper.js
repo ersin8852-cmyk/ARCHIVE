@@ -234,7 +234,7 @@ const scrapeBookPrices = async (isbn) => {
       let el = doc.querySelector('.price-new .value') || doc.querySelector('.price .value') || doc.querySelector('.product-price') || doc.querySelector('.prc-dsc');
       let priceText = el ? el.textContent : '';
       const price = parseTurkishPrice(priceText);
-      return { price, cover: extractCover(doc), metadata: extractMetadata(doc) };
+      return { price, cover: null, metadata: extractMetadata(doc) };
     }),
 
     // 2. BKM Kitap
@@ -242,10 +242,10 @@ const scrapeBookPrices = async (isbn) => {
       let el = doc.querySelector('.current-price') || doc.querySelector('.product-price') || doc.querySelector('.urun_fiyati') || doc.querySelector('.discount-price');
       let priceText = el ? el.textContent : '';
       const price = parseTurkishPrice(priceText);
-      return { price, cover: extractCover(doc), metadata: extractMetadata(doc) };
+      return { price, cover: null, metadata: extractMetadata(doc) };
     }),
 
-    // 3. Kitapsepeti
+    // 3. Kitapsepeti (SADECE GÖRSEL BURADAN ÇEKİLECEK)
     fetchPrice('Kitapsepeti', `https://www.kitapsepeti.com/arama?q=${cleanIsbn}`, (doc) => {
       let el = doc.querySelector('.current-price') || doc.querySelector('.product-price');
       let priceText = el ? el.textContent : '';
@@ -265,7 +265,7 @@ const scrapeBookPrices = async (isbn) => {
         if (priceWhole) priceText = `${priceWhole}.${priceFraction || '00'}`;
       }
       const price = parseTurkishPrice(priceText) || parseFloat(priceText);
-      return { price, cover: extractCover(doc), metadata: extractMetadata(doc) };
+      return { price, cover: null, metadata: extractMetadata(doc) };
     }),
 
     // 5. D&R
