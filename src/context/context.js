@@ -626,33 +626,36 @@ const DataProvider = ({ children }) => {
               }
               const updates = { price: result.cheapest.price, priceFetchPending: false };
               
-              if (pendingBook.isManual) {
-                if (!pendingBook.cover || pendingBook.cover === 'default-cover.png') {
-                  const foundCover = result.cheapest.cover || (result.all_results && result.all_results.find(r => r.cover)?.cover);
-                  if (foundCover && foundCover !== pendingBook.cover) updates.cover = foundCover;
-                }
+              if (!pendingBook.cover || pendingBook.cover === 'default-cover.png') {
+                const foundCover = result.cheapest.cover || (result.all_results && result.all_results.find(r => r.cover)?.cover);
+                if (foundCover && foundCover !== pendingBook.cover) updates.cover = foundCover;
+              }
+              
+              if (result.all_results) {
+                const bestMeta = result.all_results.map(r => r.metadata).reduce((acc, curr) => {
+                  if (curr && curr.title && (!acc.title || curr.title.length < acc.title.length)) {
+                    acc.title = curr.title;
+                  }
+                  if (curr && curr.pageCount && !acc.pageCount) {
+                    acc.pageCount = curr.pageCount;
+                  }
+                  if (curr && curr.author && !acc.author) {
+                    acc.author = curr.author;
+                  }
+                  if (curr && curr.publisher && !acc.publisher) {
+                    acc.publisher = curr.publisher;
+                  }
+                  return acc;
+                }, {});
                 
-                if (result.all_results) {
-                  const bestMeta = result.all_results.map(r => r.metadata).reduce((acc, curr) => {
-                    if (curr && curr.title && (!acc.title || acc.title.length < curr.title.length)) {
-                      acc.title = curr.title;
-                    }
-                    if (curr && curr.pageCount && !acc.pageCount) {
-                      acc.pageCount = curr.pageCount;
-                    }
-                    if (curr && curr.author && !acc.author) {
-                      acc.author = curr.author;
-                    }
-                    if (curr && curr.publisher && !acc.publisher) {
-                      acc.publisher = curr.publisher;
-                    }
-                    return acc;
-                  }, {});
-                  
-                  if (bestMeta.title) updates.title = bestMeta.title;
-                  if (bestMeta.pageCount && !pendingBook.pageCount) updates.pageCount = bestMeta.pageCount;
-                  if (bestMeta.author && !pendingBook.author) updates.author = bestMeta.author;
-                  if (bestMeta.publisher && !pendingBook.publisher) updates.publisher = bestMeta.publisher;
+                // Eğer alanlar boşsa ilk eklemede veya manuel güncellemede doldur
+                if (bestMeta.pageCount && !pendingBook.pageCount) updates.pageCount = bestMeta.pageCount;
+                if (bestMeta.author && !pendingBook.author) updates.author = bestMeta.author;
+                if (bestMeta.publisher && !pendingBook.publisher) updates.publisher = bestMeta.publisher;
+                
+                // Kitap adı SADECE manuel güncellemede değişsin (ve varsa üzerine yazılsın)
+                if (pendingBook.isManual && bestMeta.title) {
+                  updates.title = bestMeta.title;
                 }
               }
               
