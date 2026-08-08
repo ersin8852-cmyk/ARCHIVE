@@ -230,7 +230,7 @@ const scrapeBookPrices = async (isbn) => {
 
     // 5. D&R
     fetchPrice('D&R', `https://www.dr.com.tr/search?q=${cleanIsbn}`, (doc) => {
-      let el = doc.querySelector('.prd-price') || doc.querySelector('.price') || doc.querySelector('#salePrice') || doc.querySelector('.product-price');
+      let el = doc.querySelector('.prd-price') || doc.querySelector('.current-price') || doc.querySelector('.price') || doc.querySelector('#salePrice') || doc.querySelector('.product-price');
       let priceText = el ? el.textContent : '';
       const price = parseTurkishPrice(priceText);
       return { price, cover: extractCover(doc), metadata: extractMetadata(doc) };
