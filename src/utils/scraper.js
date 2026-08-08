@@ -80,10 +80,28 @@ const extractMetadata = (doc) => {
       if (meta.pageCount) break;
       const text = el.textContent.replace(/\n/g, ' ').trim().toLowerCase();
       if (text === 'sayfa sayısı:' || text === 'sayfa sayısı' || text === 'sayfa sayisi:' || text === 'sayfa sayisi') {
-        let val = el.nextElementSibling ? el.nextElementSibling.textContent.trim() : null;
-        if (!val && el.parentElement) {
-          val = el.parentElement.textContent.replace(el.textContent, '').trim();
+        
+        let val = null;
+
+        // 1. Doğrudan Text Node kontrolü (<b>Sayfa Sayısı:</b> 1080)
+        if (el.nextSibling && el.nextSibling.nodeType === 3) {
+          val = el.nextSibling.nodeValue.trim();
         }
+        
+        // 2. Kardeş element kontrolü (<span>Sayfa Sayısı:</span> <span>1080</span>)
+        if (!val && el.nextElementSibling) {
+          val = el.nextElementSibling.textContent.trim();
+        }
+
+        // 3. Ebeveyn kontrolü (Geriye kalan tüm metin içinde, "sayfa sayısı" ifadesinden SONRAKİ ilk sayıyı bul)
+        if (!val && el.parentElement) {
+          const parentText = el.parentElement.textContent.replace(/\n/g, ' ');
+          const labelIndex = parentText.toLowerCase().indexOf(text);
+          if (labelIndex !== -1) {
+             val = parentText.substring(labelIndex + text.length).trim();
+          }
+        }
+
         if (val) {
           const match = val.match(/\d+/);
           if (match && parseInt(match[0]) > 0 && parseInt(match[0]) < 5000) {
