@@ -213,36 +213,43 @@ module.exports = async (req, res) => {
 
   // Tüm siteleri aynı anda (paralel) tara
   await Promise.allSettled([
-    // 1. Kitapyurdu (Normal Tarama)
+    // 1. Kitapyurdu
     fetchPrice('Kitapyurdu', `https://www.kitapyurdu.com/index.php?route=product/search&filter_name=${cleanIsbn}`, ($) => {
-      const price = parseTurkishPrice($('.price .value').first().text());
+      let priceText = $('.price-new .value').first().text() || $('.price .value').first().text() || $('.product-price').first().text() || $('.prc-dsc').first().text();
+      const price = parseTurkishPrice(priceText);
       return { price, cover: extractCover($), metadata: extractMetadata($) };
     }),
 
-    // 2. BKM Kitap (Normal Tarama)
+    // 2. BKM Kitap
     fetchPrice('BKM Kitap', `https://www.bkmkitap.com/arama?q=${cleanIsbn}`, ($) => {
-      const price = parseTurkishPrice($('.current-price').first().text());
+      let priceText = $('.current-price').first().text() || $('.product-price').first().text() || $('.urun_fiyati').first().text() || $('.discount-price').first().text();
+      const price = parseTurkishPrice(priceText);
       return { price, cover: extractCover($), metadata: extractMetadata($) };
     }),
 
     // 3. Kitapsepeti (Normal Tarama)
     fetchPrice('Kitapsepeti', `https://www.kitapsepeti.com/arama?q=${cleanIsbn}`, ($) => {
-      const price = parseTurkishPrice($('.current-price').first().text());
+      let priceText = $('.current-price').first().text() || $('.product-price').first().text();
+      const price = parseTurkishPrice(priceText);
       return { price, cover: extractCover($), metadata: extractMetadata($) };
     }),
 
     // 4. Amazon TR (ScraperAPI ile Anti-Bot bypass)
     fetchPrice('Amazon', `https://www.amazon.com.tr/s?k=${cleanIsbn}`, ($) => {
-      const priceWhole = $('.a-price-whole').first().text().replace(/[^0-9]/g, '');
-      const priceFraction = $('.a-price-fraction').first().text().replace(/[^0-9]/g, '');
-      if (!priceWhole) return null;
-      const price = parseFloat(`${priceWhole}.${priceFraction || '00'}`);
+      let priceText = $('.a-price .a-offscreen').first().text();
+      if (!priceText) {
+        const priceWhole = $('.a-price-whole').first().text().replace(/[^0-9]/g, '');
+        const priceFraction = $('.a-price-fraction').first().text().replace(/[^0-9]/g, '');
+        if (priceWhole) priceText = `${priceWhole}.${priceFraction || '00'}`;
+      }
+      const price = parseTurkishPrice(priceText) || parseFloat(priceText);
       return { price, cover: extractCover($), metadata: extractMetadata($) };
     }, true),
 
     // 5. D&R (ScraperAPI ile Anti-Bot bypass)
     fetchPrice('D&R', `https://www.dr.com.tr/search?q=${cleanIsbn}`, ($) => {
-      const price = parseTurkishPrice($('.prd-price').first().text());
+      let priceText = $('.prd-price').first().text() || $('.price').first().text() || $('#salePrice').text() || $('.product-price').first().text();
+      const price = parseTurkishPrice(priceText);
       return { price, cover: extractCover($), metadata: extractMetadata($) };
     }, true)
   ]);
