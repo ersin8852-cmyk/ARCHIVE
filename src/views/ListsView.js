@@ -193,7 +193,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
 
       <SearchAddModal isOpen={searchModalOpen} onClose={closeSearchModal} folderId={activeFolderForAdd} onOpenManualAdd={() => { setSearchModalOpen(false); openManualAddModal(); }} />
       <ManualAddModal isOpen={manualAddModalOpen} onClose={closeManualAddModal} folderId={activeFolderForAdd} />
-      <BookDetailModal isOpen={detailModalOpen} onClose={closeDetailModal} bookId={activeBookId} />
+      <BookDetailModal key={activeBookId ? `detail-${activeBookId}` : 'detail-empty'} isOpen={detailModalOpen} onClose={closeDetailModal} bookId={activeBookId} />
       <ListCreateModal isOpen={listCreateModalOpen} onClose={closeListCreateModal} onCreate={addFolder} parentId={activeFolderId} />
       <ListEditModal isOpen={listEditModalOpen} onClose={closeListEditModal} folderId={activeFolderForEdit} />
 

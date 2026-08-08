@@ -9,16 +9,16 @@ const BookDetailModal = ({ bookId, isOpen, onClose }) => {
   const [showLargeCover, setShowLargeCover] = useState(false);
   const [largeCoverLoaded, setLargeCoverLoaded] = useState(false);
 
-  // Modal ilk açıldığında veya farklı bir kitaba tıklandığında state'leri sıfırla
+  // Sadece modal açıldığında (isOpen değiştiğinde) state'leri sıfırla
   useEffect(() => {
-    if (book && isOpen) {
+    if (isOpen && book) {
       setFormData(book);
       setShowDeleteConfirm(false);
       setIsEditing(false);
       setShowMove(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bookId, isOpen]);
+  }, [isOpen]);
 
   // Arka planda mevcut kitabın verisi güncellenirse (örn. fiyat geldiğinde)
   // Eğer kullanıcı o an düzenleme yapmıyorsa yeni verileri form'a yansıt

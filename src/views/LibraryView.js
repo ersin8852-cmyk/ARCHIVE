@@ -158,7 +158,7 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
           </div>
         )}
       </div>
-      <BookDetailModal isOpen={detailModalOpen} onClose={closeDetailModal} bookId={activeBookId} />
+      <BookDetailModal key={activeBookId ? `detail-${activeBookId}` : 'detail-empty'} isOpen={detailModalOpen} onClose={closeDetailModal} bookId={activeBookId} />
       <ListEditModal isOpen={listEditModalOpen} onClose={closeListEditModal} folderId={activeFolderForEdit} />
     </div>
   );
