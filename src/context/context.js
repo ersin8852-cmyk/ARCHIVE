@@ -640,11 +640,19 @@ const DataProvider = ({ children }) => {
                     if (curr && curr.pageCount && !acc.pageCount) {
                       acc.pageCount = curr.pageCount;
                     }
+                    if (curr && curr.author && !acc.author) {
+                      acc.author = curr.author;
+                    }
+                    if (curr && curr.publisher && !acc.publisher) {
+                      acc.publisher = curr.publisher;
+                    }
                     return acc;
                   }, {});
                   
                   if (bestMeta.title) updates.title = bestMeta.title;
                   if (bestMeta.pageCount && !pendingBook.pageCount) updates.pageCount = bestMeta.pageCount;
+                  if (bestMeta.author && !pendingBook.author) updates.author = bestMeta.author;
+                  if (bestMeta.publisher && !pendingBook.publisher) updates.publisher = bestMeta.publisher;
                 }
               }
               
