@@ -177,6 +177,17 @@ const fetchPrice = async (siteName, url, extractFn) => {
     }
 
     const html = await response.text();
+    
+    // Güvenlik Duvarı (WAF / Bot Koruması) Kontrolü
+    const isWafBlocked = html.includes('cf-browser-verification') || 
+                         html.includes('cf-turnstile') || 
+                         html.includes('Just a moment...') || 
+                         html.includes('Enable JavaScript and cookies to continue');
+                         
+    if (isWafBlocked) {
+      return { site: siteName, price: null, cover: null, metadata: { WAF_Engeli: true, _debug_title: 'Cloudflare / Güvenlik Duvarı Engeli' }, status: 'waf_blocked' };
+    }
+
     // DOMParser ile HTML'i Parse Et
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
@@ -197,7 +208,18 @@ const fetchPrice = async (siteName, url, extractFn) => {
     };
   } catch (error) {
     console.log(`[Frontend Scraper] ${siteName} hatası: ${error.message}`);
-    return { site: siteName, price: null, cover: null, metadata: {}, status: 'error', error: error.message };
+    
+    // Eğer 403 (Yasak) veya 503 (Servis Yok) hatası dönerse bu da kesin bir güvenlik duvarı engelidir.
+    const isFirewallError = error.message.includes('403') || error.message.includes('503');
+    
+    return { 
+      site: siteName, 
+      price: null, 
+      cover: null, 
+      metadata: isFirewallError ? { WAF_Engeli: true, Hata: error.message, _debug_title: 'HTTP Güvenlik Duvarı Engeli' } : { Hata: error.message }, 
+      status: 'error', 
+      error: error.message 
+    };
   }
 };
 
