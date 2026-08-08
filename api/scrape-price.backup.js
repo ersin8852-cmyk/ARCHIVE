@@ -213,51 +213,6 @@ module.exports = async (req, res) => {
     return parseFloat(clean) || null;
   };
 
-  const WORKER_PROXY_URL = 'https://archivebook.ersin8852.workers.dev/?url=';
-
-  // Ortak axios konfigürasyonu
-  const fetchPrice = async (siteName, url, extractFn) => {
-    try {
-      // ScraperAPI yerine doğrudan Worker Proxy'yi kullanıyoruz
-      const fetchUrl = WORKER_PROXY_URL + encodeURIComponent(url);
-
-      const response = await axios.get(fetchUrl, {
-        headers: {
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
-        },
-        timeout: 15000 // Worker gecikebilir, süreyi uzun tutalım
-      });
-
-      const html = response.data;
-      const $ = cheerio.load(html);
-      
-      const result = extractFn($);
-      if (!result) return { site: siteName, price: null, cover: null, metadata: {}, status: 'error' };
-
-      const metadata = result.metadata || {};
-      metadata._debug_title = $('title').text().trim().substring(0, 50);
-
-      // Fiyat bulunduysa başarılı, bulunamadıysa başarısız (fakat engellenmemiş)
-      const status = result.price !== null && !isNaN(result.price) ? 'success' : 'failed_or_bot_blocked';
-
-      const finalResult = {
-        site: siteName,
-        price: result.price,
-        cover: result.cover || null,
-        metadata: metadata,
-        status: status
-      };
-
-      results.push(finalResult);
-      return finalResult;
-    } catch (error) {
-      console.log(`[Scraper] ${siteName} hatası: ${error.message}`);
-      // Hata durumunda (403, 500 vb.) hata mesajını da ekle
-      results.push({ site: siteName, price: null, cover: null, metadata: {}, status: 'error', error: error.message });
-      return { site: siteName, price: null, cover: null, metadata: {}, status: 'error' };
-    }
-  };
-
   // Tüm siteleri aynı anda (paralel) tara
   await Promise.allSettled([
     // 1. Kitapyurdu
@@ -274,14 +229,14 @@ module.exports = async (req, res) => {
       return { price, cover: extractCover($), metadata: extractMetadata($) };
     }),
 
-    // 3. Kitapsepeti
+    // 3. Kitapsepeti (Normal Tarama)
     fetchPrice('Kitapsepeti', `https://www.kitapsepeti.com/arama?q=${cleanIsbn}`, ($) => {
       let priceText = $('.current-price').first().text() || $('.product-price').first().text();
       const price = parseTurkishPrice(priceText);
       return { price, cover: extractCover($), metadata: extractMetadata($) };
     }),
 
-    // 4. Amazon TR
+    // 4. Amazon TR (ScraperAPI ile Anti-Bot bypass)
     fetchPrice('Amazon', `https://www.amazon.com.tr/s?k=${cleanIsbn}`, ($) => {
       let priceText = $('.a-price .a-offscreen').first().text();
       if (!priceText) {
@@ -291,14 +246,14 @@ module.exports = async (req, res) => {
       }
       const price = parseTurkishPrice(priceText) || parseFloat(priceText);
       return { price, cover: extractCover($), metadata: extractMetadata($) };
-    }),
+    }, true),
 
-    // 5. D&R
+    // 5. D&R (ScraperAPI ile Anti-Bot bypass)
     fetchPrice('D&R', `https://www.dr.com.tr/search?q=${cleanIsbn}`, ($) => {
       let priceText = $('.prd-price').first().text() || $('.price').first().text() || $('#salePrice').text() || $('.product-price').first().text();
       const price = parseTurkishPrice(priceText);
       return { price, cover: extractCover($), metadata: extractMetadata($) };
-    })
+    }, true)
   ]);
 
   const validResults = results.filter(r => r.price !== null && r.price > 0);
