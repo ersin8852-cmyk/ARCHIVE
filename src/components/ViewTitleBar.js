@@ -14,7 +14,7 @@ const ViewTitleBar = ({
 
   return (
     <div className="sticky top-[50px] bg-white/95 backdrop-blur-sm z-10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-all">
-      <div className="pl-[10px] pr-4 flex flex-col justify-center" style={{ minHeight: '32px' }}>
+      <div className="pl-[10px] pr-4 py-0.5 flex flex-col justify-center" style={{ minHeight: '36px' }}>
         {isSearching ? (
           <div className="flex items-center w-full gap-3 animate-in fade-in slide-in-from-right-4 duration-300">
             <div className="relative flex-1">
