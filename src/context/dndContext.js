@@ -36,6 +36,7 @@ const useDraggableItem = (item, containerFolderId, onClick, itemType) => {
   const autoScrollRAF = useRef(null);
   const velocityHistory = useRef([]);
   const momentumRAF = useRef(null);
+  const activeListeners = useRef(null);
 
   const clearPressTimer = () => { if (pressTimer.current) { clearTimeout(pressTimer.current); pressTimer.current = null; } };
 
@@ -105,6 +106,7 @@ const useDraggableItem = (item, containerFolderId, onClick, itemType) => {
   };
 
   const handlePointerMove = (e) => {
+    if (pointerIdRef.current !== null && e.pointerId !== pointerIdRef.current) return;
     if (draggingRef.current) {
       e.preventDefault();
       updateDrag(e.clientX, e.clientY);
@@ -140,9 +142,12 @@ const useDraggableItem = (item, containerFolderId, onClick, itemType) => {
 
   const stopTracking = () => {
     _isDragActive = false;
-    window.removeEventListener('pointermove', handlePointerMove);
-    window.removeEventListener('pointerup', handlePointerUp);
-    window.removeEventListener('pointercancel', handlePointerCancel);
+    if (activeListeners.current) {
+      window.removeEventListener('pointermove', activeListeners.current.move);
+      window.removeEventListener('pointerup', activeListeners.current.up);
+      window.removeEventListener('pointercancel', activeListeners.current.cancel);
+      activeListeners.current = null;
+    }
     stopAutoScroll();
     if (cardRef.current && pointerIdRef.current !== null) {
       try { cardRef.current.releasePointerCapture(pointerIdRef.current); } catch(e) {}
@@ -150,7 +155,8 @@ const useDraggableItem = (item, containerFolderId, onClick, itemType) => {
     pointerIdRef.current = null;
   };
 
-  const handlePointerUp = () => {
+  const handlePointerUp = (e) => {
+    if (pointerIdRef.current !== null && e.pointerId !== pointerIdRef.current) return;
     clearPressTimer();
     const wasDragging = draggingRef.current;
     const wasScrolling = movedRef.current;
@@ -189,7 +195,8 @@ const useDraggableItem = (item, containerFolderId, onClick, itemType) => {
     }
   };
 
-  const handlePointerCancel = () => {
+  const handlePointerCancel = (e) => {
+    if (pointerIdRef.current !== null && e.pointerId !== pointerIdRef.current) return;
     clearPressTimer();
     const wasDragging = draggingRef.current;
     draggingRef.current = false;
@@ -213,6 +220,11 @@ const useDraggableItem = (item, containerFolderId, onClick, itemType) => {
     autoScrollTarget.current = { x: e.clientX, y: e.clientY };
     startAutoScroll();
 
+    activeListeners.current = {
+      move: handlePointerMove,
+      up: handlePointerUp,
+      cancel: handlePointerCancel
+    };
     window.addEventListener('pointermove', handlePointerMove, { passive: false });
     window.addEventListener('pointerup', handlePointerUp);
     window.addEventListener('pointercancel', handlePointerCancel);
@@ -236,6 +248,14 @@ const useDraggableItem = (item, containerFolderId, onClick, itemType) => {
   };
 
   const isBeingDragged = draggedId === item.id;
+
+  useEffect(() => {
+    return () => {
+      stopTracking();
+      stopMomentum();
+      clearPressTimer();
+    };
+  }, []);
 
   return { cardRef, handlePointerDown, handleClick, isBeingDragged };
 };
