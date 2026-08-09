@@ -42,7 +42,7 @@ const ViewTitleBar = ({
                   <div className="flex items-center w-full">
                     <button 
                       onClick={() => setActiveFolderId(null)} 
-                      className={`flex-1 text-left flex items-center transition-all px-2 py-[1px] rounded-lg border ${(activeFolderId === null) ? 'text-zinc-900 font-bold bg-zinc-50 border-transparent' : 'text-zinc-600 font-bold hover:bg-zinc-50 hover:text-zinc-900 border-transparent'} ${(draggedId && overTarget && overTarget.type === 'folder' && overTarget.id === 'root' && overTarget.source === 'breadcrumb') ? 'relative z-10 ring-2 ring-zinc-900 border-dashed bg-zinc-100' : ''}`} 
+                      className={`flex-1 text-left flex items-center transition-all px-2 py-[1px] rounded-lg border ${(activeFolderId === null) ? 'text-zinc-900 font-bold bg-zinc-50 border-transparent' : 'text-zinc-900 font-bold hover:bg-zinc-50 border-transparent'} ${(draggedId && overTarget && overTarget.type === 'folder' && overTarget.id === 'root' && overTarget.source === 'breadcrumb') ? 'relative z-10 ring-2 ring-zinc-900 border-dashed bg-zinc-100' : ''}`} 
                       data-breadcrumb-target="root"
                     >
                        <span className="truncate inline-block">{rootTitle}</span>
