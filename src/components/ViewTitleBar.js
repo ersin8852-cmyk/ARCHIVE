@@ -14,7 +14,7 @@ const ViewTitleBar = ({
 
   return (
     <div className="sticky top-[50px] bg-white/95 backdrop-blur-sm z-10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] transition-all">
-      <div className="pl-[10px] pr-4 min-h-[32px] py-1 flex flex-col justify-center">
+      <div className="pl-[10px] pr-4 flex flex-col justify-center" style={{ height: '30px' }}>
         {isSearching ? (
           <div className="flex items-center w-full gap-3 animate-in fade-in slide-in-from-right-4 duration-300">
             <div className="relative flex-1">
@@ -23,7 +23,7 @@ const ViewTitleBar = ({
                 autoFocus 
                 type="text" 
                 placeholder={searchPlaceholder}
-                className="w-full pl-9 pr-3 py-2 bg-zinc-100 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-zinc-900" 
+                className="w-full pl-9 pr-3 py-1 h-[26px] bg-zinc-100 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 text-zinc-900" 
                 value={searchTerm} 
                 onChange={e => setSearchTerm(e.target.value)} 
               />
@@ -34,7 +34,7 @@ const ViewTitleBar = ({
           </div>
         ) : (
           <div className="flex items-center justify-between w-full animate-in fade-in slide-in-from-left-4 duration-300">
-            <div className="flex flex-col flex-1 min-w-0 py-0.5">
+            <div className="flex flex-col flex-1 min-w-0">
               {!activeFolderId ? (
                  <h1 className="text-xl font-extrabold text-zinc-900 tracking-tight">{rootTitle}</h1>
               ) : (
