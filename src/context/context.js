@@ -436,15 +436,16 @@ const DataProvider = ({ children }) => {
       return false;
     }
 
-    const isDuplicate = data.books.some(b => {
-      if (bookData.isbn && b.isbn && b.isbn === bookData.isbn) return true;
-      return normalize(b.title) === normalize(bookData.title) &&
-             normalize(b.author) === normalize(bookData.author);
-    });
-
-    if (isDuplicate) {
-      showToast('Bu kitap zaten arşivinizde mevcut!', 'error');
-      return false;
+    const existingSameIsbnBooks = bookData.isbn ? data.books.filter(b => b.isbn === bookData.isbn) : [];
+    
+    if (existingSameIsbnBooks.length > 0) {
+      const inSameFolder = existingSameIsbnBooks.some(b => b.folderId === folderId);
+      if (inSameFolder) {
+        showToast('Bu kitap bu klasörde zaten mevcut!', 'error');
+        return false;
+      } else {
+        showToast('Bu kitap başka bir klasörde zaten mevcut, yine de listeye eklendi.', 'warning', true);
+      }
     }
 
     const siblings = data.books.filter(b => b.folderId === folderId);

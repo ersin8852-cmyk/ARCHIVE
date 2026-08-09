@@ -9,7 +9,23 @@ const StatsView = ({ onOpenProfile }) => {
   const { books, profile } = useData();
 
   const stats = useMemo(() => {
-    const libBooks = books.filter(b => b.inLibrary);
+    const deduplicate = (arr) => {
+      const sorted = [...arr].sort((a, b) => {
+        if (a.isRead !== b.isRead) return a.isRead ? -1 : 1;
+        if (a.inLibrary !== b.inLibrary) return a.inLibrary ? -1 : 1;
+        return 0;
+      });
+      const seenIsbns = new Set();
+      return sorted.filter(b => {
+        if (!b.isbn) return true;
+        if (seenIsbns.has(b.isbn)) return false;
+        seenIsbns.add(b.isbn);
+        return true;
+      });
+    };
+
+    const uniqueBooks = deduplicate(books);
+    const libBooks = uniqueBooks.filter(b => b.inLibrary);
     const calc = (arr) => {
       if (arr.length === 0) return null;
       let totalPages = 0, totalPrice = 0, longest = arr[0], shortest = arr[0];
@@ -38,7 +54,7 @@ const StatsView = ({ onOpenProfile }) => {
       };
     };
     
-    const listS = calc(books) || { total: 0, pages: 0, avg: 0, long: '-', short: '-', fav: '-', price: 0 };
+    const listS = calc(uniqueBooks) || { total: 0, pages: 0, avg: 0, long: '-', short: '-', fav: '-', price: 0 };
     const libS = calc(libBooks) || { total: 0, pages: 0, avg: 0, long: '-', short: '-', fav: '-', price: 0 };
     const read = libBooks.filter(b => b.isRead);
     const unread = libBooks.filter(b => !b.isRead);
