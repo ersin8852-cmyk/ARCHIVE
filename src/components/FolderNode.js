@@ -83,9 +83,9 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
           <div className="flex flex-col overflow-hidden">
             <span className="font-bold text-zinc-800 text-[15px] truncate">{folder.name}</span>
             <div className="flex items-center gap-1.5 mt-0.5 overflow-hidden">
-              <span className="text-[clamp(8px,2.2vw,11px)] whitespace-nowrap truncate font-medium text-zinc-500 bg-zinc-100 border border-zinc-200/60 px-1.5 py-0.5 rounded-full">{totalBooksCount} Kitap</span>
-              {totalPageCount > 0 && <span className="text-[clamp(8px,2.2vw,11px)] whitespace-nowrap truncate font-medium text-zinc-500 bg-zinc-100 border border-zinc-200/60 px-1.5 py-0.5 rounded-full">{totalPageCount.toLocaleString()} Sayfa</span>}
-              {totalFoldersCount > 0 && <span className="text-[clamp(8px,2.2vw,11px)] whitespace-nowrap truncate font-medium text-zinc-500 bg-zinc-100 border border-zinc-200/60 px-1.5 py-0.5 rounded-full">{totalFoldersCount} Alt Liste</span>}
+              <span className="text-[clamp(10px,3vw,11px)] whitespace-nowrap truncate font-medium text-zinc-500 bg-zinc-100 border border-zinc-200/60 px-2 py-0.5 rounded-full">{totalBooksCount} Kitap</span>
+              {totalPageCount > 0 && <span className="text-[clamp(10px,3vw,11px)] whitespace-nowrap truncate font-medium text-zinc-500 bg-zinc-100 border border-zinc-200/60 px-2 py-0.5 rounded-full">{totalPageCount.toLocaleString()} Sayfa</span>}
+              {totalFoldersCount > 0 && <span className="text-[clamp(10px,3vw,11px)] whitespace-nowrap truncate font-medium text-zinc-500 bg-zinc-100 border border-zinc-200/60 px-2 py-0.5 rounded-full">{totalFoldersCount} Alt Liste</span>}
             </div>
           </div>
         </div>
