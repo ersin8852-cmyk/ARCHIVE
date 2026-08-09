@@ -3,7 +3,7 @@ const Header = ({ onOpenProfile }) => {
   
   return (
     <div className="sticky top-0 bg-[#3d3430] backdrop-blur-md z-20 shadow-sm flex flex-col">
-      <div className="h-14 px-4 flex items-center border-b border-white/5 relative z-20">
+      <div className="h-[50px] px-4 flex items-center border-b border-white/5 relative z-20">
         <button onClick={onOpenProfile} className="shrink-0 p-1.5 -ml-1 text-stone-300 hover:bg-stone-800 rounded-full transition-colors flex items-center justify-center relative z-10">
           {profile?.photo ? (
             <img src={profile.photo} alt="Profil" className="w-9 h-9 rounded-full object-cover border border-stone-500 shadow-sm" />

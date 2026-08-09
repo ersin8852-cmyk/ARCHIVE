@@ -77,7 +77,7 @@ const AppLayout = () => {
             {activeTab === 'stats' && <StatsView onOpenProfile={openProfileModal} />}
           </div>
           <div className="absolute bottom-0 left-0 right-0 bg-[#2a2421] backdrop-blur-xl border-t border-white/5 pb-safe z-30 shadow-[0_-8px_30px_rgba(0,0,0,0.12)]">
-            <div className="flex justify-around items-center px-4 py-1.5">
+            <div className="flex justify-around items-center px-4 h-[54px]">
               {[
                 { id: 'lists', icon: List },
                 { id: 'library', icon: Library },
@@ -85,7 +85,7 @@ const AppLayout = () => {
               ].map(tab => (
                 <button
                   key={tab.id} onClick={() => handleTabClick(tab.id)}
-                  className={`flex flex-col items-center p-3 rounded-2xl transition-all ${activeTab === tab.id ? 'text-orange-500 bg-stone-700/50' : 'text-stone-400 hover:text-stone-200 hover:bg-stone-700/30'}`}
+                  className={`flex flex-col items-center p-2 rounded-2xl transition-all ${activeTab === tab.id ? 'text-orange-500 bg-stone-700/50' : 'text-stone-400 hover:text-stone-200 hover:bg-stone-700/30'}`}
                 >
                   <tab.icon size={24} strokeWidth={activeTab === tab.id ? 2.5 : 2} />
                 </button>
