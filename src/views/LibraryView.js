@@ -38,6 +38,10 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
     ? libraryBooks.filter(b => b.title.toLowerCase().includes(searchTerm.toLowerCase()) || (b.author && b.author.toLowerCase().includes(searchTerm.toLowerCase())))
     : [], [libraryBooks, searchTerm]);
 
+  const filteredFolders = React.useMemo(() => searchTerm
+    ? visibleFolders.filter(f => f.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    : [], [visibleFolders, searchTerm]);
+
 
 
   const handleOpenBook = React.useCallback((id) => {
@@ -69,13 +73,14 @@ const LibraryView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
      <div className="flex-1 overflow-y-auto pt-[12.8px] pr-4 pb-64 pl-[10px]" data-dnd-scroll data-folder-target={activeFolderId || "root"}>
         {isSearching ? (
            searchTerm.trim() === '' ? (
-            <EmptyState icon={Search} title="Aramak istediğiniz kitabın adını yazın." />
-          ) : filteredBooks.length > 0 ? (
+            <EmptyState icon={Search} title="Aramak istediğiniz kitabın veya listenin adını yazın." />
+          ) : (filteredBooks.length > 0 || filteredFolders.length > 0) ? (
             <div className="space-y-[3.6px]">
+              {filteredFolders.map(folder => <FolderNode key={folder.id} folder={folder} allFolders={visibleFolders} allBooks={libraryBooks} onOpenFolder={setActiveFolderId} onEdit={handleEditFolder} isLibraryView={true} />)}
               {filteredBooks.map(book => <BookCard key={book.id} book={book} onOpen={handleOpenBook} isLibraryView={true} folderPath={getFolderPath(book.folderId)} onNavigate={handleNavigate} />)}
             </div>
           ) : (
-            <EmptyState icon={FileText} title="Kütüphanenizde bu isimde kitap yok." />
+            <EmptyState icon={FileText} title="Kütüphanenizde bu isimde kitap veya liste yok." />
           )
         ) : libraryBooks.length === 0 ? (
           <EmptyState 
