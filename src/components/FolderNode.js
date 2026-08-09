@@ -4,7 +4,7 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
 
   const childBooks = allBooks.filter(b => b.folderId === folder.id);
 
-  const { totalBooksCount, totalFoldersCount } = React.useMemo(() => {
+  const { totalBooksCount, totalFoldersCount, totalPageCount } = React.useMemo(() => {
     const getDescendantFolderIds = (parentId) => {
       let ids = [];
       const children = allFolders.filter(f => f.parentId === parentId);
@@ -17,9 +17,11 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
     const descIds = getDescendantFolderIds(folder.id);
     const allFolderIds = [folder.id, ...descIds];
     
-    const tBooksCount = allBooks.filter(b => allFolderIds.includes(b.folderId)).length;
+    const folderBooks = allBooks.filter(b => allFolderIds.includes(b.folderId));
+    const tBooksCount = folderBooks.length;
     const tFoldersCount = descIds.length;
-    return { totalBooksCount: tBooksCount, totalFoldersCount: tFoldersCount };
+    const tPageCount = folderBooks.reduce((sum, b) => sum + (parseInt(b.pageCount) || 0), 0);
+    return { totalBooksCount: tBooksCount, totalFoldersCount: tFoldersCount, totalPageCount: tPageCount };
   }, [allFolders, allBooks, folder.id]);
 
   const isTarget = draggedId && overTarget && overTarget.type === 'folder' && overTarget.id === folder.id;
@@ -81,8 +83,9 @@ const FolderNode = React.memo(({ folder, allFolders, allBooks, onOpenFolder, onE
           <div className="flex flex-col overflow-hidden">
             <span className="font-bold text-zinc-800 text-[15px] truncate">{folder.name}</span>
             <div className="flex items-center gap-2 mt-0.5">
-              <span className="text-[11px] font-medium text-zinc-500 bg-zinc-100 px-2 py-0.5 rounded-full">{totalBooksCount} Kitap</span>
-              {totalFoldersCount > 0 && <span className="text-[11px] font-medium text-zinc-500 bg-zinc-100 px-2 py-0.5 rounded-full">{totalFoldersCount} Alt Liste</span>}
+              <span className="text-[11px] font-medium text-zinc-500 bg-zinc-100 border border-zinc-200/60 px-2 py-0.5 rounded-full">{totalBooksCount} Kitap</span>
+              {totalPageCount > 0 && <span className="text-[11px] font-medium text-zinc-500 bg-zinc-100 border border-zinc-200/60 px-2 py-0.5 rounded-full">{totalPageCount.toLocaleString()} Sayfa</span>}
+              {totalFoldersCount > 0 && <span className="text-[11px] font-medium text-zinc-500 bg-zinc-100 border border-zinc-200/60 px-2 py-0.5 rounded-full">{totalFoldersCount} Alt Liste</span>}
             </div>
           </div>
         </div>
