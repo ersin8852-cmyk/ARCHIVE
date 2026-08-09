@@ -5,7 +5,7 @@
 
 const firebaseConfig = {
   apiKey: (window.__ENV__ && window.__ENV__.FIREBASE_API_KEY) || "AIzaSyAmlUeEg0Ln1eYtWZOeyKBGY5BHyiah8hQ",
-  authDomain: (window.__ENV__ && window.__ENV__.FIREBASE_AUTH_DOMAIN) || "archive-984e6.firebaseapp.com",
+  authDomain: (window.__ENV__ && window.__ENV__.FIREBASE_AUTH_DOMAIN) || "archivebook.vercel.app",
   projectId: (window.__ENV__ && window.__ENV__.FIREBASE_PROJECT_ID) || "archive-984e6",
   storageBucket: (window.__ENV__ && window.__ENV__.FIREBASE_STORAGE_BUCKET) || "archive-984e6.firebasestorage.app",
   messagingSenderId: (window.__ENV__ && window.__ENV__.FIREBASE_MESSAGING_SENDER_ID) || "508847264735",
