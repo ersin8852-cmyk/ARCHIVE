@@ -160,6 +160,9 @@ const extractCover = (doc) => {
 };
 
 const fetchPrice = async (siteName, url, extractFn) => {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 3000);
+
   try {
     const fetchUrl = WORKER_PROXY_URL + encodeURIComponent(url);
 
@@ -168,9 +171,11 @@ const fetchPrice = async (siteName, url, extractFn) => {
       method: 'GET',
       headers: {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8'
-      }
-      // timeout tarayıcıda AbortController ile yapılabilir, şimdilik native bekliyoruz
+      },
+      signal: controller.signal
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
        throw new Error(`HTTP Error ${response.status}`);
@@ -207,6 +212,7 @@ const fetchPrice = async (siteName, url, extractFn) => {
       status: status
     };
   } catch (error) {
+    clearTimeout(timeoutId);
     console.log(`[Frontend Scraper] ${siteName} hatası: ${error.message}`);
     
     // Eğer 403 (Yasak) veya 503 (Servis Yok) hatası dönerse bu da kesin bir güvenlik duvarı engelidir.

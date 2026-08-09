@@ -24,7 +24,7 @@ const ManualAddModal = ({ isOpen, onClose, folderId }) => {
     
     if (!finalData.title || !finalData.title.trim()) {
       if (finalData.isbn && finalData.isbn.trim()) {
-        finalData.title = 'Kitap bilgisi yükleniyor...';
+        finalData.title = 'Taslak / Veri Çekiliyor';
       } else {
         showToast('Kitap başlığı boş olamaz.', 'error');
         return;

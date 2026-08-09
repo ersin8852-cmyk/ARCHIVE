@@ -676,7 +676,7 @@ const DataProvider = ({ children }) => {
             const newAttempts = (pendingBook.priceFetchAttempts || 0) + 1;
             window.firebaseDb.collection('users').doc(user.uid).collection('books').doc(pendingBook.id).update({ priceFetchAttempts: newAttempts, priceFetchPending: newAttempts < 3 }).catch(console.error);
           });
-      }, 5000);
+      }, 3000);
 
       return () => clearTimeout(timer);
     }
