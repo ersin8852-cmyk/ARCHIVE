@@ -1,3 +1,14 @@
+const isValidISBN13 = (isbn) => {
+  if (!/^\d{13}$/.test(isbn)) return false;
+  let sum = 0;
+  for (let i = 0; i < 12; i++) {
+    sum += parseInt(isbn[i]) * (i % 2 === 0 ? 1 : 3);
+  }
+  const checkDigit = 10 - (sum % 10);
+  const calculatedCheck = checkDigit === 10 ? 0 : checkDigit;
+  return calculatedCheck === parseInt(isbn[12]);
+};
+
 const BulkAddModal = ({ isOpen, onClose, folderId }) => {
   const { addBook } = useData();
   const { showToast } = useToast();
@@ -5,6 +16,7 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
   const [parsedResults, setParsedResults] = useState([]);
   const [showInfo, setShowInfo] = useState(false);
   const [showError, setShowError] = useState(false);
+  const [parseErrors, setParseErrors] = useState([]);
   const [isParsing, setIsParsing] = useState(false);
 
   useEffect(() => {
@@ -13,6 +25,7 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
       setParsedResults([]);
       setShowInfo(false);
       setShowError(false);
+      setParseErrors([]);
     }
   }, [isOpen]);
 
@@ -21,60 +34,33 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
     setIsParsing(true);
     
     setTimeout(() => {
-      const lines = text.split('\n').filter(l => l.trim() !== '');
-      const results = [];
+      // Check for invalid characters (allow only digits, spaces, commas, dashes, newlines)
+      if (/[^\d\s,\-]/.test(text)) {
+        setParseErrors(["Harf veya geçersiz karakter kullanılamaz. Yalnızca rakam, virgül, tire ve boşluk kullanın."]);
+        setShowError(true);
+        setIsParsing(false);
+        return;
+      }
+
+      // Split by separators (comma, dash, space, newline)
+      const tokens = text.split(/[\s,\-]+/).filter(t => t.trim() !== '');
       
-      lines.forEach(line => {
-        let currentLine = line.trim();
-        let isbn = '';
-        let pageCount = '';
-        let author = '';
-        let publisher = '';
-        let title = '';
+      const results = [];
+      const errors = [];
 
-        const isbnMatch = currentLine.match(/\b\d{10,13}\b/);
-        if (isbnMatch) {
-          isbn = isbnMatch[0];
-          currentLine = currentLine.replace(isbn, '').trim();
-        }
-
-        const pageMatch = currentLine.match(/\b(\d{2,4})\s*(sayfa|s\.|pages?)\b/i) || currentLine.match(/\b(\d{2,4})\b$/);
-        if (pageMatch) {
-          pageCount = pageMatch[1];
-          currentLine = currentLine.replace(pageMatch[0], '').trim();
-        }
-
-        currentLine = currentLine.replace(/^[-\|,]+|[-\|,]+$/g, '').trim();
-
-        const separators = [' - ', ' | ', ';', ','];
-        let parts = [];
-        
-        for (const sep of separators) {
-          if (currentLine.includes(sep)) {
-            parts = currentLine.split(sep).map(p => p.trim()).filter(p => p);
-            break;
-          }
-        }
-
-        if (parts.length > 0) {
-          title = parts[0];
-          if (parts.length >= 2) author = parts[1];
-          if (parts.length >= 3) publisher = parts.slice(2).join(' ');
+      tokens.forEach(token => {
+        if (token.length !== 13) {
+          errors.push(`"${token}" geçersiz: ISBN-13 tam olarak 13 rakamdan oluşmalıdır.`);
+        } else if (!isValidISBN13(token)) {
+          errors.push(`"${token}" geçersiz: Bu ISBN'nin check digit değeri hatalı.`);
         } else {
-          title = currentLine;
-        }
-        
-        title = title.replace(/^[-\|,]+|[-\|,]+$/g, '').trim();
-        author = author.replace(/^[-\|,]+|[-\|,]+$/g, '').trim();
-
-        if (title.length >= 2 || isbn) {
           results.push({
-            title: title || 'İsimsiz Kitap',
-            author: author || '',
-            isbn: isbn || '',
-            pageCount: pageCount || 0,
+            title: `ISBN: ${token}`,
+            author: '',
+            isbn: token,
+            pageCount: 0,
             cover: '',
-            publisher: publisher || '',
+            publisher: '',
             price: ''
           });
         }
@@ -82,7 +68,11 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
       
       setIsParsing(false);
 
-      if (results.length === 0) {
+      if (errors.length > 0) {
+        setParseErrors(errors);
+        setShowError(true);
+      } else if (results.length === 0) {
+        setParseErrors(["Geçerli bir ISBN bulunamadı."]);
         setShowError(true);
       } else {
         setParsedResults(results);
@@ -98,10 +88,16 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
 
   const infoContent = (
     <div className="text-sm space-y-2">
-      <p>Her kitabı <strong>ayrı bir satıra</strong> yazmalısın.</p>
-      <p><strong>Önerilen Format:</strong> Kitap Adı - Yazar Adı - Yayın Evi - ISBN - Sayfa</p>
-      <p>Sistem ISBN ve Sayfa sayısını otomatik tanır. İsim, yazar ve yayın evini ayırmak için <code className="bg-zinc-100 px-1 py-0.5 rounded">-</code>, <code className="bg-zinc-100 px-1 py-0.5 rounded">|</code> veya <code className="bg-zinc-100 px-1 py-0.5 rounded">,</code> kullanabilirsin.</p>
-      <p className="mt-2 text-zinc-500 italic text-xs border-t pt-2">Örnek:<br/>Suç ve Ceza - Dostoyevski - İthaki Yayınları - 9781234567890 - 600<br/>Simyacı, Paulo Coelho, Can Yayınları, 200 sayfa</p>
+      <p>Yalnızca <strong>ISBN-13</strong> numaraları girilebilir.</p>
+      <p>Her ISBN tam olarak <strong>13 rakamdan</strong> oluşmalıdır. ISBN-13 zorunludur.</p>
+      <p>Harf, kitap adı, yazar adı, yayın yılı veya sayfa sayısı <strong>GİRİLMEMELİDİR.</strong></p>
+      <p>Birden fazla ISBN girilecekse aralarında <code className="bg-zinc-100 px-1 py-0.5 rounded">,</code> (virgül), <code className="bg-zinc-100 px-1 py-0.5 rounded">-</code> (tire) veya <strong>boşluk</strong> kullanılmalıdır.</p>
+      <p className="mt-2 text-zinc-500 italic text-xs border-t pt-2">
+        Örnek (Tek):<br/>9789750719387<br/><br/>
+        Örnek (Çoklu):<br/>9789750719387, 9789750719388<br/>
+        9789750719387 - 9789750719388<br/>
+        9789750719387 9789750719388
+      </p>
     </div>
   );
 
@@ -122,7 +118,7 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
                 <Info size={14} />
               </button>
               {showInfo && (
-                <div className="absolute top-8 left-0 w-72 bg-white border border-zinc-200 shadow-xl rounded-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2">
+                <div className="absolute top-8 left-0 w-80 bg-white border border-zinc-200 shadow-xl rounded-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2">
                   {infoContent}
                 </div>
               )}
@@ -139,7 +135,7 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
             <textarea 
               value={text}
               onChange={e => setText(e.target.value)}
-              placeholder="Kitap bilgilerini buraya yapıştır..."
+              placeholder="ISBN numaralarını buraya yapıştır... (Örn: 9789750719387, 9789750719388)"
               className="w-full h-full p-6 text-base text-zinc-800 resize-none focus:outline-none bg-transparent font-mono leading-relaxed placeholder-zinc-300"
               autoFocus
             />
@@ -147,7 +143,7 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
             <div className="flex-1 overflow-y-auto p-4 bg-zinc-50/50">
               <div className="flex flex-col gap-3">
                 <div className="px-1 pb-2 flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-3">
-                  <span className="text-sm font-medium text-zinc-500">{parsedResults.length} kitap algılandı</span>
+                  <span className="text-sm font-medium text-zinc-500">{parsedResults.length} ISBN algılandı</span>
                   <div className="flex items-center gap-3 w-full sm:w-auto">
                     <button 
                       onClick={() => {
@@ -157,7 +153,7 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
                           if (success) addedCount++;
                         });
                         if (addedCount > 0) {
-                          showToast(`Toplam ${addedCount} kitap eklendi!`, 'success');
+                          showToast(`Toplam ${addedCount} kitap eklendi! Fiyat ve detaylar arka planda çekilecek.`, 'success');
                           setParsedResults([]);
                           setText('');
                         }
@@ -179,9 +175,8 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
                       <div className="flex-1 min-w-0">
                         <h3 className="font-semibold text-zinc-800 leading-tight mb-1 truncate">{book.title}</h3>
                         <p className="text-xs text-zinc-500 mb-0.5 truncate">
-                          {book.author || 'Yazar Belirtilmemiş'} {book.publisher ? ` • ${book.publisher}` : ''}
+                          Detaylar web'den çekilecek...
                         </p>
-                        <p className="text-[10px] text-zinc-400">ISBN: {book.isbn || 'Yok'} | {book.pageCount || 0} Sayfa</p>
                       </div>
                     </div>
                     <button onClick={() => handleAdd(book)} className="p-2.5 bg-zinc-100 hover:bg-zinc-200 text-zinc-700 rounded-xl transition-colors shrink-0">
@@ -202,7 +197,7 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
               disabled={isParsing || !text.trim()} 
               className="px-6 py-2.5 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              {isParsing ? 'Ayıklanıyor...' : 'Ayıkla ve Listele'}
+              {isParsing ? 'Doğrulanıyor...' : 'Doğrula ve Listele'}
             </button>
           </div>
         )}
@@ -214,26 +209,21 @@ const BulkAddModal = ({ isOpen, onClose, folderId }) => {
               <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center text-red-500 mb-4">
                 <X size={32} />
               </div>
-              <h3 className="text-xl font-medium text-zinc-800 mb-2">Lütfen istenilen formatta giriniz</h3>
-              <p className="text-zinc-500 text-sm mb-6">Sistem girdiğiniz metinde hiçbir kitap verisi algılayamadı.</p>
+              <h3 className="text-xl font-medium text-zinc-800 mb-2">Hatalı Giriş</h3>
               
-              <div className="bg-zinc-50 rounded-2xl p-5 w-full text-left border border-zinc-100 mb-6">
-                <div className="flex items-center gap-2 mb-3 text-zinc-400">
-                  <Info size={16} />
-                  <span className="font-medium text-sm">Nasıl girmeliyim?</span>
-                </div>
-                <div className="text-sm text-zinc-500 space-y-2 opacity-80">
-                  <p>Her kitabı <strong>ayrı bir satıra</strong> yazmalısın.</p>
-                  <p><strong>Önerilen:</strong> Kitap Adı - Yazar Adı - Yayın Evi - ISBN - Sayfa</p>
-                  <p>Verileri ayırmak için <code className="bg-zinc-200/50 px-1 rounded">-</code> veya <code className="bg-zinc-200/50 px-1 rounded">,</code> kullan.</p>
-                </div>
+              <div className="bg-red-50/50 rounded-2xl p-4 w-full text-left border border-red-100 mb-6 max-h-48 overflow-y-auto">
+                <ul className="text-sm text-red-600 space-y-2 list-disc pl-4">
+                  {parseErrors.map((err, i) => (
+                    <li key={i} className="leading-snug">{err}</li>
+                  ))}
+                </ul>
               </div>
 
               <button 
                 onClick={() => setShowError(false)} 
                 className="w-full py-3 bg-zinc-900 text-white font-medium rounded-xl hover:bg-zinc-800 transition-colors"
               >
-                Tekrar Dene
+                Geri Dön ve Düzelt
               </button>
             </div>
           </div>
