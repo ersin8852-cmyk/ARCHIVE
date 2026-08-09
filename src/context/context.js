@@ -436,6 +436,7 @@ const DataProvider = ({ children }) => {
       return false;
     }
 
+    let hasWarning = false;
     const existingSameIsbnBooks = bookData.isbn ? data.books.filter(b => b.isbn === bookData.isbn) : [];
     
     if (existingSameIsbnBooks.length > 0) {
@@ -444,7 +445,8 @@ const DataProvider = ({ children }) => {
         showToast('Bu kitap bu klasörde zaten mevcut!', 'error');
         return false;
       } else {
-        showToast('Bu kitap başka bir klasörde zaten mevcut, yine de listeye eklendi.', 'warning', true);
+        hasWarning = true;
+        showToast('Bu kitap başka bir klasörde mevcut, yine de listeye eklendi.', 'warning');
       }
     }
 
@@ -463,7 +465,9 @@ const DataProvider = ({ children }) => {
     };
     
     window.firebaseDb.collection('users').doc(user.uid).collection('books').doc(newBookId)
-      .set(newBook).then(() => showToast('Kitap başarıyla eklendi.')).catch(console.error);
+      .set(newBook).then(() => {
+        if (!hasWarning) showToast('Kitap başarıyla eklendi.');
+      }).catch(console.error);
 
     return true;
   }, [data.books, user, showToast]);
