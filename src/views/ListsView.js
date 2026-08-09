@@ -62,7 +62,7 @@ const ListsView = ({ activeFolderId, setActiveFolderId, onOpenProfile }) => {
         searchPlaceholder="Kitap veya yazar ara..."
       />
 
-      <div className="flex-1 overflow-y-auto pt-[12.8px] pr-4 pb-24 pl-[10px]" data-dnd-scroll data-folder-target={activeFolderId || "root"}>
+      <div className="flex-1 overflow-y-auto pt-[12.8px] pr-4 pb-64 pl-[10px]" data-dnd-scroll data-folder-target={activeFolderId || "root"}>
         {isSearching ? (
           searchTerm.trim() === '' ? (
             <EmptyState icon={Search} title="Aramak istediğiniz kitabın adını yazın." />
