@@ -1,5 +1,27 @@
 export default {
   async fetch(request) {
+    // 1. CORS Origin Whitelist Kontrolü
+    const origin = request.headers.get('Origin') || '';
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'http://localhost:5500',
+      'http://127.0.0.1:5500'
+    ];
+    const isVercel = origin.endsWith('.vercel.app');
+    const isAllowedOrigin = isVercel || allowedOrigins.includes(origin);
+
+    // OPTIONS (Preflight) isteği için hızlı yanıt
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        headers: {
+          'Access-Control-Allow-Origin': isAllowedOrigin ? origin : '',
+          'Access-Control-Allow-Methods': 'GET, HEAD, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Accept',
+          'Access-Control-Max-Age': '86400',
+        }
+      });
+    }
+
     const url = new URL(request.url);
     const target = url.searchParams.get('url');
 
@@ -10,6 +32,23 @@ export default {
 
     try {
       const targetUrl = new URL(target);
+      const hostname = targetUrl.hostname.toLowerCase();
+      
+      // 2. Hedef Site (Target) Whitelist Kontrolü
+      const allowedDomains = [
+        'kitapyurdu.com',
+        'bkmkitap.com',
+        'kitapsepeti.com',
+        'amazon.com.tr',
+        'dr.com.tr'
+      ];
+      
+      // Domain veya subdomain (www.kitapyurdu.com) kontrolü
+      const isAllowedDomain = allowedDomains.some(domain => hostname === domain || hostname.endsWith('.' + domain));
+      
+      if (!isAllowedDomain) {
+        return new Response('Güvenlik İhlali: Bu proxy sadece izin verilen kitap sitelerine istek yapabilir.', { status: 403 });
+      }
       
       // Gelen isteğin başlıklarını (headers) kopyala
       const proxyHeaders = new Headers(request.headers);
@@ -38,10 +77,12 @@ export default {
         headers: response.headers
       });
 
-      // Kritik Nokta: CORS Damgasını vur! (Tarayıcının okumasına izin ver)
-      newResponse.headers.set('Access-Control-Allow-Origin', '*');
+      // Klinik Nokta: CORS Damgasını vur! (Sadece izin verilen originlere)
+      if (isAllowedOrigin) {
+        newResponse.headers.set('Access-Control-Allow-Origin', origin);
+      }
       newResponse.headers.set('Access-Control-Allow-Methods', 'GET, HEAD, POST, OPTIONS');
-      newResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+      newResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Accept');
 
       return newResponse;
 
