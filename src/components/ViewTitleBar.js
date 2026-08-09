@@ -34,27 +34,27 @@ const ViewTitleBar = ({
           </div>
         ) : (
           <div className="flex items-center justify-between w-full animate-in fade-in slide-in-from-left-4 duration-300">
-            <div className="flex flex-col flex-1 min-w-0 py-1">
+            <div className="flex flex-col flex-1 min-w-0 py-0.5">
               {!activeFolderId ? (
                  <h1 className="text-xl font-extrabold text-zinc-900 tracking-tight">{rootTitle}</h1>
               ) : (
                 <>
-                  <div className="flex items-center mt-1 w-full">
+                  <div className="flex items-center w-full">
                     <button 
                       onClick={() => setActiveFolderId(null)} 
-                      className={`flex-1 text-left flex items-center transition-all px-2 py-0.5 rounded-lg border ${(activeFolderId === null) ? 'text-zinc-900 font-bold bg-zinc-50 border-transparent' : 'text-zinc-600 font-medium hover:bg-zinc-50 hover:text-zinc-900 border-transparent'} ${(draggedId && overTarget && overTarget.type === 'folder' && overTarget.id === 'root' && overTarget.source === 'breadcrumb') ? 'ring-2 ring-zinc-900 border-dashed bg-zinc-100' : ''}`} 
+                      className={`flex-1 text-left flex items-center transition-all px-2 py-[1px] rounded-lg border ${(activeFolderId === null) ? 'text-zinc-900 font-bold bg-zinc-50 border-transparent' : 'text-zinc-600 font-medium hover:bg-zinc-50 hover:text-zinc-900 border-transparent'} ${(draggedId && overTarget && overTarget.type === 'folder' && overTarget.id === 'root' && overTarget.source === 'breadcrumb') ? 'ring-2 ring-zinc-900 border-dashed bg-zinc-100' : ''}`} 
                       data-breadcrumb-target="root"
                     >
                        <span className="truncate inline-block">{rootTitle}</span>
                     </button>
                   </div>
-                  <div className="flex flex-col mt-1">
+                  <div className="flex flex-col">
                     {breadcrumbs.map((bc, idx) => (
-                      <div key={bc.id} className="flex items-center mt-1 w-full" style={{ paddingLeft: `${(idx + 1) * 16}px` }}>
+                      <div key={bc.id} className="flex items-center w-full" style={{ paddingLeft: `${(idx + 1) * 16}px` }}>
                         <CornerDownRight size={14} className="text-zinc-400 shrink-0 mr-1.5" />
                         <button 
                           onClick={() => setActiveFolderId(bc.id)} 
-                          className={`flex-1 text-left flex items-center transition-all px-2 py-0.5 rounded-lg border ${(activeFolderId === bc.id) ? 'text-zinc-900 font-bold bg-zinc-50 border-transparent' : 'text-zinc-600 font-medium hover:bg-zinc-50 hover:text-zinc-900 border-transparent'} ${(draggedId && overTarget && overTarget.type === 'folder' && overTarget.id === bc.id && overTarget.source === 'breadcrumb') ? 'ring-2 ring-zinc-900 border-dashed bg-zinc-100' : ''}`} 
+                          className={`flex-1 text-left flex items-center transition-all px-2 py-[1px] rounded-lg border ${(activeFolderId === bc.id) ? 'text-zinc-900 font-bold bg-zinc-50 border-transparent' : 'text-zinc-600 font-medium hover:bg-zinc-50 hover:text-zinc-900 border-transparent'} ${(draggedId && overTarget && overTarget.type === 'folder' && overTarget.id === bc.id && overTarget.source === 'breadcrumb') ? 'ring-2 ring-zinc-900 border-dashed bg-zinc-100' : ''}`} 
                           data-breadcrumb-target={bc.id}
                         >
                           <span className="truncate inline-block">{bc.name}</span>
